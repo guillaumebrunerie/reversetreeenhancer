@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      1.0
+// @version      0.1
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -42,10 +42,10 @@ document.head.appendChild(css_button_seb);
 /* Stylesheet for the hiding for the multiple-choice questions */
 var css_hiding = toStyleElem('\
 .list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; } \
-.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) input[type=checkbox] { background-color: ' + hColor + '; border-color: ' + hColor + '; } \
+.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) input[type=checkbox] { display: none; } \
 \
 .select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; } \
-.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) input[type=radio] { background-color: ' + hColor + '; border-color: ' + hColor + '; } \
+.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) input[type=radio] { display: none; } \
 .select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) .select-images-frame { opacity: 0; }')
 
 function addCSSHiding() {
