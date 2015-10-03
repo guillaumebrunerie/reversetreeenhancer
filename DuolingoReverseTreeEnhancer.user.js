@@ -90,7 +90,7 @@ function playSound(url) {
 
 function say(sentence) {
     console.debug("Reverse Tree Enhancer: saying " + sentence);
-    playSound("http://translate.google.com/translate_tts?tl=" + targetLang + "&q=" + sentence);
+    playSound("https://translate.google.com/translate_tts?tl=" + targetLang + "&q=" + sentence);
 }
 
 function keyUpHandler(e) {    
