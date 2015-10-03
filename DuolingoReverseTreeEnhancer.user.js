@@ -219,10 +219,10 @@ function challengeForm(challenge){
 function updateButton() {
     var button = document.getElementById("reverse-tree-enhancer-button");
     if(localStorage.getItem("reverse_tree_enhancer_" + document.body.lang) === null) {
-        button.innerText = "Is this a reverse tree?";
+        button.textContent = "Is this a reverse tree?";
         button.className = "btn btn-standard right btn-store";
     } else {
-        button.innerText = "This is a reverse tree!";
+        button.textContent = "This is a reverse tree!";
         button.className = "btn btn-standard right btn-store selected";
     } 
 }
