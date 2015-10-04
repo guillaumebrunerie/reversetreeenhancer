@@ -86,7 +86,7 @@ soundManager.onerror = function(){displaySoundErrorBox(audio.src);}
 function playSound(url) {
     console.debug(url);
     counter = counter + 1;
-    audio = soundManager.createSound({id: "sound-" + counter, url: url, autoPlay: true});
+    audio = soundManager.createSound({id: "sound-" + counter, url: url, autoPlay: true, onload = function(){if(audio.readyState == 2){displaySoundErrorBox(audio.url)}}});
 }
 
 function say(sentence) {
@@ -245,7 +245,6 @@ var targetLang;
 function onChange(mutations) {
     var newclass = document.getElementById("app").className;
     if(newclass != oldclass){
-        console.debug("Reverse Tree Enhancer: new class (" + newclass + ")");
         oldclass = newclass;
         
         if(/home/.test(newclass)){
