@@ -245,6 +245,7 @@ var targetLang;
 function onChange(mutations) {
     var newclass = document.getElementById("app").className;
     if(newclass != oldclass){
+        console.debug("Reverse Tree Enhancer: new class (" + newclass + ")");
         oldclass = newclass;
         
         if(/home/.test(newclass)){
