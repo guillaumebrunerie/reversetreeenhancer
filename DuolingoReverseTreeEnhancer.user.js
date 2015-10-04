@@ -85,7 +85,7 @@ var counter = 0;
 function playSound(url) {
     console.debug(url);
     counter = counter + 1;
-    audio = soundManager.createSound({id: "sound-" + counter, url: url, autoPlay: true, onload = function(){if(audio.readyState == 2){displaySoundErrorBox(audio.url)}}});
+    audio = soundManager.createSound({id: "sound-" + counter, url: url, autoPlay: true, onload: function(){if(audio.readyState == 2){displaySoundErrorBox(audio.url)}}});
 }
 
 function say(sentence) {
