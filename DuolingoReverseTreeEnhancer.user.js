@@ -81,7 +81,6 @@ function displaySoundErrorBox(url) {
 
 var audio;
 var counter = 0;
-soundManager.onerror = function(){displaySoundErrorBox(audio.src);}
 
 function playSound(url) {
     console.debug(url);
