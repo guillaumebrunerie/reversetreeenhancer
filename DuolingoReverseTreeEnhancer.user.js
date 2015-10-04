@@ -43,10 +43,10 @@ document.head.appendChild(css_button_seb);
 /* Stylesheet for the hiding for the multiple-choice questions */
 var css_hiding = toStyleElem('\
 .list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; } \
-.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) input[type=checkbox] { display: none; } \
+.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) input[type=checkbox] { visibility: hidden; } \
 \
 .select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; } \
-.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) input[type=radio] { display: none; } \
+.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) input[type=radio] { visibility: hidden; } \
 .select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) .select-images-frame { opacity: 0; }')
 
 function addCSSHiding() {
