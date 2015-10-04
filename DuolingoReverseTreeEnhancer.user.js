@@ -5,6 +5,7 @@
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
+// @downloadURL  https://github.com/guillaumebrunerie/reversetreeenhancer/raw/master/DuolingoReverseTreeEnhancer.user.js
 // @grant        none
 // ==/UserScript==
 
@@ -78,14 +79,12 @@ function displaySoundErrorBox(url) {
 
 /* Audio functions */
 
-var audio = new Audio()
-audio.onerror = function(){displaySoundErrorBox(audio.src);}
+var audio;
+// TODO
+//audio.onerror = function(){displaySoundErrorBox(audio.src);}
 
 function playSound(url) {
-    audio.pause();
-    audio.src = url;
-    audio.load();
-    audio.play();
+    audio = soundmanager.createSound({url: url; autoPlay: true});
 }
 
 function say(sentence) {
@@ -94,10 +93,8 @@ function say(sentence) {
 }
 
 function keyUpHandler(e) {    
-    if (e.shiftKey && e.keyCode == 32) {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.play()
+    if (e.shiftKey && e.keyCode == 32 && audio) {
+        audio.stop().play();
     }
 }
 
