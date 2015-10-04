@@ -181,7 +181,7 @@ function challengeSelect(challenge){
 
 /* Type the word corresponding to the images */
 function challengeName(challenge){
-    var lis = challenge.getElementsByTagName("li")
+    var lis = challenge.getElementsByClassName("list-tilted-images")[0].getElementsByTagName("li")
     var hone = challenge.getElementsByTagName("h1")[0]
     if(grade.children.length === 0){
         hone.innerHTML = hone.textContent.split(quotMark)[0] + "<span>“" + hone.textContent.split(quotMark)[1] + "”</span>";
