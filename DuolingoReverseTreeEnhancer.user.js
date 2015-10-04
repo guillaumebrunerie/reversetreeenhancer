@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.1
+// @version      0.1.2
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -12,7 +12,7 @@
 console.debug('Duolingo: Reverse Tree Enhancer');
 
 /* The color used for hiding */
-var hColor = "lightgray"
+var hColor = "lightgray";
 
 
 /* Turns a stylesheet (as a string) into a style element */
@@ -36,7 +36,7 @@ var css_button_seb = toStyleElem('\
 #reverse-tree-enhancer-button.selected:hover { background-color: #A000A0; border-color: #A000A0; }\
 \
 #sound-error-box { left: 50%; transform: translate(-50%, 0); top: 20px; color: #FF3333; font-weight: bold; }\
-#sound-error-box .tooltip-inner { color: #FF3333; font-weight: bold; }')
+#sound-error-box .tooltip-inner { color: #FF3333; font-weight: bold; }');
 
 document.head.appendChild(css_button_seb);
 
@@ -80,11 +80,13 @@ function displaySoundErrorBox(url) {
 /* Audio functions */
 
 var audio;
-// TODO
-//audio.onerror = function(){displaySoundErrorBox(audio.src);}
+var counter = 0;
+soundManager.onerror = function(){displaySoundErrorBox(audio.src);}
 
 function playSound(url) {
-    audio = soundmanager.createSound({url: url; autoPlay: true});
+    console.debug(url);
+    counter = counter + 1;
+    audio = soundManager.createSound({id: "sound-" + counter, url: url, autoPlay: true});
 }
 
 function say(sentence) {
