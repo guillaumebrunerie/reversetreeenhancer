@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.1.2
+// @version      0.1.3
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -80,12 +80,34 @@ function displaySoundErrorBox(url) {
 /* Audio functions */
 
 var audio;
+var prevAudio;
+var waiting = false;
 var counter = 0;
 
 function playSound(url) {
     console.debug(url);
     counter = counter + 1;
-    audio = soundManager.createSound({id: "sound-" + counter, url: url, autoPlay: true, onload: function(){if(audio.readyState == 2){displaySoundErrorBox(audio.url)}}});
+    if(prevAudio){ prevAudio.destruct(); };
+    prevAudio = audio;
+    waiting = (prevAudio && prevAudio.playState == 1);
+    audio = soundManager.createSound({
+        id: "sound-" + counter,
+        url: url,
+        autoLoad: true,
+        onload: function() {
+            if(audio.readyState == 2){
+                displaySoundErrorBox(audio.url);
+            } else if(!waiting){
+                audio.play();
+            }
+        },
+        onfinish: function () {
+            if(waiting) {
+                waiting = false;
+                audio.play();
+            }
+        }
+    });
 }
 
 function say(sentence) {
