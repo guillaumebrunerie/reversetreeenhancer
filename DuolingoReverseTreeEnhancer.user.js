@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.1.3
+// @version      0.1.4
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -31,12 +31,14 @@ function toStyleElem(css) {
 
 /* Stylesheet for the button and the error box */
 var css_button_seb = toStyleElem('\
-#reverse-tree-enhancer-button { margin-left: 5px; margin-right: 5px; }\
+#reverse-tree-enhancer-button { margin-left: 10px; }\
 #reverse-tree-enhancer-button.selected { background-color: purple; color: white; border-color: purple; }\
 #reverse-tree-enhancer-button.selected:hover { background-color: #A000A0; border-color: #A000A0; }\
 \
 #sound-error-box { left: 50%; transform: translate(-50%, 0); top: 20px; color: #FF3333; font-weight: bold; }\
-#sound-error-box .tooltip-inner { color: #FF3333; font-weight: bold; }');
+#sound-error-box .tooltip-inner { color: #FF3333; font-weight: bold; }\
+#sound-error-box button { padding: 5px 10px; border: none; border-radius: 100px; }\
+#sound-error-box button:hover { background-color: #EEE; }');
 
 document.head.appendChild(css_button_seb);
 
@@ -47,7 +49,7 @@ var css_hiding = toStyleElem('\
 \
 .select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; } \
 .select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) input[type=radio] { visibility: hidden; } \
-.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) .select-images-frame { opacity: 0; }')
+.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) .select-images-frame { visibility: hidden; }')
 
 function addCSSHiding() {
     document.head.appendChild(css_hiding);
@@ -63,8 +65,13 @@ soundErrorBox.className = "tooltip top"
 soundErrorBox.id = "sound-error-box"
 var innerSoundErrorBox = document.createElement('div');
 innerSoundErrorBox.className = "tooltip-inner"
-innerSoundErrorBox.innerHTML = 'Error when loading the sound, click <a id="sound-error-link" target="_blank">here</a> and try to fix the problem.'
+innerSoundErrorBox.innerHTML = 'Error when loading the sound, click <a id="sound-error-link" target="_blank">here</a> and try to fix the problem. <button id="sound-error-button">Done</button>'
 soundErrorBox.appendChild(innerSoundErrorBox)
+
+function tryagain() {
+    hideSoundErrorBox();
+    audio.load();
+}
 
 function hideSoundErrorBox() {
     soundErrorBox.style.display = "none";
@@ -75,6 +82,7 @@ function displaySoundErrorBox(url) {
     container.insertBefore(soundErrorBox, container.firstChild);
     document.getElementById("sound-error-link").href = url;
     soundErrorBox.style.display = "";
+    document.getElementById("sound-error-button").onclick = tryagain;
 }
 
 /* Audio functions */
@@ -236,25 +244,35 @@ function challengeForm(challenge){
 
 /* Function dealing with the button on the home page */
 
-function updateButton() {
-    var button = document.getElementById("reverse-tree-enhancer-button");
-    if(localStorage.getItem("reverse_tree_enhancer_" + document.body.lang) === null) {
-        button.textContent = "Is this a reverse tree?";
-        button.className = "btn btn-standard right btn-store";
-    } else {
-        button.textContent = "This is a reverse tree!";
-        button.className = "btn btn-standard right btn-store selected";
-    } 
+function isReverseTree() {
+    var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
+    if(reverseTrees === null) {
+        return false;
+    };
+    var item = document.body.lang + "-" + duo.user.attributes.learning_language;
+    console.debug(item);
+    return !!(reverseTrees[item])
 }
 
 function toggleLang() {
-    var item = "reverse_tree_enhancer_" + document.body.lang
-    if(localStorage.getItem(item) === null) {
-        localStorage.setItem(item, "yes");
-    } else {
-        localStorage.removeItem(item);
-    };
+    var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
+    if(reverseTrees === null) {reverseTrees = {}};
+    var item = document.body.lang + "-" + duo.user.attributes.learning_language;
+    reverseTrees[item] = !reverseTrees[item]
+    localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees))
     updateButton();
+}
+
+function updateButton() {
+    var button = document.getElementById("reverse-tree-enhancer-button");
+    if(button === null){ return; };
+    if(isReverseTree()) {
+        button.textContent = "This is a reverse tree!";
+        button.className = "btn btn-standard right btn-store selected";
+    } else {
+        button.textContent = "Is this a reverse tree?";
+        button.className = "btn btn-standard right btn-store";
+    } 
 }
 
 
@@ -265,22 +283,22 @@ var targetLang;
 
 function onChange(mutations) {
     var newclass = document.getElementById("app").className;
+    
+    if(/home/.test(newclass) && !document.getElementById("reverse-tree-enhancer-button")){
+        var tree = document.getElementsByClassName("tree")[0];
+        var button = document.createElement("button");
+        button.id = "reverse-tree-enhancer-button";
+        button.onclick = toggleLang;
+        tree.insertBefore(button, tree.firstChild);
+        updateButton()
+    }
+
     if(newclass != oldclass){
         oldclass = newclass;
-        
-        if(/home/.test(newclass)){
-            if(!document.getElementById("reverse-tree-enhancer-button")){
-                var tree = document.getElementsByClassName("tree")[0];
-                var button = document.createElement("button");
-                button.id = "reverse-tree-enhancer-button";
-                button.onclick = toggleLang;
-                tree.insertBefore(button, tree.firstChild);
-            }
-            updateButton();
-        }
+
         hideSoundErrorBox();
         
-        if(localStorage.getItem("reverse_tree_enhancer_" + document.body.lang) === null) {
+        if(!isReverseTree()) {
             targetLang = "";
             removeCSSHiding();
             return;
