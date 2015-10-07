@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.1.4
+// @version      0.1.5
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -30,26 +30,26 @@ function toStyleElem(css) {
 }
 
 /* Stylesheet for the button and the error box */
-var css_button_seb = toStyleElem('\
-#reverse-tree-enhancer-button { margin-left: 10px; }\
-#reverse-tree-enhancer-button.selected { background-color: purple; color: white; border-color: purple; }\
-#reverse-tree-enhancer-button.selected:hover { background-color: #A000A0; border-color: #A000A0; }\
-\
-#sound-error-box { left: 50%; transform: translate(-50%, 0); top: 20px; color: #FF3333; font-weight: bold; }\
-#sound-error-box .tooltip-inner { color: #FF3333; font-weight: bold; }\
-#sound-error-box button { padding: 5px 10px; border: none; border-radius: 100px; }\
-#sound-error-box button:hover { background-color: #EEE; }');
+var css_button_seb = toStyleElem('' +
+'#reverse-tree-enhancer-button { margin-left: 10px; }\n' +
+'#reverse-tree-enhancer-button.selected { background-color: purple; color: white; border-color: purple; }\n' +
+'#reverse-tree-enhancer-button.selected:hover { background-color: #A000A0; border-color: #A000A0; }\n' +
+'\n' +
+'#sound-error-box { left: 50%; transform: translate(-50%, 0); top: 20px; color: #FF3333; font-weight: bold; }\n' +
+'#sound-error-box .tooltip-inner { color: #FF3333; font-weight: bold; }\n' +
+'#sound-error-box button { padding: 5px 10px; border: none; border-radius: 100px; }\n' +
+'#sound-error-box button:hover { background-color: #EEE; }');
 
 document.head.appendChild(css_button_seb);
 
 /* Stylesheet for the hiding for the multiple-choice questions */
-var css_hiding = toStyleElem('\
-.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; } \
-.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) input[type=checkbox] { visibility: hidden; } \
-\
-.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; } \
-.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) input[type=radio] { visibility: hidden; } \
-.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) .select-images-frame { visibility: hidden; }')
+var css_hiding = toStyleElem('' +
+'.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; }\n' +
+'.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) input[type=checkbox] { visibility: hidden; }\n' +
+'\n' +
+'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; }\n' +
+'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) input[type=radio] { visibility: hidden; }\n' +
+'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) .select-images-frame { visibility: hidden; }');
 
 function addCSSHiding() {
     document.head.appendChild(css_hiding);
@@ -61,12 +61,9 @@ function removeCSSHiding() {
 
 /* Sound Error box */
 var soundErrorBox = document.createElement('div');
-soundErrorBox.className = "tooltip top"
-soundErrorBox.id = "sound-error-box"
-var innerSoundErrorBox = document.createElement('div');
-innerSoundErrorBox.className = "tooltip-inner"
-innerSoundErrorBox.innerHTML = 'Error when loading the sound, click <a id="sound-error-link" target="_blank">here</a> and try to fix the problem. <button id="sound-error-button">Done</button>'
-soundErrorBox.appendChild(innerSoundErrorBox)
+soundErrorBox.className = "tooltip top";
+soundErrorBox.id = "sound-error-box";
+soundErrorBox.innerHTML = '<div class="tooltip-inner">Error when loading the sound, click <a id="sound-error-link" target="_blank">here</a> and try to fix the problem. <button id="sound-error-button">Done</button></div>';
 
 function tryagain() {
     hideSoundErrorBox();
@@ -93,11 +90,11 @@ var waiting = false;
 var counter = 0;
 
 function playSound(url) {
-    console.debug(url);
     counter = counter + 1;
-    if(prevAudio){ prevAudio.destruct(); };
+    if(prevAudio){ prevAudio.destruct(); }
     prevAudio = audio;
     waiting = (prevAudio && prevAudio.playState == 1);
+    // race condition here…
     audio = soundManager.createSound({
         id: "sound-" + counter,
         url: url,
@@ -145,7 +142,7 @@ function sayCell(cell) {
 
 
 /* Translation from target language (eg. Polish) */
-function challengeTranslateTarget(challenge){
+function challengeTranslateTarget(){
     var cell = challenge.getElementsByClassName("text-to-translate")[0];
     if(grade.children.length === 0){
         sayCell(cell);
@@ -160,11 +157,11 @@ function challengeTranslateTarget(challenge){
 }
 
 /* Translation from source language (eg. English) */
-function challengeTranslateSource(challenge){
+function challengeTranslateSource(){
     if(grade.children.length > 0){
-        var betterAnswer = grade.getElementsByTagName("h1")[0].getElementsByTagName("span")
+        var betterAnswer = grade.getElementsByTagName("h1")[0].getElementsByTagName("span");
         
-        if(betterAnswer.length == 0){
+        if(betterAnswer.length === 0){
             say(document.getElementById("submitted-text").textContent);
         } else {
             say(betterAnswer[0].textContent);
@@ -173,9 +170,9 @@ function challengeTranslateSource(challenge){
 }
 
 /* Multiple-choice translation question */
-function challengeJudge(challenge){
-    var textCell = challenge.getElementsByClassName("col-left")[0].getElementsByTagName("bdi")[0]
-    var ul = challenge.getElementsByTagName("ul")[0]
+function challengeJudge(){
+    var textCell = challenge.getElementsByClassName("col-left")[0].getElementsByTagName("bdi")[0];
+    var ul = challenge.getElementsByTagName("ul")[0];
     if(grade.children.length === 0){
         textCell.style.color = hColor;
         textCell.style.backgroundColor = hColor;
@@ -189,15 +186,16 @@ function challengeJudge(challenge){
     }
 }
 
-var quotMark = /["“”]/
+var quotMark = /["“”]/;
 
 /* Select the correct image */
-function challengeSelect(challenge){
-    var hone = challenge.getElementsByTagName("h1")[0]
-    var ul = challenge.getElementsByTagName("ul")[0]
+function challengeSelect(){
+    var hone = challenge.getElementsByTagName("h1")[0];
+    var ul = challenge.getElementsByTagName("ul")[0];
+    var span;
     if(grade.children.length === 0){
         hone.innerHTML = hone.textContent.split(quotMark)[0] + "<span>“" + hone.textContent.split(quotMark)[1] + "”</span>";
-        var span = hone.getElementsByTagName("span")[0];
+        span = hone.getElementsByTagName("span")[0];
         say(span.textContent);
         span.style.color = hColor;
         span.style.backgroundColor = hColor;
@@ -210,35 +208,36 @@ function challengeSelect(challenge){
 }
 
 /* Type the word corresponding to the images */
-function challengeName(challenge){
-    var lis = challenge.getElementsByClassName("list-tilted-images")[0].getElementsByTagName("li")
-    var hone = challenge.getElementsByTagName("h1")[0]
+function challengeName(){
+    var lis = challenge.getElementsByClassName("list-tilted-images")[0].getElementsByTagName("li");
+    var hone = challenge.getElementsByTagName("h1")[0];
+    var span, i;
     if(grade.children.length === 0){
         hone.innerHTML = hone.textContent.split(quotMark)[0] + "<span>“" + hone.textContent.split(quotMark)[1] + "”</span>";
-        var span = hone.getElementsByTagName("span")[0];
+        span = hone.getElementsByTagName("span")[0];
         say(span.textContent);
         span.style.color = hColor;
         span.style.backgroundColor = hColor;
-        for(var i=0; i < lis.length; i++){
+        for(i=0; i < lis.length; i++){
             lis[i].style.backgroundColor = hColor;
             lis[i].dataset.oldImage = lis[i].style.backgroundImage;
             lis[i].style.backgroundImage = "";
         }
     } else {
-        var span = hone.getElementsByTagName("span")[0];
+        span = hone.getElementsByTagName("span")[0];
         span.style.color = "";
         span.style.backgroundColor = "";
 
-        for(var i=0; i < lis.length; i++){
+        for(i=0; i < lis.length; i++){
             lis[i].style.backgroundImage = lis[i].dataset.oldImage;
         }
     }
 }
 
 /* Multiple-choice question where we have to choose a word in the source language. Those are useless exercices, but we can’t get rid of them. */
-function challengeForm(challenge){
-    if(grade.children.length != 0){
-        say(grade.getElementsByTagName("h2")[0].children[1].textContent)
+function challengeForm(){
+    if(grade.children.length !== 0){
+        say(grade.getElementsByTagName("h2")[0].children[1].textContent);
     }
 }
 
@@ -248,24 +247,23 @@ function isReverseTree() {
     var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
     if(reverseTrees === null) {
         return false;
-    };
+    }
     var item = document.body.lang + "-" + duo.user.attributes.learning_language;
-    console.debug(item);
-    return !!(reverseTrees[item])
+    return !!(reverseTrees[item]);
 }
 
 function toggleLang() {
     var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
-    if(reverseTrees === null) {reverseTrees = {}};
+    if(reverseTrees === null) { reverseTrees = {}; }
     var item = document.body.lang + "-" + duo.user.attributes.learning_language;
-    reverseTrees[item] = !reverseTrees[item]
-    localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees))
+    reverseTrees[item] = !reverseTrees[item];
+    localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees));
     updateButton();
 }
 
 function updateButton() {
     var button = document.getElementById("reverse-tree-enhancer-button");
-    if(button === null){ return; };
+    if(button === null){ return; }
     if(isReverseTree()) {
         button.textContent = "This is a reverse tree!";
         button.className = "btn btn-standard right btn-store selected";
@@ -280,8 +278,9 @@ function updateButton() {
 
 var oldclass = "";
 var targetLang;
+var grade, challenge;
 
-function onChange(mutations) {
+function onChange() {
     var newclass = document.getElementById("app").className;
     
     if(/home/.test(newclass) && !document.getElementById("reverse-tree-enhancer-button")){
@@ -290,7 +289,7 @@ function onChange(mutations) {
         button.id = "reverse-tree-enhancer-button";
         button.onclick = toggleLang;
         tree.insertBefore(button, tree.firstChild);
-        updateButton()
+        updateButton();
     }
 
     if(newclass != oldclass){
@@ -308,25 +307,27 @@ function onChange(mutations) {
         
         var sec = document.getElementById("session-element-container");
         if(!sec){return;}
-        var challenge = sec.children[0];
+        challenge = sec.children[0];
+        grade = document.getElementById("grade");
+        
         if(/translate/.test(newclass)){
             if (challenge.getElementsByTagName("textarea")[0].getAttribute("lang") == targetLang){
-                challengeTranslateSource(challenge);
+                challengeTranslateSource();
             } else {
-                challengeTranslateTarget(challenge);
+                challengeTranslateTarget();
             }
         }
         if(/judge/.test(newclass)){
-            challengeJudge(challenge);
+            challengeJudge();
         }
         if(/select/.test(newclass)){
-            challengeSelect(challenge);
+            challengeSelect();
         }
         if(/name/.test(newclass)){
-            challengeName(challenge);
+            challengeName();
         }
         if(/form/.test(newclass)){
-            challengeForm(challenge);
+            challengeForm();
         }
     }
 }
