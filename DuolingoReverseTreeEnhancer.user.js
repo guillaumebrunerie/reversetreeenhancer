@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.1.6
+// @version      0.1.7
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -56,6 +56,7 @@ function addCSSHiding() {
 }
 
 function removeCSSHiding() {
+    document.head.appendChild(css_hiding);
     document.head.removeChild(css_hiding);
 }
 
@@ -310,7 +311,7 @@ function onChange() {
             return;
         }
         targetLang = document.body.lang;
-        addCSSHiding();
+        if(!document.getElementById("timer")) { addCSSHiding(); } else { removeCSSHiding(); }
         
         var sec = document.getElementById("session-element-container");
         if(!sec){return;}
