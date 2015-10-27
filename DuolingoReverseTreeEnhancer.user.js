@@ -299,6 +299,14 @@ function onChange() {
         tree.insertBefore(button, tree.firstChild);
         updateButton();
     }
+    
+    if (/slide-session-end/.test(newclass)) {
+        // End screen ("you beat the clock...").
+        // Destroy the reference to the audio object
+        // so that subsequent <S-Space> keypresses
+        // don't cause the audio to repeat in, e.g., the tree or discussions.
+        audio = null;
+    }
 
     if(newclass != oldclass){
         oldclass = newclass;
