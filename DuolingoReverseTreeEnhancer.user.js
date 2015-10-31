@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.1.8
+// @version      0.1.9
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -29,7 +29,7 @@ function toStyleElem(css) {
     return style;
 }
 
-/* Stylesheet for the button and the error box */
+/* Stylesheet for the button, the error box and the show-on-click box */
 var css_button_seb = toStyleElem('' +
 '#reverse-tree-enhancer-button { margin-left: 10px; }\n' +
 '#reverse-tree-enhancer-button.selected { background-color: purple; color: white; border-color: purple; }\n' +
@@ -38,7 +38,10 @@ var css_button_seb = toStyleElem('' +
 '#sound-error-box { left: 50%; transform: translate(-50%, 0); top: 20px; color: #FF3333; font-weight: bold; }\n' +
 '#sound-error-box .tooltip-inner { color: #FF3333; font-weight: bold; }\n' +
 '#sound-error-box button { padding: 5px 10px; border: none; border-radius: 100px; }\n' +
-'#sound-error-box button:hover { background-color: #EEE; }');
+'#sound-error-box button:hover { background-color: #EEE; }\n' +
+'\n' +
+'.ttt-hide, .ttt-not-hide:not(:hover) { color: ' + hColor + '; background-color: ' + hColor + '; }\n' +
+'.ttt-hide bdi, .ttt-not-hide:not(:hover) bdi { display: none; }');
 
 document.head.appendChild(css_button_seb);
 
@@ -118,7 +121,7 @@ function playSound(url) {
 
 function say(sentence) {
     console.debug("Reverse Tree Enhancer: saying " + sentence);
-    playSound("http://translate.google.com/translate_tts?tl=" + targetLang + "&q=" + encodeURIComponent(sentence));
+    playSound("http://translate.google.com/translate_tts?tl=" + targetLang + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob");
 }
 
 function keyUpHandler(e) {    
@@ -147,13 +150,11 @@ function challengeTranslateTarget(){
     var cell = challenge.getElementsByClassName("text-to-translate")[0];
     if(grade.children.length === 0){
         sayCell(cell);
-        cell.style.color = hColor;
-        cell.style.backgroundColor = hColor;
-        cell.getElementsByTagName("bdi")[0].style.display = "none";
+        cell.className = "text-to-translate ttt-hide";
+        cell.onclick = function(){cell.className = "text-to-translate ttt-not-hide"}
     } else {
-        cell.style.color = "";
-        cell.style.backgroundColor = "";
-        cell.getElementsByTagName("bdi")[0].style.display = "";
+        cell.className = "text-to-translate";
+        cell.onclick = null
     }
 }
 
