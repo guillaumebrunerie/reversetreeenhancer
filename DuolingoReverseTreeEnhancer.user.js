@@ -104,16 +104,16 @@ function playSound(url) {
         url: url,
         autoLoad: true,
         onload: function() {
-            if(audio.readyState == 2){
-                displaySoundErrorBox(audio.url);
+            if(this.readyState == 2){
+                displaySoundErrorBox(this.url);
             } else if(!waiting){
-                audio.play();
+                this.play();
             }
         },
         onfinish: function () {
             if(waiting) {
                 waiting = false;
-                audio.play();
+                this.play();
             }
         }
     });
