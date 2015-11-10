@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.1.9
+// @version      0.2.0
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -119,14 +119,38 @@ function playSound(url) {
     });
 }
 
+var sentenceGlobal = null;
+var lastSaidSlow = false;
+
 function say(sentence) {
-    console.debug("Reverse Tree Enhancer: saying " + sentence);
+    console.debug("Reverse Tree Enhancer: saying '" + sentence + "'");
+    sentenceGlobal = sentence;
     playSound("http://translate.google.com/translate_tts?tl=" + targetLang + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob");
+    lastSaidSlow = false;
 }
 
-function keyUpHandler(e) {    
+function sayslow() {
+    var sentence = sentenceGlobal;
+    console.debug("Reverse Tree Enhancer: saying slowly '" + sentence + "'");
+    playSound("http://translate.google.com/translate_tts?tl=" + targetLang + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob&ttsspeed=0");
+    lastSaidSlow = true;
+}
+
+function keyUpHandler(e) {
     if (e.shiftKey && e.keyCode == 32 && audio) {
-        audio.stop().play();
+        if (e.altKey) {
+            if (lastSaidSlow) {
+                audio.stop().play();
+            } else {
+                sayslow();
+            }
+        } else {
+            if (lastSaidSlow) {
+                say(sentenceGlobal);
+            } else {
+                audio.stop().play();
+            }
+        }
     }
 }
 
@@ -195,7 +219,7 @@ function challengeJudge(){
     }
 }
 
-var quotMark = /["“”]/;
+var quotMark = /["“”「」]/;
 
 /* Select the correct image */
 function challengeSelect(){
@@ -203,7 +227,7 @@ function challengeSelect(){
     var ul = challenge.getElementsByTagName("ul")[0];
     var span;
     if(grade.children.length === 0){
-        hone.innerHTML = hone.textContent.split(quotMark)[0] + "<span>“" + hone.textContent.split(quotMark)[1] + "”</span>";
+        hone.innerHTML = hone.textContent.split(quotMark)[0] + "<span>“" + hone.textContent.split(quotMark)[1] + "”</span>" + hone.textContent.split(quotMark)[2];
         span = hone.getElementsByTagName("span")[0];
         say(span.textContent);
         span.style.color = hColor;
@@ -311,6 +335,7 @@ function onChange() {
 
     if(newclass != oldclass){
         oldclass = newclass;
+        console.debug("New class: " + newclass);
 
         hideSoundErrorBox();
         
