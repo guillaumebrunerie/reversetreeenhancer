@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.2.0
+// @version      0.2.1
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -219,7 +219,7 @@ function challengeJudge(){
     }
 }
 
-var quotMark = /["“”「」]/;
+var quotMark = /(["“”「」])/;
 
 /* Select the correct image */
 function challengeSelect(){
@@ -227,7 +227,8 @@ function challengeSelect(){
     var ul = challenge.getElementsByTagName("ul")[0];
     var span;
     if(grade.children.length === 0){
-        hone.innerHTML = hone.textContent.split(quotMark)[0] + "<span>“" + hone.textContent.split(quotMark)[1] + "”</span>" + hone.textContent.split(quotMark)[2];
+        var sp = hone.textContent.split(quotMark);
+        hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
         span = hone.getElementsByTagName("span")[0];
         say(span.textContent);
         span.style.color = hColor;
@@ -246,7 +247,8 @@ function challengeName(){
     var hone = challenge.getElementsByTagName("h1")[0];
     var span, i;
     if(grade.children.length === 0){
-        hone.innerHTML = hone.textContent.split(quotMark)[0] + "<span>“" + hone.textContent.split(quotMark)[1] + "”</span>";
+        var sp = hone.textContent.split(quotMark);
+        hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
         span = hone.getElementsByTagName("span")[0];
         say(span.textContent);
         span.style.color = hColor;
