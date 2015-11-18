@@ -122,17 +122,22 @@ function playSound(url) {
 var sentenceGlobal = null;
 var lastSaidSlow = false;
 
+function googleTTSLang(targetLang) {
+    if (targetLang == "dn") { return "nl"; }
+    return targetLang;    
+}
+
 function say(sentence) {
     console.debug("Reverse Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
-    playSound("http://translate.google.com/translate_tts?tl=" + targetLang + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob");
+    playSound("http://translate.google.com/translate_tts?tl=" + googleTTSLang(targetLang) + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob");
     lastSaidSlow = false;
 }
 
 function sayslow() {
     var sentence = sentenceGlobal;
     console.debug("Reverse Tree Enhancer: saying slowly '" + sentence + "'");
-    playSound("http://translate.google.com/translate_tts?tl=" + targetLang + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob&ttsspeed=0");
+    playSound("http://translate.google.com/translate_tts?tl=" + googleTTSLang(targetLang) + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob&ttsspeed=0");
     lastSaidSlow = true;
 }
 
@@ -283,14 +288,14 @@ function isReverseTree() {
     if(reverseTrees === null) {
         return false;
     }
-    var item = document.body.lang + "-" + duo.user.attributes.learning_language;
+    var item = duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
     return !!(reverseTrees[item]);
 }
 
 function toggleLang() {
     var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
     if(reverseTrees === null) { reverseTrees = {}; }
-    var item = document.body.lang + "-" + duo.user.attributes.learning_language;
+    var item = duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
     reverseTrees[item] = !reverseTrees[item];
     localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees));
     updateButton();
@@ -346,7 +351,7 @@ function onChange() {
             removeCSSHiding();
             return;
         }
-        targetLang = document.body.lang;
+        targetLang = duo.user.attributes.ui_language;
         if(!document.getElementById("timer")) { addCSSHiding(); } else { removeCSSHiding(); }
         
         var sec = document.getElementById("session-element-container");
