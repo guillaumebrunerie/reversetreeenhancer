@@ -128,17 +128,79 @@ function googleTTSLang(targetLang) {
     return targetLang;
 }
 
+function yandexTTSLang(targetLang) {
+	switch (targetLang) {
+	case 'ar': return 'ar_AE';
+	case 'ca': return 'ca_ES';
+	case 'cs': return 'cs_CZ';
+	case 'da': return 'da_DK';
+	case 'de': return 'de_DE';
+	case 'el': return 'el_GR';
+	case 'en': return 'en_GB';
+	case 'es': return 'es_ES';
+	case 'fi': return 'fi_FI';
+	case 'fr': return 'fr_FR';
+	case 'it': return 'it_IT';
+	case 'dn': return 'nl_NL';
+	case 'no': return 'no_NO';
+	case 'pl': return 'pl_PL';
+	case 'pt': return 'pt_PT';
+	case 'ru': return 'ru_RU';
+	case 'se': return 'sv_SE';
+	case 'tr': return 'tr_TR';
+	}
+	return undefined;
+};
+
+function yandexURL(sentence, lang, speed) {
+	return 'http://tts.voicetech.yandex.net/tts?text=' + sentence +
+			'&lang=' + lang + '&format=mp3&quality=hi';
+};
+
+function baiduTTSLang(targetLang) {
+	switch (targetLang) {
+	case 'en': return 'en'; // American English
+	case 'es': return 'es'; // Spanish
+	case 'pt': return 'pt'; // Portuguese
+	case 'zs': return 'zh'; // Chinese
+	}
+	return undefined;
+};
+
+function baiduURL(sentence, lang, speed) {
+	return 'http://tts.baidu.com/text2audio?text=' + sentence +
+			'&lan=' + lang + '&ie=UTF-8';
+};
+
+var supportedLang = [yandexTTSLang, baiduTTSLang];
+var sayFunc = [yandexURL, baiduURL];
+
 function say(sentence) {
     console.debug("Reverse Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
-    playSound("http://translate.google.com/translate_tts?tl=" + googleTTSLang(targetLang) + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob");
+    var TTS_URL="";
+    for (i = 0; i < supportedLang.length; i++) {
+    	console.log("loop " + i);
+    	if (supportedLang[i](targetLang) != undefined) {
+    		TTS_URL = sayFunc[i](sentence, supportedLang[i](targetLang), false);
+    		break;
+    	}
+    }
+    playSound(TTS_URL);
     lastSaidSlow = false;
 }
 
 function sayslow() {
     var sentence = sentenceGlobal;
     console.debug("Reverse Tree Enhancer: saying slowly '" + sentence + "'");
-    playSound("http://translate.google.com/translate_tts?tl=" + googleTTSLang(targetLang) + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob&ttsspeed=0");
+    var TTS_URL="";
+    for (i = 0; i < supportedLang.length; i++) {
+    	if (supportedLang[i](targetLang) != undefined) {
+    		TTS_URL = sayFunc[i](sentence, supportedLang[i](targetLang), true);
+    		break;
+    	}
+    }
+    playSound(TTS_URL);
     lastSaidSlow = true;
 }
 
@@ -181,7 +243,7 @@ function challengeTranslateTarget(){
     if(grade.children.length === 0){
         sayCell(cell);
         cell.className = "text-to-translate ttt-hide";
-        cell.onclick = function(){cell.className = "text-to-translate ttt-not-hide"}
+        cell.onclick = function(){cell.className = "text-to-translate ttt-not-hide";};
     } else {
         cell.className = "text-to-translate";
         cell.onclick = null
