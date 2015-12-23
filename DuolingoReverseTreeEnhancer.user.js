@@ -93,7 +93,15 @@ var prevAudio;
 var waiting = false;
 var counter = 0;
 
-function playSound(url) {
+function playSound(sentence, slow) {
+    var url="";
+    for (i = 0; i < supportedLang.length; i++) {
+    	console.log("loop " + i);
+    	if (supportedLang[i](targetLang) != undefined) {
+    		url = sayFunc[i](sentence, supportedLang[i](targetLang), false);
+    		break;
+    	}
+    }
     counter = counter + 1;
     if(prevAudio){ prevAudio.destruct(); }
     prevAudio = audio;
@@ -126,6 +134,17 @@ function googleTTSLang(targetLang) {
     if (targetLang == "dn") { return "nl"; }
     if (targetLang == "zs") { return "zh"; }
     return targetLang;
+}
+
+function googleURL(sentence, lang, speed) {
+
+    // Create Google TTS in a way that it doesn't get tired that quickly.
+    var gRand = function () { return Math.floor(Math.random() * 1000000) + '|' +
+                                       Math.floor(Math.random() * 1000000) };
+    url = "http://translate.google.com/translate_tts?ie=UTF-8&tl=" + googleTTSLang(targetLang) +
+          "&total=1&textlen=" + sentece.length + "&tk=" + gRand() +
+          "&q=" + encodeURIComponent(sentence) + "&client=tw-ob"
+    if (slow) url = url + "&ttsspeed=0"
 }
 
 function yandexTTSLang(targetLang) {
@@ -178,15 +197,7 @@ var sayFunc = [yandexURL, baiduURL];
 function say(sentence) {
     console.debug("Reverse Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
-    var TTS_URL="";
-    for (i = 0; i < supportedLang.length; i++) {
-    	console.log("loop " + i);
-    	if (supportedLang[i](targetLang) != undefined) {
-    		TTS_URL = sayFunc[i](sentence, supportedLang[i](targetLang), false);
-    		break;
-    	}
-    }
-    playSound(TTS_URL);
+    playSound(sentence, false);
     lastSaidSlow = false;
 }
 
@@ -408,7 +419,7 @@ function onChange() {
         console.debug("New class: " + newclass);
 
         hideSoundErrorBox();
-        
+
         if(!isReverseTree()) {
             targetLang = "";
             removeCSSHiding();
@@ -416,12 +427,12 @@ function onChange() {
         }
         targetLang = duo.user.attributes.ui_language;
         if(!document.getElementById("timer")) { addCSSHiding(); } else { removeCSSHiding(); }
-        
+
         var sec = document.getElementById("session-element-container");
         if(!sec){return;}
         challenge = sec.children[0];
         grade = document.getElementById("grade");
-        
+
         if(/translate/.test(newclass)){
             if (challenge.getElementsByTagName("textarea")[0].getAttribute("lang") == targetLang){
                 challengeTranslateSource();
