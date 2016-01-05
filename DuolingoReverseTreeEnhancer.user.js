@@ -195,6 +195,7 @@ var supportedLang = [yandexTTSLang, baiduTTSLang];
 var sayFunc = [yandexURL, baiduURL];
 
 function say(sentence) {
+    sentence = sentence.replace(/•/g,"");
     console.debug("Reverse Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
     playSound(sentence, false);
@@ -204,14 +205,7 @@ function say(sentence) {
 function sayslow() {
     var sentence = sentenceGlobal;
     console.debug("Reverse Tree Enhancer: saying slowly '" + sentence + "'");
-    var TTS_URL="";
-    for (i = 0; i < supportedLang.length; i++) {
-    	if (supportedLang[i](targetLang) != undefined) {
-    		TTS_URL = sayFunc[i](sentence, supportedLang[i](targetLang), true);
-    		break;
-    	}
-    }
-    playSound(TTS_URL);
+    playSound(sentenceGlobal, true);
     lastSaidSlow = true;
 }
 
@@ -379,10 +373,10 @@ function updateButton() {
     var button = document.getElementById("reverse-tree-enhancer-button");
     if(button === null){ return; }
     if(isReverseTree()) {
-        button.textContent = "This is a reverse tree!";
+        button.textContent = "Reverse tree!";
         button.className = "btn btn-standard right btn-store selected";
     } else {
-        button.textContent = "Is this a reverse tree?";
+        button.textContent = "Reverse tree?";
         button.className = "btn btn-standard right btn-store";
     } 
 }
