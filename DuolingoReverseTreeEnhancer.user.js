@@ -92,6 +92,7 @@ var prevAudio;
 var waiting = false;
 var counter = 0;
 
+// Play an audio element.
 function playURL(url) {
     counter = counter + 1;
     if(prevAudio){ prevAudio.destruct(); }
@@ -118,6 +119,7 @@ function playURL(url) {
     });
 }
 
+// Play a sentence using the first available TTS
 function playSound(sentence, slow) {
     var url="";
     for (i = 0; i < sayFunc.length; i++) {
@@ -131,6 +133,9 @@ function playSound(sentence, slow) {
 var sentenceGlobal = null;
 var lastSaidSlow = false;
 
+// Google TTS Functions
+// ====================
+//
 function googleTTSLang(targetLang) {
     if (targetLang == "dn") { return "nl"; }
     if (targetLang == "zs") { return "zh"; }
@@ -150,6 +155,9 @@ function googleSay(sentence, lang, slow) {
     return true;
 }
 
+// Yandex TTS Functions
+// ====================
+//
 function yandexTTSLang(targetLang) {
 	switch (targetLang) {
 	case 'ar': return 'ar_AE';
@@ -185,6 +193,10 @@ function yandexSay(sentence, lang, speed) {
 	return false;
 };
 
+// Baidu TTS Functions
+// ====================
+
+// Duolingo to Baidu language codes
 function baiduTTSLang(targetLang) {
 	switch (targetLang) {
 	case 'en': return 'en'; // American English
@@ -206,8 +218,11 @@ function baiduSay(sentence, lang, speed) {
 	return false;
 }
 
+// List of supported TTS providers
 var sayFunc = [googleSay, yandexSay, baiduSay];
 
+
+// Say a sentence
 function say(sentence) {
     sentence = sentence.replace(/•/g,"");
     console.debug("Reverse Tree Enhancer: saying '" + sentence + "'");
@@ -216,6 +231,7 @@ function say(sentence) {
     lastSaidSlow = false;
 }
 
+// Repeat las sentece slowly
 function sayslow() {
     var sentence = sentenceGlobal;
     console.debug("Reverse Tree Enhancer: saying slowly '" + sentence + "'");
