@@ -14,7 +14,6 @@ console.debug('Duolingo: Reverse Tree Enhancer');
 /* The color used for hiding */
 var hColor = "lightgray";
 
-
 /* Turns a stylesheet (as a string) into a style element */
 function toStyleElem(css) {
     var style = document.createElement('style');
@@ -93,7 +92,8 @@ var prevAudio;
 var waiting = false;
 var counter = 0;
 
-function playSound(url) {
+// Play an audio element.
+function playURL(url) {
     counter = counter + 1;
     if(prevAudio){ prevAudio.destruct(); }
     prevAudio = audio;
@@ -104,41 +104,138 @@ function playSound(url) {
         url: url,
         autoLoad: true,
         onload: function() {
-            if(audio.readyState == 2){
-                displaySoundErrorBox(audio.url);
+            if(this.readyState == 2){
+                displaySoundErrorBox(this.url);
             } else if(!waiting){
-                audio.play();
+                this.play();
             }
         },
         onfinish: function () {
             if(waiting) {
                 waiting = false;
-                audio.play();
+                this.play();
             }
         }
     });
 }
 
+// Play a sentence using the first available TTS
+function playSound(sentence, slow) {
+    var url="";
+    for (i = 0; i < sayFunc.length; i++) {
+    	console.log("loop " + i);
+    	if (sayFunc[i](sentence, targetLang, slow)) {
+    		break;
+    	}
+    }
+}
+
 var sentenceGlobal = null;
 var lastSaidSlow = false;
 
+// Google TTS Functions
+// ====================
+//
 function googleTTSLang(targetLang) {
     if (targetLang == "dn") { return "nl"; }
     if (targetLang == "zs") { return "zh"; }
     return targetLang;
 }
 
+function googleSay(sentence, lang, slow) {
+
+    // Create Google TTS in a way that it doesn't get tired that quickly.
+    var gRand = function () { return Math.floor(Math.random() * 1000000) + '|' +
+                                       Math.floor(Math.random() * 1000000) };
+    url = "http://translate.google.com/translate_tts?ie=UTF-8&tl=" + googleTTSLang(lang) +
+          "&total=1&textlen=" + sentence.length + "&tk=" + gRand() +
+          "&q=" + encodeURIComponent(sentence) + "&client=tw-ob";
+    if (slow) url = url + "&ttsspeed=0"
+    playURL(url);
+    return true;
+}
+
+// Yandex TTS Functions
+// ====================
+//
+function yandexTTSLang(targetLang) {
+	switch (targetLang) {
+	case 'ar': return 'ar_AE';
+	case 'ca': return 'ca_ES';
+	case 'cs': return 'cs_CZ';
+	case 'da': return 'da_DK';
+	case 'de': return 'de_DE';
+	case 'el': return 'el_GR';
+	case 'en': return 'en_GB';
+	case 'es': return 'es_ES';
+	case 'fi': return 'fi_FI';
+	case 'fr': return 'fr_FR';
+	case 'it': return 'it_IT';
+	case 'dn': return 'nl_NL';
+	case 'no': return 'no_NO';
+	case 'pl': return 'pl_PL';
+	case 'pt': return 'pt_PT';
+	case 'ru': return 'ru_RU';
+	case 'se': return 'sv_SE';
+	case 'tr': return 'tr_TR';
+	}
+	return undefined;
+};
+
+function yandexSay(sentence, lang, speed) {
+	var sayLang = yandexTTSLang(lang);
+	if (sayLang != undefined) {
+		url = 'http://tts.voicetech.yandex.net/tts?text=' + sentence +
+			'&lang=' + sayLang + '&format=mp3&quality=hi';
+		playURL(url);
+		return true;
+	}
+	return false;
+};
+
+// Baidu TTS Functions
+// ====================
+
+// Duolingo to Baidu language codes
+function baiduTTSLang(targetLang) {
+	switch (targetLang) {
+	case 'en': return 'en'; // American English
+	case 'es': return 'es'; // Spanish
+	case 'pt': return 'pt'; // Portuguese
+	case 'zs': return 'zh'; // Chinese
+	}
+	return undefined;
+};
+
+function baiduSay(sentence, lang, speed) {
+	var sayLang = baiduTTSLang(lang);
+	if (sayLang != undefined) {
+		url = 'http://tts.baidu.com/text2audio?text=' + sentence +
+			'&lan=' + sayLang + '&ie=UTF-8';
+		playURL(url);
+		return true;
+	}
+	return false;
+}
+
+// List of supported TTS providers
+var sayFunc = [googleSay, yandexSay, baiduSay];
+
+
+// Say a sentence
 function say(sentence) {
+    sentence = sentence.replace(/•/g,"");
     console.debug("Reverse Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
-    playSound("http://translate.google.com/translate_tts?tl=" + googleTTSLang(targetLang) + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob");
+    playSound(sentence, false);
     lastSaidSlow = false;
 }
 
+// Repeat las sentece slowly
 function sayslow() {
     var sentence = sentenceGlobal;
     console.debug("Reverse Tree Enhancer: saying slowly '" + sentence + "'");
-    playSound("http://translate.google.com/translate_tts?tl=" + googleTTSLang(targetLang) + "&q=" + encodeURIComponent(sentence) + "&client=tw-ob&ttsspeed=0");
+    playSound(sentenceGlobal, true);
     lastSaidSlow = true;
 }
 
@@ -181,7 +278,7 @@ function challengeTranslateTarget(){
     if(grade.children.length === 0){
         sayCell(cell);
         cell.className = "text-to-translate ttt-hide";
-        cell.onclick = function(){cell.className = "text-to-translate ttt-not-hide"}
+        cell.onclick = function(){cell.className = "text-to-translate ttt-not-hide";};
     } else {
         cell.className = "text-to-translate";
         cell.onclick = null
@@ -306,10 +403,10 @@ function updateButton() {
     var button = document.getElementById("reverse-tree-enhancer-button");
     if(button === null){ return; }
     if(isReverseTree()) {
-        button.textContent = "This is a reverse tree!";
+        button.textContent = "Reverse tree!";
         button.className = "btn btn-standard right btn-store selected";
     } else {
-        button.textContent = "Is this a reverse tree?";
+        button.textContent = "Reverse tree?";
         button.className = "btn btn-standard right btn-store";
     } 
 }
@@ -346,7 +443,7 @@ function onChange() {
         console.debug("New class: " + newclass);
 
         hideSoundErrorBox();
-        
+
         if(!isReverseTree()) {
             targetLang = "";
             removeCSSHiding();
@@ -354,12 +451,12 @@ function onChange() {
         }
         targetLang = duo.user.attributes.ui_language;
         if(!document.getElementById("timer")) { addCSSHiding(); } else { removeCSSHiding(); }
-        
+
         var sec = document.getElementById("session-element-container");
         if(!sec){return;}
         challenge = sec.children[0];
         grade = document.getElementById("grade");
-        
+
         if(/translate/.test(newclass)){
             if (challenge.getElementsByTagName("textarea")[0].getAttribute("lang") == targetLang){
                 challengeTranslateSource();
