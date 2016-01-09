@@ -14,7 +14,6 @@ console.debug('Duolingo: Reverse Tree Enhancer');
 /* The color used for hiding */
 var hColor = "lightgray";
 
-
 /* Turns a stylesheet (as a string) into a style element */
 function toStyleElem(css) {
     var style = document.createElement('style');
@@ -93,15 +92,7 @@ var prevAudio;
 var waiting = false;
 var counter = 0;
 
-function playSound(sentence, slow) {
-    var url="";
-    for (i = 0; i < supportedLang.length; i++) {
-    	console.log("loop " + i);
-    	if (supportedLang[i](targetLang) != undefined) {
-    		url = sayFunc[i](sentence, supportedLang[i](targetLang), false);
-    		break;
-    	}
-    }
+function playURL(url) {
     counter = counter + 1;
     if(prevAudio){ prevAudio.destruct(); }
     prevAudio = audio;
@@ -127,6 +118,16 @@ function playSound(sentence, slow) {
     });
 }
 
+function playSound(sentence, slow) {
+    var url="";
+    for (i = 0; i < sayFunc.length; i++) {
+    	console.log("loop " + i);
+    	if (sayFunc[i](sentence, targetLang, slow)) {
+    		break;
+    	}
+    }
+}
+
 var sentenceGlobal = null;
 var lastSaidSlow = false;
 
@@ -136,15 +137,17 @@ function googleTTSLang(targetLang) {
     return targetLang;
 }
 
-function googleURL(sentence, lang, speed) {
+function googleSay(sentence, lang, slow) {
 
     // Create Google TTS in a way that it doesn't get tired that quickly.
     var gRand = function () { return Math.floor(Math.random() * 1000000) + '|' +
                                        Math.floor(Math.random() * 1000000) };
-    url = "http://translate.google.com/translate_tts?ie=UTF-8&tl=" + googleTTSLang(targetLang) +
-          "&total=1&textlen=" + sentece.length + "&tk=" + gRand() +
-          "&q=" + encodeURIComponent(sentence) + "&client=tw-ob"
+    url = "http://translate.google.com/translate_tts?ie=UTF-8&tl=" + googleTTSLang(lang) +
+          "&total=1&textlen=" + sentence.length + "&tk=" + gRand() +
+          "&q=" + encodeURIComponent(sentence) + "&client=tw-ob";
     if (slow) url = url + "&ttsspeed=0"
+    playURL(url);
+    return true;
 }
 
 function yandexTTSLang(targetLang) {
@@ -171,9 +174,15 @@ function yandexTTSLang(targetLang) {
 	return undefined;
 };
 
-function yandexURL(sentence, lang, speed) {
-	return 'http://tts.voicetech.yandex.net/tts?text=' + sentence +
-			'&lang=' + lang + '&format=mp3&quality=hi';
+function yandexSay(sentence, lang, speed) {
+	var sayLang = yandexTTSLang(lang);
+	if (sayLang != undefined) {
+		url = 'http://tts.voicetech.yandex.net/tts?text=' + sentence +
+			'&lang=' + sayLang + '&format=mp3&quality=hi';
+		playURL(url);
+		return true;
+	}
+	return false;
 };
 
 function baiduTTSLang(targetLang) {
@@ -186,13 +195,18 @@ function baiduTTSLang(targetLang) {
 	return undefined;
 };
 
-function baiduURL(sentence, lang, speed) {
-	return 'http://tts.baidu.com/text2audio?text=' + sentence +
-			'&lan=' + lang + '&ie=UTF-8';
-};
+function baiduSay(sentence, lang, speed) {
+	var sayLang = baiduTTSLang(lang);
+	if (sayLang != undefined) {
+		url = 'http://tts.baidu.com/text2audio?text=' + sentence +
+			'&lan=' + sayLang + '&ie=UTF-8';
+		playURL(url);
+		return true;
+	}
+	return false;
+}
 
-var supportedLang = [yandexTTSLang, baiduTTSLang];
-var sayFunc = [yandexURL, baiduURL];
+var sayFunc = [googleSay, yandexSay, baiduSay];
 
 function say(sentence) {
     sentence = sentence.replace(/•/g,"");
