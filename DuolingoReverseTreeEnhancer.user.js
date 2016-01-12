@@ -125,7 +125,7 @@ function playSound(sentence, slow) {
 	var url = "";
 	for (i = 0; i < sayFuncOrder.length; i++) {
 		try {
-			console.log("loop " + sayFuncOrder[i]);
+			// console.log("loop " + sayFuncOrder[i]);
 			if (sayFunc[sayFuncOrder[i]](sentence, targetLang, slow)) {
 				break;
 			}
@@ -468,7 +468,7 @@ function getConfig() {
     reverseTrees[item] = gm_conf.IS_REVERSE;
     localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees));
     sayFuncOrder = gm_conf.TTS_ORDER.split(" ");
-    console.log(sayFuncOrder);
+    // console.log(sayFuncOrder);
     updateButton();
 }
 
@@ -523,7 +523,7 @@ function onChange() {
 
     if(newclass != oldclass){
         oldclass = newclass;
-        console.debug("New class: " + newclass);
+        // console.debug("New class: " + newclass);
 
         hideSoundErrorBox();
 

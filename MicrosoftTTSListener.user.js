@@ -81,18 +81,23 @@ function testBingTTS() {
 
 function bingURL(sentence) {
 	bingurl = "https://api.microsofttranslator.com/v2/ajax.svc/Speak?appid=&format=audio/mp3&options=MaxQuality&" + sentence;
+	// console.log("Request" + bingurl)
 	GM_xmlhttpRequest({
-		  method: "GET",
-		  url: bingurl,
-		  headers: {
-			    "Authorization": "Bearer " + BingTTS_key
-			    },
-		  onload: function(response) {
-			url = response.response.replace(/\"/g,"");
-			url = url.replace(/\\/g,"");
+		method : "GET",
+		url : bingurl,
+		headers : {
+			"Authorization" : "Bearer " + BingTTS_key
+		},
+		onload : function(response) {
+			url = response.response.replace(/\"/g, "");
+			url = url.replace(/\\/g, "");
 			answer = document.getElementById("bing-tts-answer");
-		  }
-		});
+			answer.setAttribute("data-value", url)
+		},
+		ontimeout: function(response) {
+			console.log("Timeout " + response);
+		}
+	});
 }
 
 function ISOLang(targetLang) {
@@ -112,6 +117,7 @@ setTimeout(function() {
 	requestObserver = new MutationObserver(myObserver);
 	request = document.getElementById("bing-tts-request");
 	requestObserver.observe(request, observerConfig);
+	console.log("MS TTS Ready")
 }, 4000);
 requestMSKey();
 
