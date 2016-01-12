@@ -4,7 +4,6 @@
 // @version      0.1
 // @description  Use Multiple TTS for Duolingo
 // @match        https://www.duolingo.com/*
-// @downloadURL  https://gist.github.com/camiloaa/ece4f18a2db61764d63c/raw/LingoMultiTTS.user.js
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
@@ -14,7 +13,7 @@ BingTTS_key=undefined;
 BingBaseURL='http://api.microsofttranslator.com/V2/http.svc/Speak?';
 
 function requestMSKey() {
-	// console.log("client_id="+BingTTS_clientid+"&client_secret="+BingTTS_secret+"&scope=http%3A%2F%2Fapi.microsofttranslator.com&grant_type=client_credentials");
+	console.log("Time for new key");
 
 	GM_xmlhttpRequest({
 		method : "POST",
@@ -82,18 +81,21 @@ function testBingTTS() {
 		});
 }
 
-function bingURL(sentence, lang, speed) {
+function bingURL(sentence) {
+	bingurl = "https://api.microsofttranslator.com/v2/ajax.svc/Speak?appid=&format=audio/mp3&options=MaxQuality&" + sentence;
+	console.log("say this bing " + bingurl);
 	GM_xmlhttpRequest({
 		  method: "GET",
-		  url: "https://api.microsofttranslator.com/v2/ajax.svc/Speak?appid=&language=pl&format=audio/mp3&options=MaxQuality&text=",
+		  url: bingurl,
 		  headers: {
 			    "Authorization": "Bearer " + BingTTS_key
 			    },
 		  onload: function(response) {
 			url = response.response.replace(/\"/g,"");
 			url = url.replace(/\\/g,"");
-			url = url.substring(BingBaseURL.length);
 			console.log("Ok, no hard errors "+url);
+			answer = document.getElementById("bing-tts-answer");
+			answer.setAttribute("data-value", url);
 		  }
 		});
 }
@@ -110,12 +112,17 @@ var observerConfig = {
 	  	childList: true, 
 	  	subree: true,
 	  };
-menuObserver = new MutationObserver(myObserver);
-menuSize = 0;
-menuObserver.observe(document.body, observerConfig);
-console.log("Who knows")
+
+setTimeout(function() {
+	requestObserver = new MutationObserver(myObserver);
+	request = document.getElementById("bing-tts-request");
+	requestObserver.observe(request, observerConfig);
+}, 4000);
+requestMSKey();
 
 function myObserver() {
 	console.log("CHANGES!")
+	request = document.getElementById("bing-tts-request");
+	bingURL(request.getAttribute("data-value"));
 }
 

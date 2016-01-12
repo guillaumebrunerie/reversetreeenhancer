@@ -218,9 +218,50 @@ function baiduSay(sentence, lang, speed) {
 	return false;
 }
 
-// List of supported TTS providers
-var sayFunc = [googleSay, yandexSay, baiduSay];
+//Setup MS TTS
+tts_req = document.createElement("li");
+tts_ans = document.createElement("li");
 
+function ansObserver() {
+	console.log("CHANGES in the answer!");
+	url = tts_ans.getAttribute("data-value");
+	console.log("url");
+	playURL(url);
+}
+
+function BingSetup() {
+	var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+	var observerConfig = {
+			attributes: true,
+			childList: true,
+			subree: true,
+			};
+
+	console.log("append something")
+	tts_req.setAttribute("type", "hidden");
+	tts_req.setAttribute("id", "bing-tts-request");
+	tts_req.setAttribute("data-value", " ");
+	document.body.appendChild(tts_req);
+
+	tts_ans.setAttribute("type", "hidden");
+	tts_ans.setAttribute("id", "bing-tts-answer");
+	tts_ans.setAttribute("data-value", " ");
+	document.body.appendChild(tts_ans);
+
+	answerObserver = new MutationObserver(ansObserver);
+	answer = document.getElementById("bing-tts-answer");
+	answerObserver.observe(answer, observerConfig);
+}
+
+function bingSay(sentence, lang, slow) {
+	request = document.getElementById("bing-tts-request");
+	url = "language=" + googleTTSLang(lang) + "&text=" + sentence;
+	request.setAttribute("data-value", url);
+    return true;
+}
+
+// List of supported TTS providers
+var sayFunc = [bingSay, baiduSay, yandexSay, googleSay, ];
 
 // Say a sentence
 function say(sentence) {
@@ -480,3 +521,5 @@ function onChange() {
 }
 
 new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
+BingSetup();
+
