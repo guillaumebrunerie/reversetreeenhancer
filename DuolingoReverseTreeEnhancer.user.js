@@ -121,13 +121,13 @@ function playURL(url) {
 
 // Play a sentence using the first available TTS
 function playSound(sentence, slow) {
-    var url="";
-    for (i = 0; i < sayFunc.length; i++) {
-    	console.log("loop " + i);
-    	if (sayFunc[i](sentence, targetLang, slow)) {
-    		break;
-    	}
-    }
+	var url = "";
+	for (i = 0; i < sayFuncOrder.length; i++) {
+		console.log("loop " + sayFuncOrder[i]);
+		if (sayFunc[sayFuncOrder[i]](sentence, targetLang, slow)) {
+			break;
+		}
+	}
 }
 
 var sentenceGlobal = null;
@@ -223,9 +223,7 @@ tts_req = document.createElement("li");
 tts_ans = document.createElement("li");
 
 function ansObserver() {
-	console.log("CHANGES in the answer!");
 	url = tts_ans.getAttribute("data-value");
-	console.log("url");
 	playURL(url);
 }
 
@@ -237,7 +235,6 @@ function BingSetup() {
 			subree: true,
 			};
 
-	console.log("append something")
 	tts_req.setAttribute("type", "hidden");
 	tts_req.setAttribute("id", "bing-tts-request");
 	tts_req.setAttribute("data-value", " ");
@@ -261,7 +258,12 @@ function bingSay(sentence, lang, slow) {
 }
 
 // List of supported TTS providers
-var sayFunc = [bingSay, baiduSay, yandexSay, googleSay, ];
+var sayFunc = new Array();
+sayFunc['baidu']  = baiduSay;
+sayFunc['bing']   = bingSay;
+sayFunc['google'] = googleSay;
+sayFunc['yandex'] = yandexSay;
+var sayFuncOrder = ['bing', 'baidu', 'yandex', 'google', ];
 
 // Say a sentence
 function say(sentence) {
@@ -421,7 +423,6 @@ function challengeForm(){
 }
 
 /* Function dealing with the button on the home page */
-
 function isReverseTree() {
     var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
     if(reverseTrees === null) {

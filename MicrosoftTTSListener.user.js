@@ -13,8 +13,6 @@ BingTTS_key=undefined;
 BingBaseURL='http://api.microsofttranslator.com/V2/http.svc/Speak?';
 
 function requestMSKey() {
-	console.log("Time for new key");
-
 	GM_xmlhttpRequest({
 		method : "POST",
 		url : "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13",
@@ -83,7 +81,6 @@ function testBingTTS() {
 
 function bingURL(sentence) {
 	bingurl = "https://api.microsofttranslator.com/v2/ajax.svc/Speak?appid=&format=audio/mp3&options=MaxQuality&" + sentence;
-	console.log("say this bing " + bingurl);
 	GM_xmlhttpRequest({
 		  method: "GET",
 		  url: bingurl,
@@ -93,9 +90,7 @@ function bingURL(sentence) {
 		  onload: function(response) {
 			url = response.response.replace(/\"/g,"");
 			url = url.replace(/\\/g,"");
-			console.log("Ok, no hard errors "+url);
 			answer = document.getElementById("bing-tts-answer");
-			answer.setAttribute("data-value", url);
 		  }
 		});
 }
@@ -121,7 +116,6 @@ setTimeout(function() {
 requestMSKey();
 
 function myObserver() {
-	console.log("CHANGES!")
 	request = document.getElementById("bing-tts-request");
 	bingURL(request.getAttribute("data-value"));
 }
