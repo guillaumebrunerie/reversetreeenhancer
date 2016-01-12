@@ -5,6 +5,7 @@
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
+// @require      https://github.com/camiloaa/GM_config/raw/master/gm_config.js
 // @downloadURL  https://github.com/guillaumebrunerie/reversetreeenhancer/raw/master/DuolingoReverseTreeEnhancer.user.js
 // @grant        none
 // ==/UserScript==
@@ -123,9 +124,14 @@ function playURL(url) {
 function playSound(sentence, slow) {
 	var url = "";
 	for (i = 0; i < sayFuncOrder.length; i++) {
-		console.log("loop " + sayFuncOrder[i]);
-		if (sayFunc[sayFuncOrder[i]](sentence, targetLang, slow)) {
-			break;
+		try {
+			console.log("loop " + sayFuncOrder[i]);
+			if (sayFunc[sayFuncOrder[i]](sentence, targetLang, slow)) {
+				break;
+			}
+		}
+		catch (err) {
+			// Do nothing, I don't care
 		}
 	}
 }
@@ -422,6 +428,50 @@ function challengeForm(){
     }
 }
 
+
+function updateConfig() {
+	var item = "gm_conf-" + duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
+	var conf = {
+			'id' : item, // The id used for this instance of GM_config
+			'title' : 'Reverse Tree Configurator',
+			'fields' : // Fields object
+			{
+				'IS_REVERSE' : // This is the id of the field
+				{
+					'label' : 'This is a reverse tree',
+					'type' : 'checkbox',
+					'default' : isReverseTree()
+				},
+				'TTS_ORDER' : // This is the id of the field
+				{
+					'label' : 'List of TTS services ', // Appears next to field
+					'type' : 'text', // Makes this setting a text field
+					'default' : 'google yandex baidu' // Bing is not listed because it needs a developer key
+				},
+			},
+			'css' : 'background:#102030;',
+			'events' : { // Callback functions object
+				'save' : function() { GM_config.close()},
+				'close' : function() { getConfig(); },
+			}
+		};
+		GM_config.init(conf);
+		GM_config.open();
+};
+
+function getConfig() {
+    var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
+    if(reverseTrees === null) { reverseTrees = {}; }
+    var item = duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
+    gm_conf =  JSON.parse(localStorage.getItem("gm_conf-" + item));
+    if(gm_conf == null) { return; };
+    reverseTrees[item] = gm_conf.IS_REVERSE;
+    localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees));
+    sayFuncOrder = gm_conf.TTS_ORDER.split(" ");
+    console.log(sayFuncOrder);
+    updateButton();
+}
+
 /* Function dealing with the button on the home page */
 function isReverseTree() {
     var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
@@ -430,15 +480,6 @@ function isReverseTree() {
     }
     var item = duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
     return !!(reverseTrees[item]);
-}
-
-function toggleLang() {
-    var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
-    if(reverseTrees === null) { reverseTrees = {}; }
-    var item = duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
-    reverseTrees[item] = !reverseTrees[item];
-    localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees));
-    updateButton();
 }
 
 function updateButton() {
@@ -467,7 +508,7 @@ function onChange() {
         var tree = document.getElementsByClassName("tree")[0];
         var button = document.createElement("button");
         button.id = "reverse-tree-enhancer-button";
-        button.onclick = toggleLang;
+        button.onclick = updateConfig;
         tree.insertBefore(button, tree.firstChild);
         updateButton();
     }
