@@ -326,8 +326,10 @@ function challengeTranslateTarget(){
     var cell = challenge.getElementsByClassName("text-to-translate")[0];
     if(grade.children.length === 0){
         sayCell(cell);
-        cell.className = "text-to-translate ttt-hide";
-        cell.onclick = function(){cell.className = "text-to-translate ttt-not-hide";};
+        if (isHideTargetText()) {
+            cell.className = "text-to-translate ttt-hide";
+            cell.onclick = function(){cell.className = "text-to-translate ttt-not-hide";};
+        }
     } else {
         cell.className = "text-to-translate";
         cell.onclick = null
@@ -380,11 +382,13 @@ function challengeSelect(){
     var span;
     if(grade.children.length === 0){
         var sp = hone.textContent.split(quotMark);
-        hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
-        span = hone.getElementsByTagName("span")[0];
-        say(span.textContent);
-        span.style.color = hColor;
-        span.style.backgroundColor = hColor;
+		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
+		span = hone.getElementsByTagName("span")[0];
+		say(span.textContent);
+        if (isHideTargetText()) {
+			span.style.color = hColor;
+			span.style.backgroundColor = hColor;
+        }
     } else {
         span = hone.getElementsByTagName("span")[0];
         span.style.color = "";
@@ -400,11 +404,13 @@ function challengeName(){
     var span, i;
     if(grade.children.length === 0){
         var sp = hone.textContent.split(quotMark);
-        hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
-        span = hone.getElementsByTagName("span")[0];
-        say(span.textContent);
-        span.style.color = hColor;
-        span.style.backgroundColor = hColor;
+       	hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
+		span = hone.getElementsByTagName("span")[0];
+		say(span.textContent);
+        if (isHideTargetText()) {
+			span.style.color = hColor;
+			span.style.backgroundColor = hColor;
+        }
         for(i=0; i < lis.length; i++){
             lis[i].style.backgroundColor = hColor;
             lis[i].dataset.oldImage = lis[i].style.backgroundImage;
@@ -430,56 +436,107 @@ function challengeForm(){
 
 
 function updateConfig() {
-	var item = "gm_conf-" + duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
+	var item = "gm_conf-" + duo.user.attributes.ui_language + "-"
+			+ duo.user.attributes.learning_language;
 	var conf = {
-			'id' : item, // The id used for this instance of GM_config
-			'title' : 'Reverse Tree Configurator',
-			'fields' : // Fields object
-			{
-				'IS_REVERSE' : // This is the id of the field
-				{
-					'label' : 'This is a reverse tree',
-					'type' : 'checkbox',
-					'default' : isReverseTree()
-				},
-				'TTS_ORDER' : // This is the id of the field
-				{
-					'label' : 'List of TTS services ', // Appears next to field
-					'type' : 'text', // Makes this setting a text field
-					'default' : 'google yandex baidu' // Bing is not listed because it needs a developer key
-				},
+		id : item, // The id used for this instance of GM_config
+		title : 'Reverse Tree Configurator',
+		fields : // Fields object
+		{
+			'HEADER_1' : {
+				'section' : [ ],
+				'type' : 'hidden', // Makes this setting a text field
 			},
-			'css' : 'background:#102030;',
-			'events' : { // Callback functions object
-				'save' : function() { GM_config.close()},
-				'close' : function() { getConfig(); },
+			'IS_REVERSE' : // This is the id of the field
+			{
+				'label' : 'This is a reverse tree',
+				'type' : 'checkbox',
+				'default' : false
+			},
+			'HIDE_TARGET' : // This is the id of the field
+			{
+				'label' : 'Hide target text',
+				'type' : 'checkbox',
+				'default' : true
+			},
+			'REPLACE_TTS' : // This is the id of the field
+			{
+				'label' : 'Replace Duo\'s TTS',
+				'type' : 'checkbox',
+				'default' : false
+			},
+			'TTS_ORDER' : // This is the id of the field
+			{
+				'label' : 'List of TTS services ', // Appears next to field
+				'type' : 'text', // Makes this setting a text field
+				'default' : 'google yandex baidu' // Bing is not listed
+													// because it needs a
+													// developer key
+			},
+		},
+		full_css : [
+				"#GM_config * * { font: 500 15px/20px 'museo-sans-rounded',sans-serif; margin-right: 6px; color: #333 }",
+				"#GM_config { background: #FFF; }",
+				"#GM_config input[type='radio'] { margin-right: 8px; }",
+				"#GM_config .indent40 { margin-left: 40%; }",
+				"#GM_config .field_label { margin-right: 6px; }",
+				"#GM_config .radio_label { font-size: 12px; }",
+				"#GM_config .block { display: block; }",
+				"#GM_config .saveclose_buttons { margin: 16px 10px 10px; padding: 2px 12px; }",
+				"#GM_config .reset, #GM_config .reset a,"
+						+ " #GM_config_buttons_holder { color: #000; text-align: right; }",
+				"#GM_config .config_header { font-size: 20pt; margin:0px; color: white; background: rgba(32, 166, 231, 0.8) linear-gradient(to bottom, #20A8E9, rgba(30, 158, 220, 0.5)) repeat-x scroll 0% 0%; border: 10px solid rgba(32, 166, 231, 0.8); }",
+				"#GM_config .config_desc, #GM_config .section_desc, #GM_config .reset { font-size: 9pt; }",
+				"#GM_config .center { text-align: center; }",
+				"#GM_config .section_header_holder { margin-top: 8px; }",
+				"#GM_config .config_var { margin: 0 0 4px; }",
+				"#GM_config .section_header { background: #414141; border: 1px solid #000; color: #FFF;",
+				" font-size: 13pt; margin: 0; }",
+				"#GM_config .section_desc { background: #EFEFEF; border: 1px solid #CCC; color: #575757;"
+						+ " font-size: 9pt; margin: 0 0 6px; }" ].join('\n')
+				+ '\n',
+		events : { // Callback functions object
+			save : function() {
+				GM_config.close()
+			},
+			close : function() {
+				getConfig();
+			},
+			open : function() {
+				this.frame.setAttribute('style','bottom: auto; border: 1px solid #000; display: none; height: 50%;'
+					      + ' left: 0; margin: 0; max-height: 95%; max-width: 95%; opacity: 0;'
+					      + ' overflow: auto; padding: 0; position: fixed; right: auto; top: 0;'
+					      + ' width: 50%; z-index: 9999;');
 			}
-		};
-		GM_config.init(conf);
-		GM_config.open();
+		}
+	};
+	console.log("Config for " + item)
+	GM_config = new GM_configStruct();
+	GM_config.init(conf);
+	sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
 };
 
+function showConfig() {
+	GM_config.open();
+}
+
 function getConfig() {
-    var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
-    if(reverseTrees === null) { reverseTrees = {}; }
     var item = duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
-    gm_conf =  JSON.parse(localStorage.getItem("gm_conf-" + item));
-    if(gm_conf == null) { return; };
-    reverseTrees[item] = gm_conf.IS_REVERSE;
-    localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees));
-    sayFuncOrder = gm_conf.TTS_ORDER.split(" ");
-    // console.log(sayFuncOrder);
+    sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
     updateButton();
 }
 
 /* Function dealing with the button on the home page */
 function isReverseTree() {
-    var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
-    if(reverseTrees === null) {
-        return false;
-    }
-    var item = duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
-    return !!(reverseTrees[item]);
+    return GM_config.get('IS_REVERSE');
+}
+
+function isReplaceTTS() {
+    return GM_config.get('REPLACE_TTS');
+}
+
+function isHideTargetText() {
+    return GM_config.get('HIDE_TARGET');
 }
 
 function updateButton() {
@@ -491,7 +548,7 @@ function updateButton() {
     } else {
         button.textContent = "Reverse tree?";
         button.className = "btn btn-standard right btn-store";
-    } 
+    }
 }
 
 
@@ -508,9 +565,10 @@ function onChange() {
         var tree = document.getElementsByClassName("tree")[0];
         var button = document.createElement("button");
         button.id = "reverse-tree-enhancer-button";
-        button.onclick = updateConfig;
+        button.onclick = showConfig;
         tree.insertBefore(button, tree.firstChild);
-        updateButton();
+        updateConfig();    // Make GM_Config point to this language setup
+        updateButton()();  // Read setup
     }
     
     if (/slide-session-end/.test(newclass)) {
@@ -531,6 +589,8 @@ function onChange() {
             targetLang = "";
             removeCSSHiding();
             return;
+        } else {
+        	// console.log("Reverse and hide");
         }
         targetLang = duo.user.attributes.ui_language;
         if(!document.getElementById("timer")) { addCSSHiding(); } else { removeCSSHiding(); }
@@ -563,5 +623,33 @@ function onChange() {
 }
 
 new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
+
+(function($) {
+	console.log("Replace TTS");
+	if (typeof duo != 'undefined' && typeof $.tts_super == 'undefined') {
+		var ttsBase = duo.tts_base_url, ttsPath = duo.tts_path;
+		$.fn.tts_super = $.fn.tts;
+		$.fn.tts = function(d) {
+			if (d.tts_type === "sentence" && typeof d.sentence !== 'undefined' ) {
+				var quoted_text = encodeURIComponent(d.sentence.replace("/"," "));
+				if (isReverseTree()) return; // Don't speak in reverse tree
+				if (isReplaceTTS()) {
+					say(quoted_text);
+					return;
+				}
+			} else {
+				// Use default for tokens (single words)
+				duo.tts_base_url = ttsBase;
+				duo.tts_path = ttsPath;
+			}
+
+			return this.each(function() {
+				$(this).tts_super(d);
+			});
+		}
+	}
+}(jQuery));
+
+updateConfig();
 BingSetup();
 
