@@ -347,7 +347,7 @@ function challengeTranslateSource(){
         if(isTimedPractice && !isTypo){
             betterAnswer = [];
         }
-        
+
         if(betterAnswer.length === 0){
             say(document.getElementById("submitted-text").textContent);
         } else {
@@ -469,9 +469,11 @@ function updateConfig() {
 			{
 				'label' : 'List of TTS services ', // Appears next to field
 				'type' : 'text', // Makes this setting a text field
-				'default' : 'google yandex baidu' // Bing is not listed
-													// because it needs a
-													// developer key
+				'default' : 'google yandex baidu' // Bing is not listed,
+													// because it needs a developer key and a lot of hacking to work.
+													// But if you are reading this, you probably know what you are doing.
+													// Got to MSDN and ask for a key, and check the script
+													// MicrosoftTTSListener.user.js in this same repo to enable it!
 			},
 		},
 		full_css : [
