@@ -520,7 +520,13 @@ function showConfig() {
 }
 
 function getConfig() {
+	// Keep a list of reverse trees
+    var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
+    if(reverseTrees === null) { reverseTrees = {}; }
     var item = duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
+    reverseTrees[item] = isReverseTree();
+    localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees));
+    // Read the current TTS preferences
     sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
     updateButton();
 }
