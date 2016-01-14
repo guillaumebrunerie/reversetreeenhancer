@@ -510,7 +510,6 @@ function updateConfig() {
 			}
 		}
 	};
-	console.log("Config for " + item)
 	GM_config = new GM_configStruct();
 	GM_config.init(conf);
 	sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
@@ -586,7 +585,7 @@ function onChange() {
         hideSoundErrorBox();
 
         if(!isReverseTree()) {
-            targetLang = "";
+            targetLang = duo.user.attributes.learning_language;
             removeCSSHiding();
             return;
         } else {
@@ -625,7 +624,6 @@ function onChange() {
 new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
 
 (function($) {
-	console.log("Replace TTS");
 	if (typeof duo != 'undefined' && typeof $.tts_super == 'undefined') {
 		var ttsBase = duo.tts_base_url, ttsPath = duo.tts_path;
 		$.fn.tts_super = $.fn.tts;
@@ -634,9 +632,12 @@ new MutationObserver(onChange).observe(document.body, {attributes: true, childLi
 				var quoted_text = encodeURIComponent(d.sentence.replace("/"," "));
 				if (isReverseTree()) return; // Don't speak in reverse tree
 				if (isReplaceTTS()) {
+		            targetLang = duo.user.attributes.learning_language;
 					say(quoted_text);
 					return;
 				}
+				duo.tts_base_url = ttsBase;
+				duo.tts_path = ttsPath;
 			} else {
 				// Use default for tokens (single words)
 				duo.tts_base_url = ttsBase;
