@@ -563,6 +563,9 @@ function updateButton() {
     if(isReverseTree()) {
         button.textContent = "Reverse tree!";
         button.className = "btn btn-standard right btn-store selected";
+    } else if(isEnhancedTree()) {
+        button.textContent = "Enhanced tree!";
+        button.className = "btn btn-standard right btn-store selected";
     } else {
         button.textContent = "Reverse tree?";
         button.className = "btn btn-standard right btn-store";
