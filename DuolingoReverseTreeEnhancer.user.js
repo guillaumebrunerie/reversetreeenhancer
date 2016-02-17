@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.2.3
+// @version      0.3.0
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -129,8 +129,7 @@ function playSound(sentence, slow) {
 			if (sayFunc[sayFuncOrder[i]](sentence, targetLang, slow)) {
 				break;
 			}
-		}
-		catch (err) {
+		} catch (err) {
 			// Do nothing, I don't care
 		}
 	}
@@ -224,7 +223,7 @@ function baiduSay(sentence, lang, speed) {
 	return false;
 }
 
-//Setup MS TTS
+// Setup MS TTS
 tts_req = document.createElement("li");
 tts_ans = document.createElement("li");
 
@@ -260,7 +259,7 @@ function bingSay(sentence, lang, slow) {
 	request = document.getElementById("bing-tts-request");
 	url = "language=" + googleTTSLang(lang) + "&text=" + sentence;
 	request.setAttribute("data-value", url);
-    return true;
+	return true;
 }
 
 // List of supported TTS providers
@@ -269,7 +268,7 @@ sayFunc['baidu']  = baiduSay;
 sayFunc['bing']   = bingSay;
 sayFunc['google'] = googleSay;
 sayFunc['yandex'] = yandexSay;
-var sayFuncOrder = ['bing', 'baidu', 'yandex', 'google', ];
+var sayFuncOrder = [ 'bing', 'baidu', 'yandex', 'google', ];
 
 // Say a sentence
 function say(sentence) {
@@ -317,18 +316,19 @@ function sayCell(cell) {
     say(t.text());
 }
 
-
 /* Functions acting on the various types of exercices */
 
-
 /* Translation from target language (eg. Polish) */
-function challengeTranslateTarget(){
+function challengeTranslateTarget() {
     var cell = challenge.getElementsByClassName("text-to-translate")[0];
-    if(grade.children.length === 0){
-        sayCell(cell);
+    if (grade.children.length === 0) {
+        if (isReverseTree())
+            sayCell(cell); // Speak only by explicit request in forward tree
         if (isHideTargetText()) {
             cell.className = "text-to-translate ttt-hide";
-            cell.onclick = function(){cell.className = "text-to-translate ttt-not-hide";};
+            cell.onclick = function() {
+                cell.className = "text-to-translate ttt-not-hide";
+            };
         }
     } else {
         cell.className = "text-to-translate";
@@ -337,18 +337,19 @@ function challengeTranslateTarget(){
 }
 
 /* Translation from source language (eg. English) */
-function challengeTranslateSource(){
-    if(grade.children.length > 0){
-        var betterAnswer = grade.getElementsByTagName("h1")[0].getElementsByTagName("span");
+function challengeTranslateSource() {
+    if (grade.children.length > 0) {
+        var betterAnswer = grade.getElementsByTagName("h1")[0]
+                .getElementsByTagName("span");
         // Hack for making timed practice work
         var isTimedPractice = (grade.getElementsByClassName("icon-clock-medium").length !== 0);
         var blame = document.getElementById("blame-1")
         var isTypo = blame && blame.offsetParent !== null
-        if(isTimedPractice && !isTypo){
+        if (isTimedPractice && !isTypo) {
             betterAnswer = [];
         }
 
-        if(betterAnswer.length === 0){
+        if (betterAnswer.length === 0) {
             say(document.getElementById("submitted-text").textContent);
         } else {
             say(betterAnswer[0].textContent);
@@ -434,24 +435,26 @@ function challengeForm(){
     }
 }
 
-
 function updateConfig() {
 	var item = "gm_conf-" + duo.user.attributes.ui_language + "-"
 			+ duo.user.attributes.learning_language;
 	var conf = {
 		id : item, // The id used for this instance of GM_config
-		title : 'Reverse Tree Configurator',
+		title : 'Enhanced Tree Configurator',
 		fields : // Fields object
 		{
 			'HEADER_1' : {
-				'section' : [ ],
+				'section' : [],
 				'type' : 'hidden', // Makes this setting a text field
 			},
-			'IS_REVERSE' : // This is the id of the field
+			'IS_ENHANCED' : // This is the id of the field
 			{
-				'label' : 'This is a reverse tree',
-				'type' : 'checkbox',
-				'default' : false
+				'label' : 'Type of tree',
+				'type' : 'select', // Makes this setting a dropdown
+				'options' : [ 'Normal', 'Reverse', 'Enhanced' ], // Possible
+				// choices
+				'default' : 'Normal' // Default value if user doesn't change
+										// it
 			},
 			'HIDE_TARGET' : // This is the id of the field
 			{
@@ -469,11 +472,15 @@ function updateConfig() {
 			{
 				'label' : 'List of TTS services ', // Appears next to field
 				'type' : 'text', // Makes this setting a text field
-				'default' : 'google yandex baidu' // Bing is not listed,
-													// because it needs a developer key and a lot of hacking to work.
-													// But if you are reading this, you probably know what you are doing.
-													// Got to MSDN and ask for a key, and check the script
-													// MicrosoftTTSListener.user.js in this same repo to enable it!
+				'default' : 'google yandex baidu'
+			/*
+			 * Bing is not listed, because it needs a developer key and a lot of
+			 * hacking to work. But if you are reading this, you probably know
+			 * what you are doing.
+			 * 
+			 * Got to MSDN and ask for a key, and then check the script
+			 * MicrosoftTTSListener.user.js in this same repo to enable it!
+			 */
 			},
 		},
 		full_css : [
@@ -535,7 +542,11 @@ function getConfig() {
 
 /* Function dealing with the button on the home page */
 function isReverseTree() {
-    return GM_config.get('IS_REVERSE');
+    return GM_config.get('IS_ENHANCED') == 'Reverse';
+}
+
+function isEnhancedTree() {
+    return GM_config.get('IS_ENHANCED') != 'Normal';
 }
 
 function isReplaceTTS() {
@@ -558,7 +569,6 @@ function updateButton() {
     }
 }
 
-
 /* Function dispatching the changes in the page to the other functions */
 
 var oldclass = "";
@@ -574,10 +584,10 @@ function onChange() {
         button.id = "reverse-tree-enhancer-button";
         button.onclick = showConfig;
         tree.insertBefore(button, tree.firstChild);
-        updateConfig();    // Make GM_Config point to this language setup
-        updateButton()();  // Read setup
+        updateConfig(); // Make GM_Config point to this language setup
+        updateButton()(); // Read setup
     }
-    
+
     if (/slide-session-end/.test(newclass)) {
         // End screen ("you beat the clock...").
         // Destroy the reference to the audio object
@@ -586,44 +596,67 @@ function onChange() {
         audio = null;
     }
 
-    if(newclass != oldclass){
+    if (newclass != oldclass) {
         oldclass = newclass;
         // console.debug("New class: " + newclass);
 
         hideSoundErrorBox();
 
-        if(!isReverseTree()) {
+        if (isReverseTree()) {
+            targetLang = duo.user.attributes.ui_language;
+        } else {
             targetLang = duo.user.attributes.learning_language;
+        }
+
+        if (!isEnhancedTree()) {
             removeCSSHiding();
             return;
         } else {
-        	// console.log("Reverse and hide");
+            // console.log("Reverse and hide");
         }
-        targetLang = duo.user.attributes.ui_language;
-        if(!document.getElementById("timer")) { addCSSHiding(); } else { removeCSSHiding(); }
+        if (!document.getElementById("timer")) {
+            addCSSHiding();
+        } else {
+            removeCSSHiding();
+        }
 
         var sec = document.getElementById("session-element-container");
         if(!sec){return;}
         challenge = sec.children[0];
         grade = document.getElementById("grade");
 
-        if(/translate/.test(newclass)){
-            if (challenge.getElementsByTagName("textarea")[0].getAttribute("lang") == targetLang){
-                challengeTranslateSource();
+        if (/translate/.test(newclass)) {
+            if (challenge.getElementsByTagName("textarea")[0].getAttribute("lang") == targetLang) {
+                if (isReverseTree()) {
+                    challengeTranslateSource();
+                } else {
+                    challengeTranslateTarget();
+                }
+
             } else {
-                challengeTranslateTarget();
+                if (isReverseTree()) {
+                    challengeTranslateTarget();
+                } else {
+                    challengeTranslateSource();
+                }
             }
         }
-        if(/judge/.test(newclass)){
+
+        if (!isReverseTree()) {
+            removeCSSHiding();
+            return;
+        }
+
+        if (/judge/.test(newclass)) {
             challengeJudge();
         }
-        if(/select/.test(newclass)){
+        if (/select/.test(newclass)) {
             challengeSelect();
         }
-        if(/name/.test(newclass)){
+        if (/name/.test(newclass)) {
             challengeName();
         }
-        if(/form/.test(newclass)){
+        if (/form/.test(newclass)) {
             challengeForm();
         }
     }
