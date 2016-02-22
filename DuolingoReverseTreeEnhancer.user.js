@@ -339,8 +339,7 @@ function challengeTranslateTarget() {
 /* Translation from source language (eg. English) */
 function challengeTranslateSource() {
     if (grade.children.length > 0) {
-        var betterAnswer = grade.getElementsByTagName("h1")[0]
-                .getElementsByTagName("span");
+        var betterAnswer = grade.getElementsByTagName("h1")[0].getElementsByTagName("span");
         // Hack for making timed practice work
         var isTimedPractice = (grade.getElementsByClassName("icon-clock-medium").length !== 0);
         var blame = document.getElementById("blame-1")
@@ -630,18 +629,9 @@ function onChange() {
 
         if (/translate/.test(newclass)) {
             if (challenge.getElementsByTagName("textarea")[0].getAttribute("lang") == targetLang) {
-                if (isReverseTree()) {
-                    challengeTranslateSource();
-                } else {
-                    challengeTranslateTarget();
-                }
-
+                challengeTranslateSource();
             } else {
-                if (isReverseTree()) {
-                    challengeTranslateTarget();
-                } else {
-                    challengeTranslateSource();
-                }
+                challengeTranslateTarget();
             }
         }
 
