@@ -6,6 +6,11 @@
 // @match        https://www.duolingo.com/*
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
+//
+// Get a TTS key in
+// https://msdn.microsoft.com/en-us/library/mt146806.aspx
+//
+// Save it manualy using Firefox console
 
 BingTTS_clientid=localStorage.getItem("BingTTS-clientid");
 BingTTS_secret=localStorage.getItem("BingTTS-secret");
