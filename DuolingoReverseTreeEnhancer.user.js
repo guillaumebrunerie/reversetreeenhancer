@@ -371,7 +371,7 @@ function challengeJudge(){
         textCell.style.backgroundColor = hColor;
         textCell.style.display = "block";
         
-        say(textCell.textContent);
+        say(textCell.textContent, targetLang);
     } else {
         textCell.style.color = "";
         textCell.style.backgroundColor = "";
@@ -390,7 +390,7 @@ function challengeSelect(){
         var sp = hone.textContent.split(quotMark);
 		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
 		span = hone.getElementsByTagName("span")[0];
-		say(span.textContent);
+		say(span.textContent, targetLang);
         if (isHideText(targetLang)) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
@@ -412,7 +412,7 @@ function challengeName(){
         var sp = hone.textContent.split(quotMark);
        	hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
 		span = hone.getElementsByTagName("span")[0];
-		say(span.textContent);
+		say(span.textContent, targetLang);
         if (isHideText(targetLang)) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
@@ -436,7 +436,7 @@ function challengeName(){
 /* Multiple-choice question where we have to choose a word in the source language. Those are useless exercices, but we can’t get rid of them. */
 function challengeForm(){
     if(grade.children.length !== 0){
-        say(grade.getElementsByTagName("h2")[0].children[1].textContent);
+        say(grade.getElementsByTagName("h2")[0].children[1].textContent, targetLang);
     }
 }
 
@@ -595,7 +595,7 @@ function isSayQuestion(lang)
     if (isReverseTree())
         return lang == targetLang;
     else
-        return lang == sourceLang;
+        return (lang == sourceLang) && isSayAnswer(lang);
 }
 
 function updateButton() {
@@ -708,7 +708,7 @@ new MutationObserver(onChange).observe(document.body, {attributes: true, childLi
 				if (isReverseTree()) return; // Don't speak in reverse tree
 				if (isReplaceTTS()) {
 		            targetLang = duo.user.attributes.learning_language;
-					say(quoted_text);
+					say(quoted_text, sourceLang);
 					return;
 				}
 				duo.tts_base_url = ttsBase;
