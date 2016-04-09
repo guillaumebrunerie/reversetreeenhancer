@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.3.1
+// @version      0.4.0
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -121,12 +121,12 @@ function playURL(url) {
 }
 
 // Play a sentence using the first available TTS
-function playSound(sentence, slow) {
+function playSound(sentence, lang, slow) {
 	var url = "";
 	for (i = 0; i < sayFuncOrder.length; i++) {
 		try {
 			// console.log("loop " + sayFuncOrder[i]);
-			if (sayFunc[sayFuncOrder[i]](sentence, targetLang, slow)) {
+			if (sayFunc[sayFuncOrder[i]](sentence, lang, slow)) {
 				break;
 			}
 		} catch (err) {
@@ -271,20 +271,22 @@ sayFunc['yandex'] = yandexSay;
 var sayFuncOrder = [ 'bing', 'baidu', 'yandex', 'google', ];
 
 // Say a sentence
-function say(sentence) {
+function say(sentence, lang) {
     sentence = sentence.replace(/•/g,"");
     console.debug("Reverse Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
-    playSound(sentence, false);
+    playSound(sentence, lang, false);
     lastSaidSlow = false;
+    lastSaidLang = lang;
 }
 
 // Repeat las sentece slowly
-function sayslow() {
+function sayslow(lang) {
     var sentence = sentenceGlobal;
     console.debug("Reverse Tree Enhancer: saying slowly '" + sentence + "'");
-    playSound(sentenceGlobal, true);
+    playSound(sentenceGlobal, lang, true);
     lastSaidSlow = true;
+    lastSaidLang = lang;
 }
 
 function keyUpHandler(e) {
@@ -293,11 +295,11 @@ function keyUpHandler(e) {
             if (lastSaidSlow) {
                 audio.stop().play();
             } else {
-                sayslow();
+                sayslow(lastSaidLang);
             }
         } else {
             if (lastSaidSlow) {
-                say(sentenceGlobal);
+                say(sentenceGlobal, lastSaidLang);
             } else {
                 audio.stop().play();
             }
@@ -308,23 +310,31 @@ function keyUpHandler(e) {
 document.addEventListener('keyup', keyUpHandler, false);
 
 /* jQuery hack to avoid reading things in display:none, copy-pasted from StackOverflow */
-function sayCell(cell) {
+function sayCell(cell, lang) {
     var t = $(cell).clone();
     $('body').append(t);
     t.find('*:not(:visible)').remove();
     t.remove();
-    say(t.text());
+    say(t.text(), lang);
 }
 
 /* Functions acting on the various types of exercices */
 
 /* Translation from target language (eg. Polish) */
-function challengeTranslateTarget() {
+function challengeTranslate(lang) {
     var cell = challenge.getElementsByClassName("text-to-translate")[0];
+    if (lang == targetLang) {
+        question = sourceLang;
+        answer = targetLang;
+    } else {
+        question = targetLang;
+        answer = sourceLang;
+    }
+    console.log("challengeTranslate from "+question+" to "+answer);
     if (grade.children.length === 0) {
-        if (isReverseTree())
-            sayCell(cell); // Speak only by explicit request in forward tree
-        if (isHideTargetText()) {
+        if (isSayQuestion(question))
+            sayCell(cell, question); // Speak only by explicit request in forward tree
+        if (isHideText(question)) {
             cell.className = "text-to-translate ttt-hide";
             cell.onclick = function() {
                 cell.className = "text-to-translate ttt-not-hide";
@@ -334,11 +344,7 @@ function challengeTranslateTarget() {
         cell.className = "text-to-translate";
         cell.onclick = null
     }
-}
-
-/* Translation from source language (eg. English) */
-function challengeTranslateSource() {
-    if (grade.children.length > 0) {
+    if ((grade.children.length > 0) && isSayAnswer(answer)) {
         var betterAnswer = grade.getElementsByTagName("h1")[0].getElementsByTagName("span");
         // Hack for making timed practice work
         var isTimedPractice = (grade.getElementsByClassName("icon-clock-medium").length !== 0);
@@ -349,9 +355,9 @@ function challengeTranslateSource() {
         }
 
         if (betterAnswer.length === 0) {
-            say(document.getElementById("submitted-text").textContent);
+            say(document.getElementById("submitted-text").textContent, answer);
         } else {
-            say(betterAnswer[0].textContent);
+            say(betterAnswer[0].textContent, answer);
         }
     }
 }
@@ -385,7 +391,7 @@ function challengeSelect(){
 		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
 		span = hone.getElementsByTagName("span")[0];
 		say(span.textContent);
-        if (isHideTargetText()) {
+        if (isHideText()) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
         }
@@ -407,7 +413,7 @@ function challengeName(){
        	hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
 		span = hone.getElementsByTagName("span")[0];
 		say(span.textContent);
-        if (isHideTargetText()) {
+        if (isHideText()) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
         }
@@ -455,12 +461,30 @@ function updateConfig() {
 				'default' : 'Normal' // Default value if user doesn't change
 										// it
 			},
-			'HIDE_TARGET' : // This is the id of the field
-			{
-				'label' : 'Hide target text',
-				'type' : 'checkbox',
-				'default' : true
-			},
+            'HIDE_TARGET' : // This is the id of the field
+            {
+                'label' : 'Hide target language questions',
+                'type' : 'checkbox',
+                'default' : true
+            },
+            'HIDE_SOURCE' : // This is the id of the field
+            {
+                'label' : 'Hide source language questions',
+                'type' : 'checkbox',
+                'default' : true
+            },
+            'READ_TARGET' : // This is the id of the field
+            {
+                'label' : 'Read target language answers',
+                'type' : 'checkbox',
+                'default' : true
+            },
+            'READ_SOURCE' : // This is the id of the field
+            {
+                'label' : 'Read source language answers',
+                'type' : 'checkbox',
+                'default' : true
+            },
 			'REPLACE_TTS' : // This is the id of the field
 			{
 				'label' : 'Replace Duo\'s TTS',
@@ -552,8 +576,26 @@ function isReplaceTTS() {
     return GM_config.get('REPLACE_TTS');
 }
 
-function isHideTargetText() {
-    return GM_config.get('HIDE_TARGET');
+function isHideText(from) {
+    if (targetLang == from)
+        return GM_config.get('HIDE_TARGET');
+    else
+        return GM_config.get('HIDE_SOURCE');
+}
+
+function isSayAnswer(from) {
+    if (targetLang == from)
+        return GM_config.get('READ_TARGET');
+    else
+        return GM_config.get('READ_SOURCE')
+}
+
+function isSayQuestion(lang)
+{
+    if (isReverseTree())
+        return lang == targetLang;
+    else
+        return lang == sourceLang;
 }
 
 function updateButton() {
@@ -574,7 +616,7 @@ function updateButton() {
 /* Function dispatching the changes in the page to the other functions */
 
 var oldclass = "";
-var targetLang;
+var targetLang, sourceLange;
 var grade, challenge;
 
 function onChange() {
@@ -606,7 +648,9 @@ function onChange() {
 
         if (isReverseTree()) {
             targetLang = duo.user.attributes.ui_language;
+            sourceLang = duo.user.attributes.learning_language;
         } else {
+            sourceLang = duo.user.attributes.ui_language;
             targetLang = duo.user.attributes.learning_language;
         }
 
@@ -628,11 +672,8 @@ function onChange() {
         grade = document.getElementById("grade");
 
         if (/translate/.test(newclass)) {
-            if (challenge.getElementsByTagName("textarea")[0].getAttribute("lang") == targetLang) {
-                challengeTranslateSource();
-            } else {
-                challengeTranslateTarget();
-            }
+            lang = challenge.getElementsByTagName("textarea")[0].getAttribute("lang");
+            challengeTranslate(lang);
         }
 
         if (!isReverseTree()) {
