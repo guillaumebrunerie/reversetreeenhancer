@@ -391,7 +391,7 @@ function challengeSelect(){
 		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
 		span = hone.getElementsByTagName("span")[0];
 		say(span.textContent);
-        if (isHideText()) {
+        if (isHideText(targetLang)) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
         }
@@ -413,7 +413,7 @@ function challengeName(){
        	hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
 		span = hone.getElementsByTagName("span")[0];
 		say(span.textContent);
-        if (isHideText()) {
+        if (isHideText(targetLang)) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
         }
