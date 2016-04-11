@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.4.0
+// @version      0.4.1
 // @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie
 // @match        https://www.duolingo.com/*
@@ -456,34 +456,34 @@ function updateConfig() {
 			{
 				'label' : 'Type of tree',
 				'type' : 'select', // Makes this setting a dropdown
-				'options' : [ 'Normal', 'Reverse', 'Enhanced' ], // Possible
-				// choices
+				'options' : [ 'Normal', 'Reverse', 'Enhanced', 'Laddering' ],
+				// Choose a pre-defined profile
 				'default' : 'Normal' // Default value if user doesn't change
 										// it
 			},
             'HIDE_TARGET' : // This is the id of the field
             {
-                'label' : 'Hide target language questions',
+                'label' : 'Hide target language questions (' + targetLang + ')',
                 'type' : 'checkbox',
-                'default' : true
+                'default' : false
             },
             'HIDE_SOURCE' : // This is the id of the field
             {
-                'label' : 'Hide source language questions',
+                'label' : 'Hide source language questions (' + sourceLang + ')',
                 'type' : 'checkbox',
-                'default' : true
+                'default' : false
             },
             'READ_TARGET' : // This is the id of the field
             {
-                'label' : 'Read target language answers',
+                'label' : 'Read target language answers (' + targetLang + ')',
                 'type' : 'checkbox',
                 'default' : true
             },
             'READ_SOURCE' : // This is the id of the field
             {
-                'label' : 'Read source language answers',
+                'label' : 'Read source language answers (' + sourceLang + ')',
                 'type' : 'checkbox',
-                'default' : true
+                'default' : false
             },
 			'REPLACE_TTS' : // This is the id of the field
 			{
@@ -628,6 +628,8 @@ function onChange() {
         button.id = "reverse-tree-enhancer-button";
         button.onclick = showConfig;
         tree.insertBefore(button, tree.firstChild);
+        sourceLang = duo.user.attributes.ui_language;
+        targetLang = duo.user.attributes.learning_language;
         updateConfig(); // Make GM_Config point to this language setup
         updateButton()(); // Read setup
     }
