@@ -463,25 +463,25 @@ function updateConfig() {
 			},
             'HIDE_TARGET' : // This is the id of the field
             {
-                'label' : 'Hide target language questions (' + targetLang + ')',
+                'label' : 'Hide questions in ' + duo.language_names_ui['en'][targetLang],
                 'type' : 'checkbox',
                 'default' : false
             },
             'HIDE_SOURCE' : // This is the id of the field
             {
-                'label' : 'Hide source language questions (' + sourceLang + ')',
+                'label' : 'Hide questions in ' + duo.language_names_ui['en'][sourceLang],
                 'type' : 'checkbox',
                 'default' : false
             },
             'READ_TARGET' : // This is the id of the field
             {
-                'label' : 'Read target language answers (' + targetLang + ')',
+                'label' : 'Read answers in ' + duo.language_names_ui['en'][targetLang],
                 'type' : 'checkbox',
                 'default' : true
             },
             'READ_SOURCE' : // This is the id of the field
             {
-                'label' : 'Read source language answers (' + sourceLang + ')',
+                'label' : 'Read answers in ' + duo.language_names_ui['en'][sourceLang],
                 'type' : 'checkbox',
                 'default' : false
             },
