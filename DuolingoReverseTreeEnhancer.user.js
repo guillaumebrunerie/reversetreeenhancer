@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         Duoling Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.4.1
-// @description  Enhance reverse trees by adding a TTS (currently Google Translate) and turning most exercices into listening exercices by hiding the text in the target language.
-// @author       Guillaume Brunerie
+// @version      0.5
+// @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
+// @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
 // @require      https://github.com/camiloaa/GM_config/raw/master/gm_config.js
-// @downloadURL  https://github.com/guillaumebrunerie/reversetreeenhancer/raw/master/DuolingoReverseTreeEnhancer.user.js
+// @downloadURL  https://github.com/camiloaa/reversetreeenhancer/raw/master/DuolingoReverseTreeEnhancer.user.js
 // @grant        none
 // ==/UserScript==
 
@@ -371,7 +371,8 @@ function challengeJudge(){
         textCell.style.backgroundColor = hColor;
         textCell.style.display = "block";
         
-        say(textCell.textContent, targetLang);
+        if (isSayAnswer(sourceLang))
+            say(textCell.textContent, sourceLang);
     } else {
         textCell.style.color = "";
         textCell.style.backgroundColor = "";
@@ -390,8 +391,10 @@ function challengeSelect(){
         var sp = hone.textContent.split(quotMark);
 		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
 		span = hone.getElementsByTagName("span")[0];
-		say(span.textContent, targetLang);
-        if (isHideText(targetLang)) {
+
+		if (isSayAnswer(sourceLang))
+		    say(span.textContent, sourcetLang);
+        if (isHideText(sourceLang)) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
         }
@@ -412,8 +415,11 @@ function challengeName(){
         var sp = hone.textContent.split(quotMark);
        	hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
 		span = hone.getElementsByTagName("span")[0];
-		say(span.textContent, targetLang);
-        if (isHideText(targetLang)) {
+
+        if (isSayAnswer(sourceLang))
+            say(span.textContent, sourceLang);
+
+        if (isHideText(sourceLang)) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
         }
@@ -436,7 +442,8 @@ function challengeName(){
 /* Multiple-choice question where we have to choose a word in the source language. Those are useless exercices, but we can’t get rid of them. */
 function challengeForm(){
     if(grade.children.length !== 0){
-        say(grade.getElementsByTagName("h2")[0].children[1].textContent, targetLang);
+        if (isSayAnswer(sourceLang))
+            say(grade.getElementsByTagName("h2")[0].children[1].textContent, sourceLang);
     }
 }
 
@@ -458,8 +465,9 @@ function updateConfig() {
 				'type' : 'select', // Makes this setting a dropdown
 				'options' : [ 'Normal', 'Reverse', 'Enhanced', 'Laddering' ],
 				// Choose a pre-defined profile
-				'default' : 'Normal' // Default value if user doesn't change
-										// it
+				'default' : 'Normal', // Do nothing by default
+				'change' : function() {
+		            setConfigDefaults(this[this.selectedIndex].value); }
 			},
             'HIDE_TARGET' : // This is the id of the field
             {
@@ -475,13 +483,13 @@ function updateConfig() {
             },
             'READ_TARGET' : // This is the id of the field
             {
-                'label' : 'Read answers in ' + duo.language_names_ui['en'][targetLang],
+                'label' : 'Read text in ' + duo.language_names_ui['en'][targetLang],
                 'type' : 'checkbox',
-                'default' : true
+                'default' : false
             },
             'READ_SOURCE' : // This is the id of the field
             {
-                'label' : 'Read answers in ' + duo.language_names_ui['en'][sourceLang],
+                'label' : 'Read text in ' + duo.language_names_ui['en'][sourceLang],
                 'type' : 'checkbox',
                 'default' : false
             },
@@ -547,8 +555,54 @@ function updateConfig() {
 	sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
 };
 
+function setConfigDefaults(treeType)
+{
+    switch (treeType) {
+    case 'Normal':
+        GM_config.fields['HIDE_TARGET'].value = false;
+        GM_config.fields['HIDE_SOURCE'].value = false;
+        GM_config.fields['READ_TARGET'].value = false;
+        GM_config.fields['READ_SOURCE'].value = false;
+        GM_config.fields['REPLACE_TTS'].value = false;
+        break;
+
+    case 'Reverse':
+        GM_config.fields['HIDE_TARGET'].value = false;
+        GM_config.fields['HIDE_SOURCE'].value = true;
+        GM_config.fields['READ_TARGET'].value = false;
+        GM_config.fields['READ_SOURCE'].value = true;
+        GM_config.fields['REPLACE_TTS'].value = true;
+        break
+
+    case 'Enhanced':
+        GM_config.fields['HIDE_TARGET'].value = true;
+        GM_config.fields['HIDE_SOURCE'].value = false;
+        GM_config.fields['READ_TARGET'].value = true;
+        GM_config.fields['READ_SOURCE'].value = false;
+        GM_config.fields['REPLACE_TTS'].value = false;
+        break;
+
+    case 'Laddering':
+        GM_config.fields['HIDE_TARGET'].value = true;
+        GM_config.fields['HIDE_SOURCE'].value = true;
+        GM_config.fields['READ_TARGET'].value = true;
+        GM_config.fields['READ_SOURCE'].value = true;
+        GM_config.fields['REPLACE_TTS'].value = false;
+        break;
+
+    default:
+        break;
+    }
+
+    GM_config.fields['HIDE_TARGET'].reload();
+    GM_config.fields['HIDE_SOURCE'].reload();
+    GM_config.fields['READ_TARGET'].reload();
+    GM_config.fields['READ_SOURCE'].reload();
+    GM_config.fields['REPLACE_TTS'].reload();
+}
+
 function showConfig() {
-	GM_config.open();
+    GM_config.open();
 }
 
 function getConfig() {
@@ -592,10 +646,7 @@ function isSayAnswer(from) {
 
 function isSayQuestion(lang)
 {
-    if (isReverseTree())
-        return lang == targetLang;
-    else
-        return (lang == sourceLang) && isSayAnswer(lang);
+    return (lang == sourceLang) && isSayAnswer(lang);
 }
 
 function updateButton() {
@@ -608,7 +659,7 @@ function updateButton() {
         button.textContent = "Enhanced tree!";
         button.className = "btn btn-standard right btn-store selected";
     } else {
-        button.textContent = "Reverse tree?";
+        button.textContent = "Normal tree";
         button.className = "btn btn-standard right btn-store";
     }
 }
@@ -622,14 +673,14 @@ var grade, challenge;
 function onChange() {
     var newclass = document.getElementById("app").className;
     
+    sourceLang = duo.user.attributes.ui_language;
+    targetLang = duo.user.attributes.learning_language;
     if(/home/.test(newclass) && !document.getElementById("reverse-tree-enhancer-button")){
         var tree = document.getElementsByClassName("tree")[0];
         var button = document.createElement("button");
         button.id = "reverse-tree-enhancer-button";
         button.onclick = showConfig;
         tree.insertBefore(button, tree.firstChild);
-        sourceLang = duo.user.attributes.ui_language;
-        targetLang = duo.user.attributes.learning_language;
         updateConfig(); // Make GM_Config point to this language setup
         updateButton()(); // Read setup
     }
@@ -647,14 +698,6 @@ function onChange() {
         // console.debug("New class: " + newclass);
 
         hideSoundErrorBox();
-
-        if (isReverseTree()) {
-            targetLang = duo.user.attributes.ui_language;
-            sourceLang = duo.user.attributes.learning_language;
-        } else {
-            sourceLang = duo.user.attributes.ui_language;
-            targetLang = duo.user.attributes.learning_language;
-        }
 
         if (!isEnhancedTree()) {
             removeCSSHiding();
@@ -680,7 +723,6 @@ function onChange() {
 
         if (!isReverseTree()) {
             removeCSSHiding();
-            return;
         }
 
         if (/judge/.test(newclass)) {
@@ -709,7 +751,8 @@ new MutationObserver(onChange).observe(document.body, {attributes: true, childLi
 				var quoted_text = encodeURIComponent(d.sentence.replace("/"," "));
 				if (isReverseTree()) return; // Don't speak in reverse tree
 				if (isReplaceTTS()) {
-		            targetLang = duo.user.attributes.learning_language;
+				    sourceLang = duo.user.attributes.ui_language;
+				    targetLang = duo.user.attributes.learning_language;
 					say(quoted_text, sourceLang);
 					return;
 				}
