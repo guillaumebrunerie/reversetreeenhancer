@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         Duoling Reverse Tree Enhancer
+// @name         Duolingo Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
 // @version      0.5.0
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
