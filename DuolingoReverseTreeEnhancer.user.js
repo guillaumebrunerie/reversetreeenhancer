@@ -742,6 +742,9 @@ function onChange() {
     }
 }
 
+setTimeout(BingSetup, 1500);
+setTimeout(updateConfig, 1000);
+
 new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
 
 (function($) {
@@ -773,6 +776,4 @@ new MutationObserver(onChange).observe(document.body, {attributes: true, childLi
 	}
 }(jQuery));
 
-updateConfig();
-BingSetup();
-
+console.log("Reverse Tree Enhancer ready");
