@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Reverse Tree Enhancer
 // @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.5.0
+// @version      0.5.1
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -344,7 +344,7 @@ function challengeTranslate(lang) {
         cell.className = "text-to-translate";
         cell.onclick = null
     }
-    if ((grade.children.length > 0) && isSayAnswer(answer)) {
+    if ((grade.children.length > 0) && isSayText(answer)) {
         var betterAnswer = grade.getElementsByTagName("h1")[0].getElementsByTagName("span");
         // Hack for making timed practice work
         var isTimedPractice = (grade.getElementsByClassName("icon-clock-medium").length !== 0);
@@ -373,7 +373,7 @@ function challengeJudge(){
             textCell.style.display = "block";
         }
         
-        if (isSayAnswer(sourceLang))
+        if (isSayText(sourceLang))
             say(textCell.textContent, sourceLang);
     } else {
         textCell.style.color = "";
@@ -394,7 +394,7 @@ function challengeSelect(){
 		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
 		span = hone.getElementsByTagName("span")[0];
 
-		if (isSayAnswer(sourceLang))
+		if (isSayText(sourceLang))
 		    say(span.textContent, sourcetLang);
         if (isHideText(sourceLang)) {
 			span.style.color = hColor;
@@ -418,17 +418,19 @@ function challengeName(){
        	hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
 		span = hone.getElementsByTagName("span")[0];
 
-        if (isSayAnswer(sourceLang))
+        if (isSayText(sourceLang))
             say(span.textContent, sourceLang);
 
         if (isHideText(sourceLang)) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
         }
-        for(i=0; i < lis.length; i++){
-            lis[i].style.backgroundColor = hColor;
-            lis[i].dataset.oldImage = lis[i].style.backgroundImage;
-            lis[i].style.backgroundImage = "";
+        if (isHidePics()) {
+            for (i = 0; i < lis.length; i++) {
+                lis[i].style.backgroundColor = hColor;
+                lis[i].dataset.oldImage = lis[i].style.backgroundImage;
+                lis[i].style.backgroundImage = "";
+            }
         }
     } else {
         span = hone.getElementsByTagName("span")[0];
@@ -444,7 +446,7 @@ function challengeName(){
 /* Multiple-choice question where we have to choose a word in the source language. Those are useless exercices, but we can’t get rid of them. */
 function challengeForm(){
     if(grade.children.length !== 0){
-        if (isSayAnswer(sourceLang))
+        if (isSayText(sourceLang))
             say(grade.getElementsByTagName("h2")[0].children[1].textContent, sourceLang);
     }
 }
@@ -492,6 +494,12 @@ function updateConfig() {
             'READ_SOURCE' : // This is the id of the field
             {
                 'label' : 'Read text in ' + duo.language_names_ui['en'][sourceLang],
+                'type' : 'checkbox',
+                'default' : false
+            },
+            'HIDE_PICS' : // This is the id of the field
+            {
+                'label' : 'Hide pictures',
                 'type' : 'checkbox',
                 'default' : false
             },
@@ -566,6 +574,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['READ_TARGET'].value = false;
         GM_config.fields['READ_SOURCE'].value = false;
         GM_config.fields['REPLACE_TTS'].value = false;
+        GM_config.fields['HIDE_PICS'].value = false;
         break;
 
     case 'Reverse':
@@ -574,6 +583,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['READ_TARGET'].value = false;
         GM_config.fields['READ_SOURCE'].value = true;
         GM_config.fields['REPLACE_TTS'].value = true;
+        GM_config.fields['HIDE_PICS'].value = true;
         break
 
     case 'Enhanced':
@@ -582,6 +592,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['READ_TARGET'].value = true;
         GM_config.fields['READ_SOURCE'].value = false;
         GM_config.fields['REPLACE_TTS'].value = false;
+        GM_config.fields['HIDE_PICS'].value = false;
         break;
 
     case 'Laddering':
@@ -590,6 +601,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['READ_TARGET'].value = true;
         GM_config.fields['READ_SOURCE'].value = true;
         GM_config.fields['REPLACE_TTS'].value = false;
+        GM_config.fields['HIDE_PICS'].value = false;
         break;
 
     default:
@@ -601,6 +613,7 @@ function setConfigDefaults(treeType)
     GM_config.fields['READ_TARGET'].reload();
     GM_config.fields['READ_SOURCE'].reload();
     GM_config.fields['REPLACE_TTS'].reload();
+    GM_config.fields['HIDE_PICS'].reload();
 }
 
 function showConfig() {
@@ -615,6 +628,13 @@ function getConfig() {
     reverseTrees[item] = isReverseTree();
     localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees));
     // Read the current TTS preferences
+    var hasEnhancement = GM_config.get('HIDE_TARGET')
+            || GM_config.get('HIDE_SOURCE') || GM_config.get('READ_TARGET')
+            || GM_config.get('READ_SOURCE') || GM_config.get('HIDE_PICS');
+    if (!isEnhancedTree() && hasEnhancement) {
+        GM_config.set('IS_ENHANCED', "Enhanced");
+    }
+
     sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
     updateButton();
 }
@@ -632,6 +652,10 @@ function isReplaceTTS() {
     return GM_config.get('REPLACE_TTS');
 }
 
+function isHidePics() {
+    return GM_config.get('HIDE_PICS');
+}
+
 function isHideText(from) {
     if (targetLang == from)
         return GM_config.get('HIDE_TARGET');
@@ -639,7 +663,7 @@ function isHideText(from) {
         return GM_config.get('HIDE_SOURCE');
 }
 
-function isSayAnswer(from) {
+function isSayText(from) {
     if (targetLang == from)
         return GM_config.get('READ_TARGET');
     else
@@ -648,7 +672,7 @@ function isSayAnswer(from) {
 
 function isSayQuestion(lang)
 {
-    return (lang == sourceLang) && isSayAnswer(lang);
+    return (lang == sourceLang) && isSayText(lang);
 }
 
 function updateButton() {
