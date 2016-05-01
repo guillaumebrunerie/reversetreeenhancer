@@ -1,16 +1,16 @@
 // ==UserScript==
-// @name         Duolingo Reverse Tree Enhancer
-// @namespace    https://github.com/guillaumebrunerie/reversetreeenhancer
-// @version      0.5.1
+// @name         Duolingo Tree Enhancer
+// @namespace    https://github.com/camiloaa/duolingotreeenhancer
+// @version      0.5.2
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
 // @require      https://github.com/camiloaa/GM_config/raw/master/gm_config.js
-// @downloadURL  https://github.com/camiloaa/reversetreeenhancer/raw/master/DuolingoReverseTreeEnhancer.user.js
+// @downloadURL  https://github.com/camiloaa/duolingotreeenhancer/raw/master/DuolingoTreeEnhancer.user.js
 // @grant        none
 // ==/UserScript==
 
-console.debug('Duolingo: Reverse Tree Enhancer');
+console.debug('Duolingo: Tree Enhancer');
 
 /* The color used for hiding */
 var hColor = "lightgray";
@@ -273,7 +273,7 @@ var sayFuncOrder = [ 'bing', 'baidu', 'yandex', 'google', ];
 // Say a sentence
 function say(sentence, lang) {
     sentence = sentence.replace(/•/g,"");
-    console.debug("Reverse Tree Enhancer: saying '" + sentence + "'");
+    console.debug("Duolingo Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
     playSound(sentence, lang, false);
     lastSaidSlow = false;
@@ -283,7 +283,7 @@ function say(sentence, lang) {
 // Repeat las sentece slowly
 function sayslow(lang) {
     var sentence = sentenceGlobal;
-    console.debug("Reverse Tree Enhancer: saying slowly '" + sentence + "'");
+    console.debug("Duolingo Tree Enhancer: saying slowly '" + sentence + "'");
     playSound(sentenceGlobal, lang, true);
     lastSaidSlow = true;
     lastSaidLang = lang;
@@ -800,4 +800,4 @@ new MutationObserver(onChange).observe(document.body, {attributes: true, childLi
 	}
 }(jQuery));
 
-console.log("Reverse Tree Enhancer ready");
+console.log("Duolingo Tree Enhancer ready");
