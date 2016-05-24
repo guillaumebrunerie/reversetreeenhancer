@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.5.2
+// @version      0.5.3
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -233,7 +233,9 @@ function ansObserver() {
 }
 
 function BingSetup() {
-	var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+	var MutationObserver = window.MutationObserver ||
+	                       window.WebKitMutationObserver ||
+	                       window.MozMutationObserver;
 	var observerConfig = {
 			attributes: true,
 			childList: true,
@@ -366,6 +368,13 @@ function challengeTranslate(lang) {
 function challengeJudge(){
     var textCell = challenge.getElementsByClassName("col-left")[0].getElementsByTagName("bdi")[0];
     var ul = challenge.getElementsByTagName("ul")[0];
+
+    if (!document.getElementById("timer") && isHideTranslations()) {
+		addCSSHiding();
+	} else {
+		removeCSSHiding();
+	}
+
     if(grade.children.length === 0){
         if (isHideText(sourceLang)) {
             textCell.style.color = hColor;
@@ -388,7 +397,8 @@ var quotMark = /(["“”「」])/;
 function challengeSelect(){
     var hone = challenge.getElementsByTagName("h1")[0];
     var ul = challenge.getElementsByTagName("ul")[0];
-    var span;
+	    var span;
+
     if(grade.children.length === 0){
         var sp = hone.textContent.split(quotMark);
 		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
@@ -443,7 +453,8 @@ function challengeName(){
     }
 }
 
-/* Multiple-choice question where we have to choose a word in the source language. Those are useless exercices, but we can’t get rid of them. */
+/* Multiple-choice question where we have to choose a word in the source language.
+ * Those are useless exercices, but we can’t get rid of them. */
 function challengeForm(){
     if(grade.children.length !== 0){
         if (isSayText(sourceLang))
@@ -460,56 +471,65 @@ function updateConfig() {
 		fields : // Fields object
 		{
 			'HEADER_1' : {
-				'section' : [],
+				'section' : ['Select the kind of tree you want to play.',
+				             'Change the details to fit your taste.<br>' +
+				             'Default settings for different kind of trees ' +
+				             'are \'hard\' mode.<br>Hiding less stuff makes ' +
+				             'the tree easier to complete'],
 				'type' : 'hidden', // Makes this setting a text field
 			},
-			'IS_ENHANCED' : // This is the id of the field
+			'IS_ENHANCED' : // Choose a pre-defined profile
 			{
 				'label' : 'Type of tree',
 				'type' : 'select', // Makes this setting a dropdown
 				'options' : [ 'Normal', 'Reverse', 'Enhanced', 'Laddering' ],
-				// Choose a pre-defined profile
 				'default' : 'Normal', // Do nothing by default
 				'change' : function() {
 		            setConfigDefaults(this[this.selectedIndex].value); }
 			},
-            'HIDE_TARGET' : // This is the id of the field
+            'HIDE_TARGET' : // Hide questions in Duo's target language
             {
                 'label' : 'Hide questions in ' + duo.language_names_ui['en'][targetLang],
                 'type' : 'checkbox',
                 'default' : false
             },
-            'HIDE_SOURCE' : // This is the id of the field
+            'HIDE_SOURCE' : // Hide questions in Duo's source language
             {
                 'label' : 'Hide questions in ' + duo.language_names_ui['en'][sourceLang],
                 'type' : 'checkbox',
                 'default' : false
             },
-            'READ_TARGET' : // This is the id of the field
+            'READ_TARGET' : // Read text in Duo's target language
             {
                 'label' : 'Read text in ' + duo.language_names_ui['en'][targetLang],
                 'type' : 'checkbox',
                 'default' : false
             },
-            'READ_SOURCE' : // This is the id of the field
+            'READ_SOURCE' : // Read text in Duo's target language
             {
                 'label' : 'Read text in ' + duo.language_names_ui['en'][sourceLang],
                 'type' : 'checkbox',
                 'default' : false
             },
-            'HIDE_PICS' : // This is the id of the field
+            'HIDE_PICS' :
             {
                 'label' : 'Hide pictures',
                 'type' : 'checkbox',
                 'default' : false
             },
-			'REPLACE_TTS' : // This is the id of the field
+            'HIDE_TRANSLATIONS' :
+            {
+                'label' : 'Hide translations in ' + duo.language_names_ui['en'][targetLang],
+                'type' : 'checkbox',
+                'default' : false
+            },
+			'REPLACE_TTS' :
 			{
 				'label' : 'Replace Duo\'s TTS',
 				'type' : 'checkbox',
 				'default' : false
 			},
-			'TTS_ORDER' : // This is the id of the field
+			'TTS_ORDER' :
 			{
 				'label' : 'List of TTS services ', // Appears next to field
 				'type' : 'text', // Makes this setting a text field
@@ -575,6 +595,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['READ_SOURCE'].value = false;
         GM_config.fields['REPLACE_TTS'].value = false;
         GM_config.fields['HIDE_PICS'].value = false;
+        GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
 
     case 'Reverse':
@@ -584,6 +605,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['READ_SOURCE'].value = true;
         GM_config.fields['REPLACE_TTS'].value = true;
         GM_config.fields['HIDE_PICS'].value = true;
+        GM_config.fields['HIDE_TRANSLATIONS'].value = true;
         break
 
     case 'Enhanced':
@@ -593,6 +615,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['READ_SOURCE'].value = false;
         GM_config.fields['REPLACE_TTS'].value = false;
         GM_config.fields['HIDE_PICS'].value = false;
+        GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
 
     case 'Laddering':
@@ -602,6 +625,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['READ_SOURCE'].value = true;
         GM_config.fields['REPLACE_TTS'].value = false;
         GM_config.fields['HIDE_PICS'].value = false;
+        GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
 
     default:
@@ -614,6 +638,7 @@ function setConfigDefaults(treeType)
     GM_config.fields['READ_SOURCE'].reload();
     GM_config.fields['REPLACE_TTS'].reload();
     GM_config.fields['HIDE_PICS'].reload();
+    GM_config.fields['HIDE_TRANSLATIONS'].reload();
 }
 
 function showConfig() {
@@ -656,6 +681,10 @@ function isHidePics() {
     return GM_config.get('HIDE_PICS');
 }
 
+function isHideTranslations() {
+    return GM_config.get('HIDE_TRANSLATIONS');
+}
+
 function isHideText(from) {
     if (targetLang == from)
         return GM_config.get('HIDE_TARGET');
@@ -678,11 +707,8 @@ function isSayQuestion(lang)
 function updateButton() {
     var button = document.getElementById("reverse-tree-enhancer-button");
     if(button === null){ return; }
-    if(isReverseTree()) {
-        button.textContent = "Reverse tree!";
-        button.className = "btn btn-standard right btn-store selected";
-    } else if(isEnhancedTree()) {
-        button.textContent = "Enhanced tree!";
+    if(isEnhancedTree()) {
+        button.textContent = GM_config.get('IS_ENHANCED') + " tree!";
         button.className = "btn btn-standard right btn-store selected";
     } else {
         button.textContent = "Normal tree";
@@ -731,11 +757,6 @@ function onChange() {
         } else {
             // console.log("Reverse and hide");
         }
-        if (!document.getElementById("timer")) {
-            addCSSHiding();
-        } else {
-            removeCSSHiding();
-        }
 
         var sec = document.getElementById("session-element-container");
         if(!sec){return;}
@@ -745,10 +766,6 @@ function onChange() {
         if (/translate/.test(newclass)) {
             lang = challenge.getElementsByTagName("textarea")[0].getAttribute("lang");
             challengeTranslate(lang);
-        }
-
-        if (!isReverseTree()) {
-            removeCSSHiding();
         }
 
         if (/judge/.test(newclass)) {
@@ -778,10 +795,11 @@ new MutationObserver(onChange).observe(document.body, {attributes: true, childLi
 		$.fn.tts = function(d) {
 			if (d.tts_type === "sentence" && typeof d.sentence !== 'undefined' ) {
 				var quoted_text = encodeURIComponent(d.sentence.replace("/"," "));
-				if (isReverseTree()) return; // Don't speak in reverse tree
+			    sourceLang = duo.user.attributes.ui_language;
+			    targetLang = duo.user.attributes.learning_language;
+				if (!isSayText(sourceLang))
+					return; // Don't speak in forward tree
 				if (isReplaceTTS()) {
-				    sourceLang = duo.user.attributes.ui_language;
-				    targetLang = duo.user.attributes.learning_language;
 					say(quoted_text, sourceLang);
 					return;
 				}
