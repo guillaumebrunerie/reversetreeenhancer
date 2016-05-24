@@ -470,68 +470,83 @@ function updateConfig() {
 		title : 'Enhanced Tree Configurator',
 		fields : // Fields object
 		{
-			'HEADER_1' : {
-				'section' : ['Select the kind of tree you want to play.',
-				             'Change the details to fit your taste.<br>' +
-				             'Default settings for different kind of trees ' +
-				             'are \'hard\' mode.<br>Hiding less stuff makes ' +
-				             'the tree easier to complete'],
-				'type' : 'hidden', // Makes this setting a text field
+			'SECTION_0' : {
+				'section' : [ '', '' ],
+				'type' : 'hidden'
 			},
-			'IS_ENHANCED' : // Choose a pre-defined profile
-			{
-				'label' : 'Type of tree',
-				'type' : 'select', // Makes this setting a dropdown
+			'IS_ENHANCED' : { // Choose a pre-defined profile
+				'label' : 'Select the kind of tree you want to play:',
 				'options' : [ 'Normal', 'Reverse', 'Enhanced', 'Laddering' ],
 				'default' : 'Normal', // Do nothing by default
 				'change' : function() {
-		            setConfigDefaults(this[this.selectedIndex].value); }
+					setConfigDefaults(this[this.selectedIndex].value);
+				},
+				'type' : 'select', // Makes this setting a dropdown
 			},
-            'HIDE_TARGET' : // Hide questions in Duo's target language
-            {
-                'label' : 'Hide questions in ' + duo.language_names_ui['en'][targetLang],
-                'type' : 'checkbox',
-                'default' : false
-            },
-            'HIDE_SOURCE' : // Hide questions in Duo's source language
-            {
-                'label' : 'Hide questions in ' + duo.language_names_ui['en'][sourceLang],
-                'type' : 'checkbox',
-                'default' : false
-            },
-            'READ_TARGET' : // Read text in Duo's target language
-            {
-                'label' : 'Read text in ' + duo.language_names_ui['en'][targetLang],
-                'type' : 'checkbox',
-                'default' : false
-            },
-            'READ_SOURCE' : // Read text in Duo's target language
-            {
-                'label' : 'Read text in ' + duo.language_names_ui['en'][sourceLang],
-                'type' : 'checkbox',
-                'default' : false
-            },
-            'HIDE_PICS' :
-            {
-                'label' : 'Hide pictures',
-                'type' : 'checkbox',
-                'default' : false
-            },
-            'HIDE_TRANSLATIONS' :
-            {
-                'label' : 'Hide translations in ' + duo.language_names_ui['en'][targetLang],
-                'type' : 'checkbox',
-                'default' : false
-            },
-			'REPLACE_TTS' :
-			{
-				'label' : 'Replace Duo\'s TTS',
+			'SECTION_1' : {
+				'section' : [ '', 'Hide questions in:' ],
+				'type' : 'hidden'
+			},
+			'HIDE_TARGET' : { // Hide questions in Duo's target language
+				'section' : [],
+				'labelPos' : 'right',
+				'label' : duo.language_names_ui['en'][targetLang], // SECTION_2
 				'type' : 'checkbox',
 				'default' : false
 			},
-			'TTS_ORDER' :
+			'HIDE_SOURCE' : { // Hide questions in Duo's source language
+				'label' : duo.language_names_ui['en'][sourceLang],
+				'labelPos' : 'right',
+				'type' : 'checkbox',
+				'default' : false
+			},
+			'HIDE_TRANSLATIONS' : {
+				'label' : 'Multiple selection',
+				'labelPos' : 'right',
+				'type' : 'checkbox',
+				'default' : false
+			},
+			'SECTION_3' : {
+				'section' : [ '', 'Read text in:' ],
+				'type' : 'hidden'
+			},
+			'READ_TARGET' : { // Read text in Duo's target language
+				'section' : [], // SECTION_4
+				'label' : duo.language_names_ui['en'][targetLang],
+				'labelPos' : 'right',
+				'type' : 'checkbox',
+				'default' : false
+			},
+			'READ_SOURCE' : // Read text in Duo's target language
 			{
-				'label' : 'List of TTS services ', // Appears next to field
+				'label' : duo.language_names_ui['en'][sourceLang],
+				'labelPos' : 'right',
+				'type' : 'checkbox',
+				'default' : false
+			},
+			'SECTION_5' : {
+				'section' : [ '', 'Other options' ],
+				'type' : 'hidden'
+			},
+			'HIDE_PICS' : {
+				'section' : [], // SECTION_6
+				'label' : 'Hide pictures',
+				'labelPos' : 'right',
+				'type' : 'checkbox',
+				'default' : false
+			},
+			'REPLACE_TTS' : {
+				'label' : 'Replace Duo\'s TTS',
+				'labelPos' : 'right',
+				'type' : 'checkbox',
+				'default' : false
+			},
+			'SECTION_7' : {
+				'section' : [ '', '' ],
+				'type' : 'hidden'
+			},
+			'TTS_ORDER' : {
+				'label' : 'List of TTS services ',
 				'type' : 'text', // Makes this setting a text field
 				'default' : 'google yandex baidu'
 			/*
@@ -560,11 +575,18 @@ function updateConfig() {
 				"#GM_config .center { text-align: center; }",
 				"#GM_config .section_header_holder { margin-top: 8px; }",
 				"#GM_config .config_var { margin: 0 0 4px; }",
-				"#GM_config .section_header { background: #414141; border: 1px solid #000; color: #FFF;",
-				" font-size: 13pt; margin: 0; }",
-				"#GM_config .section_desc { background: #EFEFEF; border: 1px solid #CCC; color: #575757;"
-						+ " font-size: 9pt; margin: 0 0 6px; }" ].join('\n')
-				+ '\n',
+				"#GM_config .section_header { background: #F0F0F0; border: 1px solid #CCC; color: #404040; "
+						+ " font-size: 11pt; margin: 0; text-align: left; }",
+				"#GM_config .section_desc { background: #F0F0F0; border: 1px solid #CCC; color: #404040;"
+						+ " font-size: 11pt; margin: 0 0 6px; text-align: left; }",
+				"#GM_config_section_0 .config_var, #GM_config_section_7 .config_var "
+						+ " { background: #F0F0F0; border: 1px solid #CCC; color: #404040;"
+						+ " font-size: 11pt; margin: 0 0 6px; text-align: left; }",
+				"#GM_config_section_2 .config_var, "
+						+ "#GM_config_section_4 .config_var, "
+						+ "#GM_config_section_6 .config_var "
+						+ "{ margin: 5% !important;display: inline !important; }", 
+				].join('\n') + '\n',
 		events : { // Callback functions object
 			save : function() {
 				GM_config.close()
@@ -795,11 +817,11 @@ new MutationObserver(onChange).observe(document.body, {attributes: true, childLi
 		$.fn.tts = function(d) {
 			if (d.tts_type === "sentence" && typeof d.sentence !== 'undefined' ) {
 				var quoted_text = encodeURIComponent(d.sentence.replace("/"," "));
-			    sourceLang = duo.user.attributes.ui_language;
-			    targetLang = duo.user.attributes.learning_language;
-				if (!isSayText(sourceLang))
-					return; // Don't speak in forward tree
-				if (isReplaceTTS()) {
+				sourceLang = duo.user.attributes.ui_language;
+				targetLang = duo.user.attributes.learning_language;
+				if (!isSayText(targetLang) && isEnhancedTree()) {
+					return; // User-disabled TTS
+				} else if (isReplaceTTS()) {
 					say(quoted_text, sourceLang);
 					return;
 				}
