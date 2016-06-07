@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.5.3
+// @version      0.5.4
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -530,16 +530,22 @@ function updateConfig() {
 			},
 			'HIDE_PICS' : {
 				'section' : [], // SECTION_6
-				'label' : 'Hide pictures',
+				'label' : 'Hide pics',
 				'labelPos' : 'right',
 				'type' : 'checkbox',
 				'default' : false
 			},
 			'REPLACE_TTS' : {
-				'label' : 'Replace Duo\'s TTS',
+				'label' : 'Replace TTS',
 				'labelPos' : 'right',
 				'type' : 'checkbox',
 				'default' : false
+			},
+			'SPELL_CHECK' : {
+				'label' : 'Check spelling',
+				'labelPos' : 'right',
+				'type' : 'checkbox',
+				'default' : true
 			},
 			'SECTION_7' : {
 				'section' : [ '', '' ],
@@ -707,6 +713,10 @@ function isHideTranslations() {
     return GM_config.get('HIDE_TRANSLATIONS');
 }
 
+function isCheckSpell() {
+    return GM_config.get('SPELL_CHECK');
+}
+
 function isHideText(from) {
     if (targetLang == from)
         return GM_config.get('HIDE_TARGET');
@@ -787,6 +797,9 @@ function onChange() {
 
         if (/translate/.test(newclass)) {
             lang = challenge.getElementsByTagName("textarea")[0].getAttribute("lang");
+            if (isCheckSpell()) {
+                challenge.getElementsByTagName("textarea")[0].setAttribute("spellcheck", "true");
+	    }
             challengeTranslate(lang);
         }
 
@@ -801,6 +814,11 @@ function onChange() {
         }
         if (/form/.test(newclass)) {
             challengeForm();
+        }
+        if (/listen/.test(newclass)) {
+            if (isCheckSpell()) {
+                challenge.getElementsByTagName("input")[0].setAttribute("spellcheck", "true");
+	    }
         }
     }
 }
