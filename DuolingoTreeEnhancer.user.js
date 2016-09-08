@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.5.4
+// @version      0.5.5
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -32,10 +32,12 @@ function toStyleElem(css) {
 /* Stylesheet for the button, the error box and the show-on-click box */
 var css_button_seb = toStyleElem('' +
 '#reverse-tree-enhancer-button { margin-left: 10px; }\n' +
-'#reverse-tree-enhancer-button.selected { background-color: purple; color: white; border-color: purple; }\n' +
+'#reverse-tree-enhancer-button.selected { background-color: purple; color: ' +
+'white; border-color: purple; }\n' +
 '#reverse-tree-enhancer-button.selected:hover { background-color: #A000A0; border-color: #A000A0; }\n' +
 '\n' +
-'#sound-error-box { left: 50%; transform: translate(-50%, 0); top: 20px; color: #FF3333; font-weight: bold; }\n' +
+'#sound-error-box { left: 50%; transform: translate(-50%, 0); top: 20px; ' +
+'color: #FF3333; font-weight: bold; }\n' +
 '#sound-error-box .tooltip-inner { color: #FF3333; font-weight: bold; }\n' +
 '#sound-error-box button { padding: 5px 10px; border: none; border-radius: 100px; }\n' +
 '#sound-error-box button:hover { background-color: #EEE; }\n' +
@@ -47,12 +49,17 @@ document.head.appendChild(css_button_seb);
 
 /* Stylesheet for the hiding for the multiple-choice questions */
 var css_hiding = toStyleElem('' +
-'.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; }\n' +
-'.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) input[type=checkbox] { visibility: hidden; }\n' +
+'.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) ' +
+'{ color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; }\n' +
+'.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) ' +
+'input[type=checkbox] { visibility: hidden; }\n' +
 '\n' +
-'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) { color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; }\n' +
-'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) input[type=radio] { visibility: hidden; }\n' +
-'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) .select-images-frame { visibility: hidden; }');
+'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) { color: ' + hColor +
+'; background-color: ' + hColor + '; border-color: ' + hColor + '; }\n' +
+'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) ' +
+'input[type=radio] { visibility: hidden; }\n' +
+'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) .select-images-frame ' +
+'{ visibility: hidden; }');
 
 function addCSSHiding() {
     document.head.appendChild(css_hiding);
@@ -67,7 +74,9 @@ function removeCSSHiding() {
 var soundErrorBox = document.createElement('div');
 soundErrorBox.className = "tooltip top";
 soundErrorBox.id = "sound-error-box";
-soundErrorBox.innerHTML = '<div class="tooltip-inner">Error when loading the sound, click <a id="sound-error-link" target="_blank">here</a> and try to fix the problem. <button id="sound-error-button">Done</button></div>';
+soundErrorBox.innerHTML = '<div class="tooltip-inner">' +
+'Error when loading the sound, click <a id="sound-error-link" target="_blank">here</a> ' +
+'and try to fix the problem. <button id="sound-error-button">Done</button></div>';
 
 function tryagain() {
     hideSoundErrorBox();
@@ -365,30 +374,32 @@ function challengeTranslate(lang) {
 }
 
 /* Multiple-choice translation question */
-function challengeJudge(){
-    var textCell = challenge.getElementsByClassName("col-left")[0].getElementsByTagName("bdi")[0];
-    var ul = challenge.getElementsByTagName("ul")[0];
+function challengeJudge() {
+	var textCell = challenge.getElementsByClassName("col-left")[0]
+			.getElementsByTagName("bdi")[0];
+	var ul = challenge.getElementsByTagName("ul")[0];
 
-    if (!document.getElementById("timer") && isHideTranslations()) {
+	if (!document.getElementById("timer") && isHideTranslations()) {
 		addCSSHiding();
 	} else {
 		removeCSSHiding();
 	}
 
-    if(grade.children.length === 0){
-        if (isHideText(sourceLang)) {
-            textCell.style.color = hColor;
-            textCell.style.backgroundColor = hColor;
-            textCell.style.display = "block";
-        }
-        
-        if (isSayText(sourceLang))
-            say(textCell.textContent, sourceLang);
-    } else {
-        textCell.style.color = "";
-        textCell.style.backgroundColor = "";
-        ul.className += " nothiding";
-    }
+	if (grade.children.length === 0) {
+		if (isHideText(sourceLang)) {
+			textCell.style.color = hColor;
+			textCell.style.backgroundColor = hColor;
+			textCell.style.display = "block";
+		}
+
+		if (isSayText(sourceLang))
+			say(textCell.textContent, sourceLang);
+	} else {
+		textCell.style.color = "";
+		textCell.style.backgroundColor = "";
+		ul.className += " nothiding";
+		removeCSSHiding();
+	}
 }
 
 var quotMark = /(["“”「」])/;
@@ -398,6 +409,12 @@ function challengeSelect(){
     var hone = challenge.getElementsByTagName("h1")[0];
     var ul = challenge.getElementsByTagName("ul")[0];
 	    var span;
+
+    if (isHidePics()) {
+		addCSSHiding();
+    } else {
+		removeCSSHiding();
+    }
 
     if(grade.children.length === 0){
         var sp = hone.textContent.split(quotMark);
@@ -415,6 +432,7 @@ function challengeSelect(){
         span.style.color = "";
         span.style.backgroundColor = "";
         ul.className += " nothiding";
+		removeCSSHiding();
     }
 }
 
@@ -566,7 +584,8 @@ function updateConfig() {
 			},
 		},
 		full_css : [
-				"#GM_config * * { font: 500 15px/20px 'museo-sans-rounded',sans-serif; margin-right: 6px; color: #333 }",
+				"#GM_config * * { font: 500 15px/20px 'museo-sans-rounded',sans-serif; "
+				        + "margin-right: 6px; color: #333 }",
 				"#GM_config { background: #FFF; }",
 				"#GM_config input[type='radio'] { margin-right: 8px; }",
 				"#GM_config .indent40 { margin-left: 40%; }",
@@ -576,13 +595,16 @@ function updateConfig() {
 				"#GM_config .saveclose_buttons { margin: 16px 10px 10px; padding: 2px 12px; }",
 				"#GM_config .reset, #GM_config .reset a,"
 						+ " #GM_config_buttons_holder { color: #000; text-align: right; }",
-				"#GM_config .config_header { font-size: 20pt; margin:0px; color: white; background: rgba(32, 166, 231, 0.8) linear-gradient(to bottom, #20A8E9, rgba(30, 158, 220, 0.5)) repeat-x scroll 0% 0%; border: 10px solid rgba(32, 166, 231, 0.8); }",
+				"#GM_config .config_header { font-size: 20pt; margin:0px; color: white; background: "
+				        + "rgba(32, 166, 231, 0.8) linear-gradient(to bottom, #20A8E9, "
+				        + "rgba(30, 158, 220, 0.5)) "
+				        + "repeat-x scroll 0% 0%; border: 10px solid rgba(32, 166, 231, 0.8); }",
 				"#GM_config .config_desc, #GM_config .section_desc, #GM_config .reset { font-size: 9pt; }",
 				"#GM_config .center { text-align: center; }",
 				"#GM_config .section_header_holder { margin-top: 8px; }",
 				"#GM_config .config_var { margin: 0 0 4px; }",
-				"#GM_config .section_header { background: #F0F0F0; border: 1px solid #CCC; color: #404040; "
-						+ " font-size: 11pt; margin: 0; text-align: left; }",
+				"#GM_config .section_header { background: #F0F0F0; border: 1px solid #CCC; "
+				        + "color: #404040; font-size: 11pt; margin: 0; text-align: left; }",
 				"#GM_config .section_desc { background: #F0F0F0; border: 1px solid #CCC; color: #404040;"
 						+ " font-size: 11pt; margin: 0 0 6px; text-align: left; }",
 				"#GM_config_section_0 .config_var, #GM_config_section_7 .config_var "
@@ -601,10 +623,10 @@ function updateConfig() {
 				getConfig();
 			},
 			open : function() {
-				this.frame.setAttribute('style','bottom: auto; border: 1px solid #000; display: none; height: 50%;'
-					      + ' left: 0; margin: 0; max-height: 95%; max-width: 95%; opacity: 0;'
-					      + ' overflow: auto; padding: 0; position: fixed; right: auto; top: 0;'
-					      + ' width: 50%; z-index: 9999;');
+				this.frame.setAttribute('style','bottom: auto; border: 1px solid #000;'
+						  + ' display: none; height: 50%; left: 0; margin: 0; max-height: 95%;'
+						  + ' max-width: 95%; opacity: 0; overflow: auto; padding: 0;'
+						  + ' position: fixed; right: auto; top: 0; width: 50%; z-index: 9999;');
 			}
 		}
 	};
