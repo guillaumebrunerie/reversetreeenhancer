@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.5.5
+// @version      0.5.6
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -146,6 +146,7 @@ function playSound(sentence, lang, slow) {
 
 var sentenceGlobal = null;
 var lastSaidSlow = false;
+var enableTTSGlobal = true;
 
 // Google TTS Functions
 // ====================
@@ -748,9 +749,9 @@ function isHideText(from) {
 
 function isSayText(from) {
     if (targetLang == from)
-        return GM_config.get('READ_TARGET');
+        return (GM_config.get('READ_TARGET') && enableTTSGlobal);
     else
-        return GM_config.get('READ_SOURCE')
+        return (GM_config.get('READ_SOURCE') && enableTTSGlobal);
 }
 
 function isSayQuestion(lang)
@@ -778,9 +779,15 @@ var grade, challenge;
 
 function onChange() {
     var newclass = document.getElementById("app").className;
-    
+
     sourceLang = duo.user.attributes.ui_language;
     targetLang = duo.user.attributes.learning_language;
+    if(/certification_test/.test(newclass)) {
+        enableTTSGlobal = false;
+    } else {
+        enableTTSGlobal = true;
+    }
+
     if(/home/.test(newclass) && !document.getElementById("reverse-tree-enhancer-button")){
         var tree = document.getElementsByClassName("tree")[0];
         var button = document.createElement("button");
@@ -859,10 +866,10 @@ new MutationObserver(onChange).observe(document.body, {attributes: true, childLi
 				var quoted_text = encodeURIComponent(d.sentence.replace("/"," "));
 				sourceLang = duo.user.attributes.ui_language;
 				targetLang = duo.user.attributes.learning_language;
-				if (!isSayText(targetLang) && isEnhancedTree()) {
-					return; // User-disabled TTS
-				} else if (isReplaceTTS()) {
-					say(quoted_text, sourceLang);
+				if (isReplaceTTS()) {
+					if (isSayText(targetLang)) {
+						say(quoted_text, sourceLang);
+					}
 					return;
 				}
 				duo.tts_base_url = ttsBase;
