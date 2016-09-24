@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.5.6
+// @version      0.5.7
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -578,7 +578,7 @@ function updateConfig() {
 			 * Bing is not listed, because it needs a developer key and a lot of
 			 * hacking to work. But if you are reading this, you probably know
 			 * what you are doing.
-			 * 
+			 *
 			 * Got to MSDN and ask for a key, and then check the script
 			 * MicrosoftTTSListener.user.js in this same repo to enable it!
 			 */
@@ -703,15 +703,18 @@ function getConfig() {
     var item = duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
     reverseTrees[item] = isReverseTree();
     localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees));
+
+    sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
+
     // Read the current TTS preferences
     var hasEnhancement = GM_config.get('HIDE_TARGET')
             || GM_config.get('HIDE_SOURCE') || GM_config.get('READ_TARGET')
             || GM_config.get('READ_SOURCE') || GM_config.get('HIDE_PICS');
     if (!isEnhancedTree() && hasEnhancement) {
         GM_config.set('IS_ENHANCED', "Enhanced");
+        updateButton();
+	GM_config.save();  // Won't return
     }
-
-    sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
     updateButton();
 }
 
