@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.5.7
+// @version      0.5.8
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -767,7 +767,7 @@ function updateButton() {
     if(button === null){ return; }
     if(isEnhancedTree()) {
         button.textContent = GM_config.get('IS_ENHANCED') + " tree!";
-        button.className = "btn btn-standard right btn-store selected";
+        button.className = "btn btn-standard right btn-store";
     } else {
         button.textContent = "Normal tree";
         button.className = "btn btn-standard right btn-store";
