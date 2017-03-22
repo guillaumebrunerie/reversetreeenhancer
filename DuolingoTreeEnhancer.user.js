@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.5.11
+// @version      0.6.0
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -445,6 +445,38 @@ function challengeForm(){
     }
 }
 
+function updateUser(ap, mic, spk) {
+	// This was reverse engineered, might stop working any time
+	url = "/2016-04-13/users/";
+	fields = "?fields=%2Cautoplay%2CenableMicrophone%2CenableSpeaker";
+	params = '{"":"","autoplay":' + ap +
+	',"enableMicrophone":' + mic +
+	',"enableSpeaker":' + spk +'}';
+
+	http=new XMLHttpRequest();
+	http.open("PATCH", url + duo.user.id + fields, true);
+
+	//Send the proper header information along with the request
+	http.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	http.setRequestHeader("Content-length", params.length);
+	http.setRequestHeader("Connection", "keep-alive");
+	http.setRequestHeader("Cookie", document.cookie);
+
+	http.onreadystatechange = function() {//Call a function when the state changes.
+		if(http.readyState == 4 && http.status == 200) {
+			console.log("Updated Setup " + params);
+		}
+	}
+	http.send(params);
+}
+
+function setUserConfig() {
+	var autoplay = isSayText(duo.user.attributes.learning_language);
+	var microphone = isSpeaking();
+	var speakers = isListening();
+	updateUser(autoplay, microphone, speakers);
+}
+
 function updateConfig() {
 	var item = "gm_conf-" + duo.user.attributes.ui_language + "-"
 			+ duo.user.attributes.learning_language;
@@ -507,6 +539,12 @@ function updateConfig() {
 				'type' : 'checkbox',
 				'default' : false
 			},
+			'LISTENING' : {
+				'label' : 'Listening exercises',
+				'labelPos' : 'right',
+				'type' : 'checkbox',
+				'default' : true
+			},
 			'SECTION_5' : {
 				'section' : [ '', 'Other options' ],
 				'type' : 'hidden'
@@ -520,6 +558,12 @@ function updateConfig() {
 			},
 			'SPELL_CHECK' : {
 				'label' : 'Check spelling',
+				'labelPos' : 'right',
+				'type' : 'checkbox',
+				'default' : true
+			},
+			'SPEAKING' : {
+				'label' : 'Speaking exercises',
 				'labelPos' : 'right',
 				'type' : 'checkbox',
 				'default' : true
@@ -595,6 +639,8 @@ function setConfigDefaults(treeType)
         GM_config.fields['HIDE_SOURCE'].value = false;
         GM_config.fields['READ_TARGET'].value = true;
         GM_config.fields['READ_SOURCE'].value = false;
+        GM_config.fields['LISTENING'].value = true;
+        GM_config.fields['SPEAKING'].value = true;
         GM_config.fields['HIDE_PICS'].value = false;
         GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
@@ -604,6 +650,8 @@ function setConfigDefaults(treeType)
         GM_config.fields['HIDE_SOURCE'].value = true;
         GM_config.fields['READ_TARGET'].value = false;
         GM_config.fields['READ_SOURCE'].value = true;
+        GM_config.fields['LISTENING'].value = false;
+        GM_config.fields['SPEAKING'].value = false;
         GM_config.fields['HIDE_PICS'].value = true;
         GM_config.fields['HIDE_TRANSLATIONS'].value = true;
         break
@@ -613,6 +661,8 @@ function setConfigDefaults(treeType)
         GM_config.fields['HIDE_SOURCE'].value = false;
         GM_config.fields['READ_TARGET'].value = true;
         GM_config.fields['READ_SOURCE'].value = false;
+        GM_config.fields['LISTENING'].value = true;
+        GM_config.fields['SPEAKING'].value = true;
         GM_config.fields['HIDE_PICS'].value = false;
         GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
@@ -622,6 +672,8 @@ function setConfigDefaults(treeType)
         GM_config.fields['HIDE_SOURCE'].value = true;
         GM_config.fields['READ_TARGET'].value = true;
         GM_config.fields['READ_SOURCE'].value = true;
+        GM_config.fields['LISTENING'].value = true;
+        GM_config.fields['SPEAKING'].value = true;
         GM_config.fields['HIDE_PICS'].value = false;
         GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
@@ -698,6 +750,14 @@ function isSayText(from) {
         return (GM_config.get('READ_TARGET') && enableTTSGlobal);
     else
         return (GM_config.get('READ_SOURCE') && enableTTSGlobal);
+}
+
+function isListening() {
+	return (GM_config.get(['LISTENING']));
+}
+
+function isSpeaking() {
+	return (GM_config.get(['SPEAKING']));
 }
 
 function isSayQuestion(lang)
@@ -799,37 +859,9 @@ function onChange() {
 }
 
 setTimeout(updateConfig, 1000);
+setTimeout(setUserConfig, 1200);
 
 new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
 
-//(function($) {
-//	if (typeof duo != 'undefined' && typeof $.tts_super == 'undefined') {
-//		var ttsBase = duo.tts_base_url, ttsPath = duo.tts_path;
-//		$.fn.tts_super = $.fn.tts;
-//		$.fn.tts = function(d) {
-//			if (d.tts_type === "sentence" && typeof d.sentence !== 'undefined' ) {
-//				var quoted_text = encodeURIComponent(d.sentence.replace("/"," "));
-//				sourceLang = duo.user.attributes.ui_language;
-//				targetLang = duo.user.attributes.learning_language;
-//				if (isReplaceTTS()) {
-//					if (isSayText(targetLang)) {
-//						say(quoted_text, sourceLang);
-//					}
-//					return;
-//				}
-//				duo.tts_base_url = ttsBase;
-//				duo.tts_path = ttsPath;
-//			} else {
-//				// Use default for tokens (single words)
-//				duo.tts_base_url = ttsBase;
-//				duo.tts_path = ttsPath;
-//			}
-//
-//			return this.each(function() {
-//				$(this).tts_super(d);
-//			});
-//		}
-//	}
-//}(jQuery));
 
 console.log("Duolingo Tree Enhancer ready");
