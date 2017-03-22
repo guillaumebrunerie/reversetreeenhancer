@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.5.9
+// @version      0.5.10
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -234,54 +234,17 @@ function baiduSay(sentence, lang, speed) {
 	return false;
 }
 
-// Setup MS TTS
-tts_req = document.createElement("li");
-tts_ans = document.createElement("li");
-
 function ansObserver() {
 	url = tts_ans.getAttribute("data-value");
 	playURL(url);
 }
 
-function BingSetup() {
-	var MutationObserver = window.MutationObserver ||
-	                       window.WebKitMutationObserver ||
-	                       window.MozMutationObserver;
-	var observerConfig = {
-			attributes: true,
-			childList: true,
-			subree: true,
-			};
-
-	tts_req.setAttribute("type", "hidden");
-	tts_req.setAttribute("id", "bing-tts-request");
-	tts_req.setAttribute("data-value", " ");
-	document.body.appendChild(tts_req);
-
-	tts_ans.setAttribute("type", "hidden");
-	tts_ans.setAttribute("id", "bing-tts-answer");
-	tts_ans.setAttribute("data-value", " ");
-	document.body.appendChild(tts_ans);
-
-	answerObserver = new MutationObserver(ansObserver);
-	answer = document.getElementById("bing-tts-answer");
-	answerObserver.observe(answer, observerConfig);
-}
-
-function bingSay(sentence, lang, slow) {
-	request = document.getElementById("bing-tts-request");
-	url = "language=" + googleTTSLang(lang) + "&text=" + sentence;
-	request.setAttribute("data-value", url);
-	return true;
-}
-
 // List of supported TTS providers
 var sayFunc = new Array();
 sayFunc['baidu']  = baiduSay;
-sayFunc['bing']   = bingSay;
 sayFunc['google'] = googleSay;
 sayFunc['yandex'] = yandexSay;
-var sayFuncOrder = [ 'bing', 'baidu', 'yandex', 'google', ];
+var sayFuncOrder = [ 'baidu', 'yandex', 'google', ];
 
 // Say a sentence
 function say(sentence, lang) {
@@ -856,7 +819,6 @@ function onChange() {
     }
 }
 
-setTimeout(BingSetup, 1500);
 setTimeout(updateConfig, 1000);
 
 new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
