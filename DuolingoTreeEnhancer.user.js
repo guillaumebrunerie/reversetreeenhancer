@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.5.10
+// @version      0.5.11
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -498,7 +498,7 @@ function updateConfig() {
 				'label' : duo.language_names_ui['en'][targetLang],
 				'labelPos' : 'right',
 				'type' : 'checkbox',
-				'default' : false
+				'default' : true
 			},
 			'READ_SOURCE' : // Read text in Duo's target language
 			{
@@ -518,12 +518,6 @@ function updateConfig() {
 				'type' : 'checkbox',
 				'default' : false
 			},
-			'REPLACE_TTS' : {
-				'label' : 'Replace TTS',
-				'labelPos' : 'right',
-				'type' : 'checkbox',
-				'default' : false
-			},
 			'SPELL_CHECK' : {
 				'label' : 'Check spelling',
 				'labelPos' : 'right',
@@ -536,16 +530,9 @@ function updateConfig() {
 			},
 			'TTS_ORDER' : {
 				'label' : 'List of TTS services ',
+				'labelPos' : 'left',
 				'type' : 'text', // Makes this setting a text field
 				'default' : 'google yandex baidu'
-			/*
-			 * Bing is not listed, because it needs a developer key and a lot of
-			 * hacking to work. But if you are reading this, you probably know
-			 * what you are doing.
-			 *
-			 * Got to MSDN and ask for a key, and then check the script
-			 * MicrosoftTTSListener.user.js in this same repo to enable it!
-			 */
 			},
 		},
 		full_css : [
@@ -589,9 +576,9 @@ function updateConfig() {
 			},
 			open : function() {
 				this.frame.setAttribute('style','bottom: auto; border: 1px solid #000;'
-						  + ' display: none; height: 50%; left: 0; margin: 0; max-height: 95%;'
+						  + ' display: none; height: 60%; left: 0; margin: 0; max-height: 95%;'
 						  + ' max-width: 95%; opacity: 0; overflow: auto; padding: 0;'
-						  + ' position: fixed; right: auto; top: 0; width: 50%; z-index: 9999;');
+						  + ' position: fixed; right: auto; top: 0; width: 70%; z-index: 9999;');
 			}
 		}
 	};
@@ -606,9 +593,8 @@ function setConfigDefaults(treeType)
     case 'Normal':
         GM_config.fields['HIDE_TARGET'].value = false;
         GM_config.fields['HIDE_SOURCE'].value = false;
-        GM_config.fields['READ_TARGET'].value = false;
+        GM_config.fields['READ_TARGET'].value = true;
         GM_config.fields['READ_SOURCE'].value = false;
-        GM_config.fields['REPLACE_TTS'].value = false;
         GM_config.fields['HIDE_PICS'].value = false;
         GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
@@ -618,7 +604,6 @@ function setConfigDefaults(treeType)
         GM_config.fields['HIDE_SOURCE'].value = true;
         GM_config.fields['READ_TARGET'].value = false;
         GM_config.fields['READ_SOURCE'].value = true;
-        GM_config.fields['REPLACE_TTS'].value = true;
         GM_config.fields['HIDE_PICS'].value = true;
         GM_config.fields['HIDE_TRANSLATIONS'].value = true;
         break
@@ -628,7 +613,6 @@ function setConfigDefaults(treeType)
         GM_config.fields['HIDE_SOURCE'].value = false;
         GM_config.fields['READ_TARGET'].value = true;
         GM_config.fields['READ_SOURCE'].value = false;
-        GM_config.fields['REPLACE_TTS'].value = false;
         GM_config.fields['HIDE_PICS'].value = false;
         GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
@@ -638,7 +622,6 @@ function setConfigDefaults(treeType)
         GM_config.fields['HIDE_SOURCE'].value = true;
         GM_config.fields['READ_TARGET'].value = true;
         GM_config.fields['READ_SOURCE'].value = true;
-        GM_config.fields['REPLACE_TTS'].value = false;
         GM_config.fields['HIDE_PICS'].value = false;
         GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
@@ -689,10 +672,6 @@ function isReverseTree() {
 
 function isEnhancedTree() {
     return GM_config.get('IS_ENHANCED') != 'Normal';
-}
-
-function isReplaceTTS() {
-    return GM_config.get('REPLACE_TTS');
 }
 
 function isHidePics() {
@@ -823,34 +802,34 @@ setTimeout(updateConfig, 1000);
 
 new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
 
-(function($) {
-	if (typeof duo != 'undefined' && typeof $.tts_super == 'undefined') {
-		var ttsBase = duo.tts_base_url, ttsPath = duo.tts_path;
-		$.fn.tts_super = $.fn.tts;
-		$.fn.tts = function(d) {
-			if (d.tts_type === "sentence" && typeof d.sentence !== 'undefined' ) {
-				var quoted_text = encodeURIComponent(d.sentence.replace("/"," "));
-				sourceLang = duo.user.attributes.ui_language;
-				targetLang = duo.user.attributes.learning_language;
-				if (isReplaceTTS()) {
-					if (isSayText(targetLang)) {
-						say(quoted_text, sourceLang);
-					}
-					return;
-				}
-				duo.tts_base_url = ttsBase;
-				duo.tts_path = ttsPath;
-			} else {
-				// Use default for tokens (single words)
-				duo.tts_base_url = ttsBase;
-				duo.tts_path = ttsPath;
-			}
-
-			return this.each(function() {
-				$(this).tts_super(d);
-			});
-		}
-	}
-}(jQuery));
+//(function($) {
+//	if (typeof duo != 'undefined' && typeof $.tts_super == 'undefined') {
+//		var ttsBase = duo.tts_base_url, ttsPath = duo.tts_path;
+//		$.fn.tts_super = $.fn.tts;
+//		$.fn.tts = function(d) {
+//			if (d.tts_type === "sentence" && typeof d.sentence !== 'undefined' ) {
+//				var quoted_text = encodeURIComponent(d.sentence.replace("/"," "));
+//				sourceLang = duo.user.attributes.ui_language;
+//				targetLang = duo.user.attributes.learning_language;
+//				if (isReplaceTTS()) {
+//					if (isSayText(targetLang)) {
+//						say(quoted_text, sourceLang);
+//					}
+//					return;
+//				}
+//				duo.tts_base_url = ttsBase;
+//				duo.tts_path = ttsPath;
+//			} else {
+//				// Use default for tokens (single words)
+//				duo.tts_base_url = ttsBase;
+//				duo.tts_path = ttsPath;
+//			}
+//
+//			return this.each(function() {
+//				$(this).tts_super(d);
+//			});
+//		}
+//	}
+//}(jQuery));
 
 console.log("Duolingo Tree Enhancer ready");
