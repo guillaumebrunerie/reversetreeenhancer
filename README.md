@@ -1,9 +1,13 @@
 # Duolingo Tree Enhancer
-User script for a better experince when using Duolingo
+User script for a better experince when using Duolingo.
 
-1. Make all the exercises listening exercises.
-2. Read answers aloud.
-3. Make Duo better for reverse trees.
+The follwing options are available:
+
+1. Keep per-tree settings for listening/speaking exercises. 
+2. Make all the exercises listening exercises (hide the question).
+3. Read answers aloud.
+4. Hide clues (e.g pictures).
+4. Make Duo better for reverse trees.
 
 
 ### Installation

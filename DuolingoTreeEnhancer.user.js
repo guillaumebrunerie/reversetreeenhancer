@@ -2,7 +2,7 @@
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
 // @version      0.6.1
-// @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
+// @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
 // @require      https://github.com/camiloaa/GM_config/raw/master/gm_config.js
@@ -559,7 +559,7 @@ function updateConfig() {
 				'label' : 'Check spelling',
 				'labelPos' : 'right',
 				'type' : 'checkbox',
-				'default' : true
+				'default' : false
 			},
 			'SPEAKING' : {
 				'label' : 'Speaking exercises',
@@ -641,6 +641,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['LISTENING'].value = true;
         GM_config.fields['SPEAKING'].value = true;
         GM_config.fields['HIDE_PICS'].value = false;
+        GM_config.fields['SPELL_CHECK'].value = false;
         GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
 
@@ -652,6 +653,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['LISTENING'].value = false;
         GM_config.fields['SPEAKING'].value = false;
         GM_config.fields['HIDE_PICS'].value = true;
+        GM_config.fields['SPELL_CHECK'].value = true;
         GM_config.fields['HIDE_TRANSLATIONS'].value = true;
         break
 
@@ -663,6 +665,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['LISTENING'].value = true;
         GM_config.fields['SPEAKING'].value = true;
         GM_config.fields['HIDE_PICS'].value = false;
+        GM_config.fields['SPELL_CHECK'].value = true;
         GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
 
@@ -674,6 +677,7 @@ function setConfigDefaults(treeType)
         GM_config.fields['LISTENING'].value = true;
         GM_config.fields['SPEAKING'].value = true;
         GM_config.fields['HIDE_PICS'].value = false;
+        GM_config.fields['SPELL_CHECK'].value = true;
         GM_config.fields['HIDE_TRANSLATIONS'].value = false;
         break;
 
@@ -685,8 +689,10 @@ function setConfigDefaults(treeType)
     GM_config.fields['HIDE_SOURCE'].reload();
     GM_config.fields['READ_TARGET'].reload();
     GM_config.fields['READ_SOURCE'].reload();
-    GM_config.fields['REPLACE_TTS'].reload();
+    GM_config.fields['LISTENING'].reload();
+    GM_config.fields['SPEAKING'].reload();
     GM_config.fields['HIDE_PICS'].reload();
+    GM_config.fields['SPELL_CHECK'].reload();
     GM_config.fields['HIDE_TRANSLATIONS'].reload();
 }
 
@@ -706,14 +712,15 @@ function getConfig() {
 
     // Read the current TTS preferences
     var hasEnhancement = GM_config.get('HIDE_TARGET')
-            || GM_config.get('HIDE_SOURCE') || GM_config.get('READ_TARGET')
+            || GM_config.get('HIDE_SOURCE') || GM_config.get('SPELL_CHECK')
             || GM_config.get('READ_SOURCE') || GM_config.get('HIDE_PICS');
     if (!isEnhancedTree() && hasEnhancement) {
         GM_config.set('IS_ENHANCED', "Enhanced");
-        updateButton();
-	GM_config.save();  // Won't return
+    } else if (!hasEnhancement) {
+        GM_config.set('IS_ENHANCED', "Normal");
     }
     updateButton();
+    GM_config.save();  // Won't return
 }
 
 /* Function dealing with the button on the home page */
@@ -872,10 +879,6 @@ function onChange() {
     }
 }
 
-// setTimeout(updateConfig, 1000);
-// setTimeout(setUserConfig, 1200);
-
 new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
-
 
 console.log("Duolingo Tree Enhancer ready");
