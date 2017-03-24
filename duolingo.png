@@ -1,0 +1,5095 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		<!DOCTYPE html>
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+	
+		
+		
+	
+	
+		
+	
+	
+	
+	
+	
+
+	
+	
+	
+
+	
+	
+	
+
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<html class="aui ltr" dir="ltr" xmlns="http://www.w3.org/1999/xhtml" lang="pl">
+
+<head>
+  <title>Zespół Katedr i Zakładów Informatyki Matematycznej Uniwersytetu Jagiellońskiego</title>
+  <script src="http://www.tcs.uj.edu.pl/uj-main-theme/js/jquery/jquery.js" type="text/javascript"></script>
+  <script src="http://www.tcs.uj.edu.pl/uj-main-theme/js/jquery/cookie.js" type="text/javascript"></script>
+  <script src="http://www.tcs.uj.edu.pl/uj-main-theme/js/jquery/ui.core.js" type="text/javascript"></script>
+  <script src="http://www.tcs.uj.edu.pl/uj-main-theme/js/jquery/ui.tabs.js" type="text/javascript"></script>
+  <script type="text/javascript">jQuery.noConflict();</script>
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+
+	
+
+	
+
+	
+
+	
+
+
+
+<link href="http://www.tcs.uj.edu.pl/uj-main-theme/images/favicon.ico" rel="Shortcut Icon" />
+
+
+
+
+
+	<link href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl" rel="canonical" />
+
+	
+
+			
+
+			<link href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;en_GB" hreflang="en-GB" rel="alternate" />
+
+	
+
+			
+				<link href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl" hreflang="x-default" rel="alternate" />
+			
+
+			<link href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;pl" hreflang="pl-PL" rel="alternate" />
+
+	
+
+
+
+
+
+<link class="lfr-css-file" href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;uj-main-theme&#x2f;css&#x2f;aui&#x2e;css&#x3f;browserId&#x3d;firefox&#x26;themeId&#x3d;ujmain_WAR_ujmaintheme&#x26;minifierType&#x3d;css&#x26;languageId&#x3d;pl_PL&#x26;b&#x3d;6205&#x26;t&#x3d;1475886785000" rel="stylesheet" type="text/css" />
+
+<link href="&#x2f;html&#x2f;css&#x2f;main&#x2e;css&#x3f;browserId&#x3d;firefox&#x26;themeId&#x3d;ujmain_WAR_ujmaintheme&#x26;minifierType&#x3d;css&#x26;languageId&#x3d;pl_PL&#x26;b&#x3d;6205&#x26;t&#x3d;1452605784000" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+
+
+	
+
+				<link href="http://www.tcs.uj.edu.pl/html/portlet/journal_content/css/main.css?browserId=firefox&amp;themeId=ujmain_WAR_ujmaintheme&amp;minifierType=css&amp;languageId=pl_PL&amp;b=6205&amp;t=1490141267000" rel="stylesheet" type="text/css" />
+
+	
+
+				<link href="http://www.tcs.uj.edu.pl/html/portlet/document_library/css/main.css?browserId=firefox&amp;themeId=ujmain_WAR_ujmaintheme&amp;minifierType=css&amp;languageId=pl_PL&amp;b=6205&amp;t=1490141267000" rel="stylesheet" type="text/css" />
+
+	
+
+				<link href="http://www.tcs.uj.edu.pl/html/portlet/dynamic_data_mapping/css/main.css?browserId=firefox&amp;themeId=ujmain_WAR_ujmaintheme&amp;minifierType=css&amp;languageId=pl_PL&amp;b=6205&amp;t=1490141267000" rel="stylesheet" type="text/css" />
+
+	
+
+				<link href="http://www.tcs.uj.edu.pl/notifications-portlet/notifications/css/main.css?browserId=firefox&amp;themeId=ujmain_WAR_ujmaintheme&amp;minifierType=css&amp;languageId=pl_PL&amp;b=6205&amp;t=1490141239000" rel="stylesheet" type="text/css" />
+
+	
+
+
+
+
+
+
+
+<script type="text/javascript">
+	// <![CDATA[
+		var Liferay = {
+			Browser: {
+				acceptsGzip: function() {
+
+				},
+				getMajorVersion: function() {
+
+				},
+				getRevision: function() {
+					return "52.0";
+				},
+				getVersion: function() {
+					return "52.0";
+				},
+				isAir: function() {
+
+				},
+				isChrome: function() {
+
+				},
+				isFirefox: function() {
+
+				},
+				isGecko: function() {
+
+				},
+				isIe: function() {
+
+				},
+				isIphone: function() {
+
+				},
+				isLinux: function() {
+
+				},
+				isMac: function() {
+
+				},
+				isMobile: function() {
+
+				},
+				isMozilla: function() {
+
+				},
+				isOpera: function() {
+
+				},
+				isRtf: function() {
+
+				},
+				isSafari: function() {
+
+				},
+				isSun: function() {
+
+				},
+				isWap: function() {
+
+				},
+				isWapXhtml: function() {
+
+				},
+				isWebKit: function() {
+
+				},
+				isWindows: function() {
+
+				},
+				isWml: function() {
+
+				}
+			},
+
+			Data: {
+				NAV_SELECTOR: '#navigation',
+
+				isCustomizationView: function() {
+
+				},
+
+				notices: [
+					null
+
+					
+
+					
+				]
+			},
+
+			ThemeDisplay: {
+				
+					getLayoutId: function() {
+						return "99";
+					},
+					getLayoutURL: function() {
+						return "http://www.tcs.uj.edu.pl/start";
+					},
+					getParentLayoutId: function() {
+						return "0";
+					},
+					isPrivateLayout: function() {
+						return "false";
+					},
+					isVirtualLayout: function() {
+
+					},
+				
+
+				getBCP47LanguageId: function() {
+					return "pl-PL";
+				},
+				getCDNBaseURL: function() {
+					return "http://www.tcs.uj.edu.pl";
+				},
+				getCDNDynamicResourcesHost: function() {
+					return "";
+				},
+				getCDNHost: function() {
+					return "";
+				},
+				getCompanyId: function() {
+					return "10112";
+				},
+				getCompanyGroupId: function() {
+					return "37001";
+				},
+				getDefaultLanguageId: function() {
+					return "pl_PL";
+				},
+				getDoAsUserIdEncoded: function() {
+					return "";
+				},
+				getLanguageId: function() {
+					return "pl_PL";
+				},
+				getParentGroupId: function() {
+					return "35126571";
+				},
+				getPathContext: function() {
+					return "";
+				},
+				getPathImage: function() {
+					return "/image";
+				},
+				getPathJavaScript: function() {
+					return "/html/js";
+				},
+				getPathMain: function() {
+					return "/c";
+				},
+				getPathThemeImages: function() {
+					return "http://www.tcs.uj.edu.pl/uj-main-theme/images";
+				},
+				getPathThemeRoot: function() {
+					return "/uj-main-theme";
+				},
+				getPlid: function() {
+					return "49217399";
+				},
+				getPortalURL: function() {
+					return "http://www.tcs.uj.edu.pl";
+				},
+				getPortletSetupShowBordersDefault: function() {
+
+				},
+				getScopeGroupId: function() {
+					return "35126571";
+				},
+				getScopeGroupIdOrLiveGroupId: function() {
+					return "35126571";
+				},
+				getSessionId: function() {
+					
+						
+						
+							return "";
+						
+					
+				},
+				getSiteGroupId: function() {
+					return "35126571";
+				},
+				getURLControlPanel: function() {
+					return "/group/control_panel?refererPlid=49217399";
+				},
+				getURLHome: function() {
+					return "http\x3a\x2f\x2fwww\x2euj\x2eedu\x2epl";
+				},
+				getUserId: function() {
+					return "10115";
+				},
+				getUserName: function() {
+					
+						
+						
+							return "";
+						
+					
+				},
+				isAddSessionIdToURL: function() {
+
+				},
+				isFreeformLayout: function() {
+
+				},
+				isImpersonated: function() {
+
+				},
+				isSignedIn: function() {
+
+				},
+				isStateExclusive: function() {
+
+				},
+				isStateMaximized: function() {
+
+				},
+				isStatePopUp: function() {
+
+				}
+			},
+
+			PropsValues: {
+				NTLM_AUTH_ENABLED: false
+			}
+		};
+
+		var themeDisplay = Liferay.ThemeDisplay;
+
+		
+
+		Liferay.AUI = {
+			getAvailableLangPath: function() {
+				return 'available_languages.jsp?browserId=firefox&themeId=ujmain_WAR_ujmaintheme&colorSchemeId=uj&minifierType=js&languageId=pl_PL&b=6205&t=1452609014000';
+			},
+			getCombine: function() {
+
+			},
+			getComboPath: function() {
+				return '/combo/?browserId=firefox&minifierType=&languageId=pl_PL&b=6205&t=1452609014000&';
+			},
+			getFilter: function() {
+				
+					
+						return 'min';
+					
+					
+					
+				
+			},
+			getJavaScriptRootPath: function() {
+				return '/html/js';
+			},
+			getLangPath: function() {
+				return 'aui_lang.jsp?browserId=firefox&themeId=ujmain_WAR_ujmaintheme&colorSchemeId=uj&minifierType=js&languageId=pl_PL&b=6205&t=1452609014000';
+			},
+			getStaticResourceURLParams: function() {
+				return '?browserId=firefox&minifierType=&languageId=pl_PL&b=6205&t=1452609014000';
+			}
+		};
+
+		Liferay.authToken = 'CglZcuJ0';
+
+		
+
+		Liferay.currentURL = '\x2f';
+		Liferay.currentURLEncoded = '%2F';
+	// ]]>
+</script>
+
+
+	
+		
+			
+				<script src="/html/js/barebone.jsp?browserId=firefox&amp;themeId=ujmain_WAR_ujmaintheme&amp;colorSchemeId=uj&amp;minifierType=js&amp;minifierBundleId=javascript.barebone.files&amp;languageId=pl_PL&amp;b=6205&amp;t=1452609014000" type="text/javascript"></script>
+			
+			
+		
+	
+	
+
+
+<script type="text/javascript">
+	// <![CDATA[
+		
+
+			
+
+			
+				Liferay.Portlet.list = ['56_INSTANCE_kvJCCNlvDZe0', '56_INSTANCE_Rv5ETo5iDxzm', '118_INSTANCE_vN6z0kejskNk', '85_INSTANCE_GIPDu95QM6Lj', '56_INSTANCE_yOHdFBHI9MLN', '56_INSTANCE_qXTGw8v4cU0h', '56', '20'];
+			
+		
+
+		
+
+		
+	// ]]>
+</script>
+
+
+
+
+
+	
+		
+
+			
+
+			
+		
+		
+	
+
+
+
+	
+		
+		
+
+			
+
+			
+		
+	
+
+
+<script>
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-83698611-1']);
+	_gaq.push(['_setDomainName', 'uj.edu.pl']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+</script>
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+<link class="lfr-css-file" href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;uj-main-theme&#x2f;css&#x2f;main&#x2e;css&#x3f;browserId&#x3d;firefox&#x26;themeId&#x3d;ujmain_WAR_ujmaintheme&#x26;minifierType&#x3d;css&#x26;languageId&#x3d;pl_PL&#x26;b&#x3d;6205&#x26;t&#x3d;1475886785000" rel="stylesheet" type="text/css" />
+
+
+
+
+	<style type="text/css">
+		.aui #faculty {
+background: url(http://www.portal.uj.edu.pl/documents/35126571/ab59a209-60eb-451e-9489-0ab3c7facb00)no-repeat 540px 0px;
+background-size: contain;
+width: 857px;
+height: 80px;
+}
+
+.aui .faculty #header a.logo, .faculty.pl_PL #header a.logo {
+    background: url('http://www.im.uj.edu.pl/uj-main-theme/images/custom/logo_faculty.png') no-repeat scroll 0% 0% transparent;
+    height: 92px;
+    width: 50px;
+}
+
+.aui #column-1{
+min-height:0px; !important
+}
+
+.aui div {
+line-height: 15px; !important
+}
+
+.aui div.portlet-column.uj-top.yui3-dd-drop{
+min-height:0px; !important
+}
+
+.aui div.portlet-column.uj-top {
+min-height:0px; !important
+}
+
+.aui .portlet-borderless-container ul li {
+    margin-bottom:10px;
+}
+
+.aui .journal-content-article #tresc h1 {
+       border-bottom:none;
+}
+
+.aui .portlet-site-map ul {
+    margin: 0px; !important
+    padding: 0px; !important
+}
+
+.aui #top-corner-container{
+    font: 11px Verdana,Arial,Helvetica,sans-serif; !important
+    color: #666666;
+    position: absolute;
+    right: 0;
+    top: 20px;
+}
+	</style>
+
+
+
+
+
+	<style type="text/css">
+
+		
+
+			
+
+				
+
+					
+
+#p_p_id_56_INSTANCE_kvJCCNlvDZe0_ {
+border-width:;
+border-style:
+}
+
+
+
+
+				
+
+			
+
+		
+
+			
+
+				
+
+					
+
+#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ {
+border-width:;
+border-style:
+}
+
+
+
+
+				
+
+			
+
+		
+
+			
+
+				
+
+					
+
+#p_p_id_118_INSTANCE_vN6z0kejskNk_ {
+border-width:;
+border-style:
+}
+
+
+
+
+				
+
+			
+
+		
+
+			
+
+				
+
+					
+
+#p_p_id_85_INSTANCE_GIPDu95QM6Lj_ {
+border-width:;
+border-style:
+}
+
+
+
+
+				
+
+			
+
+		
+
+			
+
+				
+
+					
+
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ {
+border-width:;
+border-style:
+}
+
+
+
+
+				
+
+			
+
+		
+
+			
+
+				
+
+					
+
+#p_p_id_56_INSTANCE_qXTGw8v4cU0h_ {
+border-width:;
+border-style:
+}
+
+
+
+
+				
+
+			
+
+		
+
+			
+
+		
+
+			
+
+		
+
+			
+
+		
+
+			
+
+		
+
+	</style>
+
+
+
+        <script type="text/javascript">
+       // <![CDATA[
+       
+       // ]]>
+      </script>
+                	  <link rel="icon" type="image/png" href="http://www.tcs.uj.edu.pl/uj-main-theme/images/favicon.png" />
+		    </head>
+<body class="desktop uj yui3-skin-sam controls-visible signed-out public-page organization-site pl_PL dockbar-bubbles over pl_PL faculty">
+<div id="wrapper" class="pl_PL">
+<a href="#main-content" class="skip-main-content" id="skip-to-content">Przejdź do głównej treści strony</a>
+		
+  <div id="main-container">
+    <div id="header">
+      
+	  <a class="logo png" href="http://www.uj.edu.pl">UJ</a>      
+		
+				<div id="faculty">
+			  <h1><a href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;start">Zespół Katedr i Zakładów Informatyki Matematycznej</a></h1>
+			  <h2>
+				                    <a href="http://www.uj.edu.pl">Uniwersytetu Jagiellońskiego</a>			
+							  </h2>
+		</div>		
+		
+		
+        <div id="top-corner-container">
+		                      <!-- _*UJ_CAS_NIE_ZALOGOWANY*_ -->
+				<a class="logowanie" href="http://www.tcs.uj.edu.pl/c/portal/login?p_l_id=49217399&redirect=%2F">
+					logowanie
+				</a>		
+          				
+		
+        								
+								
+				
+										
+										<a class="language" 
+											href="/en_GB/"
+					 >
+							<img src="/uj-main-theme/images/language/en_GB.png" width="16" height="11"
+										title="english"  alt="english"/>
+															english					
+													</a>
+					
+        </div>
+        <div id="top-middle-container">
+          <ul>
+                                                                                                                                                                                                                                                        </ul>
+<!-- menu_top  include -->
+          
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+          <nav id="navigation">
+	<ul>
+		    		    		<li >
+							<a tabindex="0" href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;aktualnosci"  ><span>Aktualności</span></a>
+					</li>
+	   		    		<li >
+							<a tabindex="0" href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;wydarzenia"  ><span>Wydarzenia</span></a>
+					</li>
+	   		    		<li >
+							<a tabindex="0" href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;nauka"  ><span>Nauka</span></a>
+				<ul class="child-menu">
+										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;dziedziny-badan" >Dziedziny badań</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;seminaria" >Seminaria</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;granty" >Granty</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;doktoraty" >Doktoraty</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;apacz&#x2e;matinf&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;jednostki&#x2f;4-zespol-katedr-i-zakladow-informatyki-matematycznej-wydzial-matematyki-i-informatyki-uj&#x23;tresc" >Publikacje</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;zasoby-naukowe" >Zasoby naukowe (biblioteki, czasopisma on-line)</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;workshop&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;" >Warsztaty i konferencje</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;osrodek-badawczo-rozwojowy2" >Ośrodek badawczo rozwojowy</a>
+						</li>
+					    									</ul>
+					</li>
+	   		    		<li >
+							<a tabindex="0" href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;informatyka-analityczna"  ><span>Informatyka Analityczna</span></a>
+				<ul class="child-menu">
+										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;studia&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;" >Dla kandydatów</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;informacje-ogolne" >Informacje ogólne</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;dydaktyka&#x2f;organizacja-roku-akademickiego" >Organizacja roku akademickiego</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;plany-studiow" >Programy studiów</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;harmonogram" >Harmonogram</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="https&#x3a;&#x2f;&#x2f;www&#x2e;google&#x2e;com&#x2f;calendar&#x2f;embed&#x3f;src&#x3d;smk9h0uph7l00i8n7ql5in4cf0&#x25;40group&#x2e;calendar&#x2e;google&#x2e;com&#x26;ctz&#x3d;Europe&#x2f;Warsaw" >Kalendarz TCS</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;stypendia" >Stypendia</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;organizacje-studenckie" >Organizacje studenckie</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;informacje-techniczne" >Informacje techniczne (serwery, strony, Intranet, @uj.edu.pl)</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="https&#x3a;&#x2f;&#x2f;satori&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl" >Satori</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="https&#x3a;&#x2f;&#x2f;www&#x2e;usosweb&#x2e;uj&#x2e;edu&#x2e;pl" >UsosWeb</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;erasmus" >Erasmus</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;absolwenci" >Absolwenci</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;oi" >Olimpiada Informatyczna</a>
+						</li>
+					    										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;v-lo" >V Liceum Ogólnokształcące im. A. Witkowskiego</a>
+						</li>
+					    									</ul>
+					</li>
+	   		    		<li >
+							<a tabindex="0" href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;archiwum"  ><span>Archiwum</span></a>
+				<ul class="child-menu">
+										    						<li  >
+							<a tabindex="0"href="http&#x3a;&#x2f;&#x2f;old&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl" >Stara strona TCS</a>
+						</li>
+					    									</ul>
+					</li>
+	   		    		</ul>
+    </nav>
+			
+	          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="columns-uj columns-uj-l" id="main-content" role="main">
+        
+	<div class="portlet-layout">
+		<div class="portlet-column uj-top" id="column-1">
+			<div class="portlet-dropzone empty" id="layout-column_column-1"></div>
+		</div>	
+		
+	    <div class="column-container" id="main-content-for-skip">
+			<div class="portlet-column portlet-column-first uj-large-left" id="column-2">
+				<div class="portlet-dropzone portlet-column-content portlet-column-content-first" id="layout-column_column-2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	<div class="portlet-boundary portlet-boundary_56_  portlet-static portlet-static-end portlet-borderless portlet-journal-content " id="p_p_id_56_INSTANCE_kvJCCNlvDZe0_" >
+		<span id="p_56_INSTANCE_kvJCCNlvDZe0"></span>
+
+
+
+	
+	
+	
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+
+		
+
+		
+			
+			
+
+				
+
+				<div class="portlet-borderless-container" style="">
+					
+
+					
+
+
+	<div class="portlet-body">
+
+
+
+	
+		
+			
+			
+				
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+				
+
+				
+					
+					
+						
+
+
+	
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+		
+
+		
+			
+			
+
+				
+
+				
+					
+
+						
+
+						
+
+						<div class="journal-content-article">
+							<style type="text/css">
+    .aui .tresc{
+	max-width:890px;
+}
+    .aui .tresc h2{
+	margin: 0px 0px 18px 0px;
+	padding: 0px 0px 0px 0px;
+	width: 100%;
+	border-bottom: 4px #00519e solid;
+	font-weight: bold;
+	font-size: 16px;
+    color: #00519e;}
+
+    .aui .tresc h3{
+	clear:both;
+
+	margin: 0px 0px 10px 0px;
+	padding: 0px 0px 0px 0px;
+	width: 100%;
+	border-bottom: 1px #cccccc dotted;
+	font-weight: bold;
+	font-size: 13px;
+    color: #00519e;}
+
+    .aui .tresc ul.niebieska-lista li {
+    text-align: left; 
+    list-style-type: square; 
+    color: #00519e;
+    margin-bottom: 3px;}
+
+    .aui .tresc ul.niebieska-lista li span {
+    color: #666666;}
+
+    .aui .tresc ol.lista-liczby li {
+    list-style: decimal inside !important;
+background: none;
+padding: 0px 0px 0px 0px;}
+
+    .aui .tresc a:link {
+	text-decoration: underline; 
+	color: #666666;}
+	
+    .aui .tresc a:visited {
+	text-decoration: underline; 
+	color: #666666;}
+
+    .aui .tresc a:hover {
+	text-decoration: underline; 
+	color: #6699CC;}
+	
+    .aui .tresc a:active {
+	text-decoration: underline; 
+	color: #00519e;}	
+
+    .aui .tresc ul.niebieska-lista li span a:link {
+	text-decoration: underline; 
+	color: #666666;}
+	
+    .aui .tresc ul.niebieska-lista li span a:visited {
+	text-decoration: underline; 
+	color: #666666;}
+	
+    .aui .tresc ul.niebieska-lista li span a:hover, .aui .tresc ul.niebieska-lista li span a:active {
+	text-decoration: underline; 
+	color: #00519e;}	
+
+    .aui .tresc ul.prosta-lista li {
+	list-style-type: none; margin-bottom: 5px;}
+		
+    .aui .tresc p {
+         text-align: left;}
+
+    .aui .tresc .alert {
+	background-color:#FFBFBF;
+	border:1px solid red;
+	font-weight:bold;margin:5px;
+	padding:5px;}
+
+    .aui .tresc a:link.prosty {
+	text-decoration: none; 
+	color: #00519e;}
+
+    .aui .tresc a:visited.prosty {
+	text-decoration: none; 
+	color: #00519e;}
+
+    .aui .tresc a:hover.prosty, .aui .tresc a:active.prosty {
+	text-decoration: underline; 
+	color: #00519e;}
+
+    .aui .tresc a:link.czarny, .aui .tresc a:visited.czarny, .aui .tresc a:hover.czarny, .aui .tresc a:active.czarny  {
+	text-decoration: underline; 
+	color: black;}
+
+    .aui .tresc .ramka_img {
+	border: 1px solid #cccccc; 
+	padding: 4px;}
+
+    .aui .tresc .kreska {
+	border-top: 1px #cccccc dotted; 
+	height: 5px;}
+
+    .aui .tresc ul.lista-pdf li {
+	list-style-type: none; 
+	margin-bottom: 5px; 
+	background-image: url('/image/image_gallery?uuid=a45b2adf-141b-427d-a724-9589f0c781c9&groupId=35126571&t=1251798591489'); 
+	background-repeat: no-repeat; 
+	padding: 3px 0px 2px 19px;}
+	
+    .aui .tresc .prosta-tab {
+	border-width: 1px 0px 0px 1px; 
+	border-style: solid; 
+	border-color: #cccccc;}
+	
+    .aui .tresc .prosta-tab td, .aui .tresc .prosta-tab th {
+	padding: 3px; 
+	border-width: 0px 1px 1px 0px; 
+	border-style: solid; 
+	border-color: #cccccc;}
+	
+    .aui .tresc .tab-wiersz {
+	width:100%;
+	background-color:#e5e5e5; 
+	border:0px;
+	font-weight:bold;
+	padding:5px 0px 5px 0px;}
+	
+    .aui .tresc .tab-zadanie {
+	padding-left:3px; 
+	width:20%;}
+    .aui .tresc .tab-left {
+	width:20%;
+	background-color:#e5e5e5; 
+	padding-top:5px;
+	padding-bottom:5px;
+	padding-left:3px;}
+    .aui .tresc .tab-down {
+	background-color:#e5e5e5;
+	padding-left:3px;}
+	
+    .aui .tresc .tab-kolumna {
+	width:80%;
+	padding:5px 0px 5px 3px;}
+	
+    .aui .tresc table {
+	margin-bottom: 15px; 
+	width: 100%;}
+	
+    .aui .tresc .tab-odp {
+	width:20%;
+	padding-left:3px;}
+    .aui .tresc .tab-row {
+	padding:2px 0px 2px 3px;
+	border-bottom:1px solid #cccccc;}
+
+    .aui .tresc dl.sklad {
+	margin: 0px; 
+        padding: 0px;}	
+
+    .aui .tresc dl.sklad dt{
+	font-weight: bold;
+        margin: 0px;}	
+
+    .aui .tresc dl.sklad dd{
+	margin: 0px 0px 9px 0px;}		
+	
+    .aui .tresc .tab-data {
+	padding:2px 0px 2px 3px;
+	border-bottom:1px solid #cccccc;}
+
+    .aui .tresc .tab-postep {
+	padding: 2px 0px 2px 3px;
+	border-bottom:1px solid #cccccc;}
+
+    .aui .tresc a:link.wiecej {
+	text-decoration: none; 
+	color: #00519e;}
+	
+    .aui .tresc a:visited.wiecej {
+	text-decoration: none; 
+	color: #00519e;}
+	
+    .aui .tresc a:hover.wiecej, .aui .tresc a:active.wiecej {
+	text-decoration: none; 
+	color: #2377cd;}
+
+    .aui .tresc .grafika-lewa{
+	border: 1px #cccccc solid; 
+	padding: 4px; 
+	margin: 0px 10px 10px 0px; 
+	float: left;
+	max-width:40%;
+}
+
+    .aui .tresc .grafika-prawa{
+	border: 1px #cccccc solid; 
+	padding: 4px; 
+	margin: 0px 0px 10px 10px; 
+	float: right;
+	max-width:40%;
+}
+    .aui .tresc{
+	margin-bottom: 20px;
+	clear:both;
+}
+    .aui .tresc .publikacja{
+	font-size: 9px; 
+	color: #ababab; 
+	float: left; 
+	width: auto; 
+	margin-bottom: 20px;
+}
+</style>
+
+
+<article class="tresc" tabindex="-1">
+
+		
+	
+		
+		
+
+		
+			<div class="tresc">
+
+			    			    
+			    
+					
+																						 				
+		    	
+		    		<div>
+<div style="float: right"><a href="http://www.tcs.uj.edu.pl/documents/35126571/584f5d72-9e34-4dda-b9c7-bbce169ef4b7"><img height="212" src="http://www.tcs.uj.edu.pl/documents/35126571/f1f7f97d-c7b9-4581-9653-88e6d09405f4" width="389" /></a></div>
+
+<p style="color: rgb(102, 102, 102); font-family: arial; width: 400px; text-align: center;"><span style="font-size:12px;">Zespół&nbsp;Katedr&nbsp;i&nbsp;Zakładów&nbsp;Informatyki&nbsp;Matematycznej<br />
+Uniwersytet&nbsp;Jagielloński</span></p>
+
+<p style="color: rgb(102, 102, 102); font-family: arial; width: 400px; text-align: center;"><span style="font-size:12px;">ul.&nbsp;Prof.&nbsp;S.&nbsp;Łojasiewicza&nbsp;6<br />
+30-348&nbsp;Kraków</span></p>
+
+<p style="color: rgb(102, 102, 102); font-family: arial; width: 400px;"><b>telefon:</b><span style="margin-left:50px;">(+48-12) 664 66 47</span><br />
+<b>fax:</b><span style="margin-left:74px;">(+48-12) 664 66 72</span><br />
+<b>email:</b><span style="margin-left:60px;"><img alt="email" src="/documents/35126571/103637838/admtcs%20croped?t=1444315163886" /></span><br />
+<b>pokój:</b><span style="margin-left:60px;">3053</span><br />
+<b>sekretariat ogólny:</b><br />
+poniedziałek - czwartek:<span style="margin-left:10px;">9:00-15:00</span><br />
+piątek:<span style="margin-left:94px;">nieczynne (dzień pracy wewnętrznej)</span><br />
+<b>sekretariat dydaktyczny:</b><br />
+poniedziałek - czwartek:<span style="margin-left:10px;">10:00-13:00</span><br />
+piątek:<span style="margin-left:94px;">nieczynne (dzień pracy wewnętrznej)</span></p>
+</div>
+		    	
+	    	</div>  
+
+	    
+
+	 
+
+			
+	
+		
+		
+	
+
+  	
+	 
+</article>
+						</div>
+
+						
+					
+					
+				
+			
+		
+	
+
+
+
+
+	
+
+
+
+
+	
+		<div class="entry-links">
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		</div>
+	
+
+	
+
+	
+
+	
+
+					
+				
+			
+		
+	
+	
+
+
+
+	</div>
+
+				</div>
+
+				
+			
+		
+	
+
+
+	
+
+
+
+
+
+		
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	<div class="portlet-boundary portlet-boundary_56_  portlet-static portlet-static-end portlet-borderless portlet-journal-content " id="p_p_id_56_INSTANCE_Rv5ETo5iDxzm_" >
+		<span id="p_56_INSTANCE_Rv5ETo5iDxzm"></span>
+
+
+
+	
+	
+	
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+
+		
+
+		
+			
+			
+
+				
+
+				<div class="portlet-borderless-container" style="">
+					
+
+					
+
+
+	<div class="portlet-body">
+
+
+
+	
+		
+			
+			
+				
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+				
+
+				
+					
+					
+						
+
+
+	
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+		
+
+		
+			
+			
+
+				
+
+				
+					
+
+						
+
+						
+
+						<div class="journal-content-article">
+							
+
+
+
+<style type="text/css">
+
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ .tytul { color:#666;  font-weight: bold; display:block; }
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ .opis { color:#666; font-weight: normal; }
+
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ p { text-align: left; }
+
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ img.foto {width:36px; height:36px; padding:2px; border:1px solid #cccccc; float:left; display: inline-block; margin: 0px 4px 2px 0px; }
+
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ h1{ margin: 0px 0px 10px 0px;padding: 0px 0px 1px 0px; width: 100%; border-bottom: None; font-weight: bold; font-size: 16px; color: #00519e;}
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ h2{ margin: 0px 0px 10px 0px; padding: 10px 0px 6px 0px; width: 100%; border-bottom: 4px solid #00519e; font-weight: bold; font-size: 11px; color: #00519e;}
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ h3{ margin: 0px 0px 10px 0px; padding: 10px 0px 6px 0px; width: 100%; border-bottom: 1px dotted #aaa; font-weight: bold; font-size: 11px; color: #00519e;}
+
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ div.box{ clear:both;margin-bottom:10px;}
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ a.box { color:#666; text-decoration:none; height:100%; display:block; padding:3px;}
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ a:hover.box { text-decoration:none;background:#f5f5f5; }
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ a.box_z_obrazkiem{ min-height: 42px;}
+    .ie6 #p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ a.box_z_obrazkiem { height: 42px;}
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ .ikona_audio { margin:1px; padding:0px 1px 0px 8px; display:inline-block; background: url(/image/image_gallery?uuid=26e82bf7-1deb-4583-a90f-c61fb8514f27&groupId=10172&t=1257529901140) left no-repeat }
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ .ikona_foto { margin:1px; padding:0px 1px 0px 8px; display:inline-block; background: url(/image/image_gallery?uuid=56901e74-f170-484b-b7ff-1d8e92714475&groupId=10172&t=1257529901237) left no-repeat }
+		#p_p_id_56_INSTANCE_Rv5ETo5iDxzm_ .ikona_video { margin:1px; padding:0px 1px 0px 8px; display:inline-block; background: url(/image/image_gallery?uuid=03abf4cf-0067-4f5c-b04c-1385e02321ee&groupId=10172&t=1257529901425) left no-repeat }
+
+    ul.paginacja { list-style-type: none; color:#666; margin: 0; }
+    ul.paginacja li { float: left; display: block; background-color: #FFF; margin-right: 8px; }
+    ul.paginacja li a:link { text-decoration: none; padding: 3px 5px 4px 5px; border: 1px solid #999; color:#666; }
+    ul.paginacja li a:visited { text-decoration: none; padding: 3px 5px 4px 5px; color:#666; border: 1px solid #999; }
+    ul.paginacja li a:hover { text-decoration: none; padding: 2px 4px 3px 4px; border: 2px solid #00519e; color:#666; }
+    ul.paginacja li a:active { text-decoration: none; padding: 2px 4px 3px 4px; border: 2px solid #00519e; color:#666; }
+    ul.paginacja li span {font-weight: bold; color: #00519e;}
+
+</style>
+
+
+
+
+  
+
+
+
+		
+
+
+
+
+		
+						
+					
+
+
+
+	
+		
+				
+				
+		
+		
+		
+					
+																																																																																																
+		
+																
+		        <h1><a href="seminaria">Najbliższe referaty</a></h1>
+		
+				        <div class="box" style="margin-bottom: 4px;">
+            <table name="135955536">
+                <tr><td style="width: 100px;">
+																														28.03.2017 14:15<br/>
+																Piotr Wójcik<br/>
+					
+                </td>
+                    <td style="padding-left:10px;">
+                        <b><a href="kryptologia">Kryptologia</a></b><br/>
+						Quantum Authentication with Key Recycling
+                    </td></tr>
+				            </table></div>
+				
+				
+				
+		
+		
+		
+					
+																																																																																																
+		
+																
+		
+				        <div class="box" style="margin-bottom: 4px;">
+            <table name="135843500">
+                <tr><td style="width: 100px;">
+																														29.03.2017 12:15<br/>
+																Szymon Stankiewicz<br/>
+					
+                </td>
+                    <td style="padding-left:10px;">
+                        <b><a href="podstawy-informatyki">Podstawy Informatyki</a></b><br/>
+						CANTOR POLYNOMIALS AND THE FUETER-POLYA THEOREM by  MELVYN NATHANSON
+                    </td></tr>
+				            </table></div>
+				
+				
+						
+		
+		
+		
+					
+																																																																																																
+		
+																
+		
+				        <div class="box" style="margin-bottom: 4px;">
+            <table name="135955588">
+                <tr><td style="width: 100px;">
+																														04.04.2017 14:15<br/>
+																Mateusz Jachna<br/>
+					
+                </td>
+                    <td style="padding-left:10px;">
+                        <b><a href="kryptologia">Kryptologia</a></b><br/>
+						Secure Hash Algorithms family and the recently found collision for SHA-1
+                    </td></tr>
+				            </table></div>
+				
+				
+						
+		
+		
+		
+					
+																																																																																																
+		
+																
+		
+				        <div class="box" style="margin-bottom: 4px;">
+            <table name="135224710">
+                <tr><td style="width: 100px;">
+																														19.04.2017 16:15<br/>
+																Lech Duraj, Adam Polak<br/>
+					
+                </td>
+                    <td style="padding-left:10px;">
+                        <b><a href="informatyka-teoretyczna">Informatyka Teoretyczna</a></b><br/>
+						Longest Common Strictly Increasing Subsequecnce
+                    </td></tr>
+				            </table></div>
+				
+				
+				
+		
+		
+		
+					
+																																																																																																
+		
+																
+		
+				        <div class="box" style="margin-bottom: 4px;">
+            <table name="135994288">
+                <tr><td style="width: 100px;">
+																														26.04.2017 16:15<br/>
+																Marcin Pilipczuk<br/>
+					<small>University of Warsaw</small>
+                </td>
+                    <td style="padding-left:10px;">
+                        <b><a href="informatyka-teoretyczna">Informatyka Teoretyczna</a></b><br/>
+						Subexponential Parameterized Algorithms for Planar Graphs, Apex-Minor-Free Graphs and Graphs of Polynomial Growth via Low Treewidth Pattern Covering
+                    </td></tr>
+				            </table></div>
+				
+				
+				
+		
+		
+		
+					
+																																																																																																
+		
+																
+		
+				        <div class="box" style="margin-bottom: 4px;">
+            <table name="135833964">
+                <tr><td style="width: 100px;">
+																														31.05.2017 16:15<br/>
+																Piotr Micek<br/>
+					
+                </td>
+                    <td style="padding-left:10px;">
+                        <b><a href="informatyka-teoretyczna">Informatyka Teoretyczna</a></b><br/>
+						Ramsey Theory for Binary Trees and the Separation of Tree-chromatic Number from Path-chromatic Number
+                    </td></tr>
+				            </table></div>
+			
+						</div>
+
+						
+					
+					
+				
+			
+		
+	
+
+
+
+
+	
+
+
+
+
+	
+		<div class="entry-links">
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		</div>
+	
+
+	
+
+	
+
+	
+
+					
+				
+			
+		
+	
+	
+
+
+
+	</div>
+
+				</div>
+
+				
+			
+		
+	
+
+
+	
+
+
+
+
+
+		
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	<div class="portlet-boundary portlet-boundary_118_  portlet-static portlet-static-end portlet-borderless portlet-nested-portlets " id="p_p_id_118_INSTANCE_vN6z0kejskNk_" >
+		<span id="p_118_INSTANCE_vN6z0kejskNk"></span>
+
+
+
+	
+	
+	
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+
+		
+
+		
+			
+			
+
+				
+
+				<div class="portlet-borderless-container" style="">
+					
+
+					
+
+
+	<div class="portlet-body">
+
+
+
+	
+		
+			
+			
+				
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+				
+
+				
+					
+					
+						
+
+
+	
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="columns-2" id="_118_INSTANCE_vN6z0kejskNk_main-content" role="main">
+	<div class="portlet-layout row-fluid">
+		<div class="portlet-column portlet-column-first span4" id="_118_INSTANCE_vN6z0kejskNk_column-1">
+			<div class="portlet-dropzone portlet-column-content portlet-column-content-first" id="layout-column__118_INSTANCE_vN6z0kejskNk__column-1">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	<div class="portlet-boundary portlet-boundary_56_  portlet-static portlet-static-end portlet-borderless portlet-journal-content " id="p_p_id_56_INSTANCE_qXTGw8v4cU0h_" >
+		<span id="p_56_INSTANCE_qXTGw8v4cU0h"></span>
+
+
+
+	
+	
+	
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+
+		
+
+		
+			
+			
+
+				
+
+				<div class="portlet-borderless-container" style="">
+					
+
+					
+
+
+	<div class="portlet-body">
+
+
+
+	
+		
+			
+			
+				
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+				
+
+				
+					
+					
+						
+
+
+	
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+		
+
+		
+			
+			
+
+				
+
+				
+					
+
+						
+
+						
+
+						<div class="journal-content-article">
+							
+
+
+
+<style type="text/css">
+
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ .tytul { color:#666;  font-weight: bold; display:block; }
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ .opis { color:#666; font-weight: normal; }
+
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ p { text-align: left; }
+
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ img.foto {width:36px; height:36px; padding:2px; border:1px solid #cccccc; float:left; display: inline-block; margin: 0px 4px 2px 0px; }
+
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ h1{ margin: 0px 0px 10px 0px;padding: 0px 0px 1px 0px; width: 100%; border-bottom: None; font-weight: bold; font-size: 16px; color: #00519e;}
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ h2{ margin: 0px 0px 10px 0px; padding: 10px 0px 6px 0px; width: 100%; border-bottom: None; font-weight: bold; font-size: 11px; color: #00519e;}
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ h3{ margin: 0px 0px 10px 0px; padding: 10px 0px 6px 0px; width: 100%; border-bottom: None; font-weight: bold; font-size: 11px; color: #00519e;}
+
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ div.box{ clear:both;margin-bottom:10px;}
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ a.box { color:#666; text-decoration:none; height:100%; display:block; padding:3px;}
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ a:hover.box { text-decoration:none;background:#f5f5f5; }
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ a.box_z_obrazkiem{ min-height: 42px;}
+    .ie6 #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ a.box_z_obrazkiem { height: 42px;}
+
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ .ikona_audio { margin:1px; padding:0px 1px 0px 8px; display:inline-block; background: url(/image/image_gallery?uuid=26e82bf7-1deb-4583-a90f-c61fb8514f27&groupId=10172&t=1257529901140) left no-repeat }
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ .ikona_foto { margin:1px; padding:0px 1px 0px 8px; display:inline-block; background: url(/image/image_gallery?uuid=56901e74-f170-484b-b7ff-1d8e92714475&groupId=10172&t=1257529901237) left no-repeat }
+    #p_p_id_56_INSTANCE_qXTGw8v4cU0h_ .ikona_video { margin:1px; padding:0px 1px 0px 8px; display:inline-block; background: url(/image/image_gallery?uuid=03abf4cf-0067-4f5c-b04c-1385e02321ee&groupId=10172&t=1257529901425) left no-repeat }
+
+    ul.paginacja { list-style-type: none; color:#666; margin: 0; }
+    ul.paginacja li { float: left; display: block; background-color: #FFF; margin-right: 8px; }
+    ul.paginacja li a:link { text-decoration: none; padding: 3px 5px 4px 5px; border: 1px solid #999; color:#666; }
+    ul.paginacja li a:visited { text-decoration: none; padding: 3px 5px 4px 5px; color:#666; border: 1px solid #999; }
+    ul.paginacja li a:hover { text-decoration: none; padding: 2px 4px 3px 4px; border: 2px solid #00519e; color:#666; }
+    ul.paginacja li a:active { text-decoration: none; padding: 2px 4px 3px 4px; border: 2px solid #00519e; color:#666; }
+    ul.paginacja li span {font-weight: bold; color: #00519e;}
+
+</style>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+            
+
+
+
+
+
+
+
+<h1><a href="wydarzenia">Wydarzenia</a></h1>
+
+
+
+    
+    
+                        
+    	        
+               
+    <div class="box" style="margin-bottom: 10px;">
+      	<a class="box" href="wydarzenia#134481270">
+            <b>22.10.2016, </b>
+            <b>Uniwersyteckie Zawody Informatyczne <br/> </b>
+      
+	</a>
+          </div>
+
+
+    
+    
+                            
+    	        
+           
+    <div class="box" style="margin-bottom: 10px;">
+      	<a class="box" href="wydarzenia#108086368">
+            <b>14.09.2016 - 17.09.2016, </b>
+            <b>Order & Geometry Workshop - Gułtowy Palace <br/> </b>
+      <a href="http://orderandgeometry2016.tcs.uj.edu.pl/">http://orderandgeometry2016.tcs.uj.edu.pl/</a>
+	</a>
+          </div>
+
+
+    
+    
+                            
+    	        
+           
+    <div class="box" style="margin-bottom: 10px;">
+      	<a class="box" href="wydarzenia#106750134">
+            <b>04.07.2016 - 08.07.2016, </b>
+            <b>The 27th International Conference on Probabilistic, Combinatorial and Asymptotic Methods for the Analysis of Algorithms, AofA'16 Krakow <br/> </b>
+      <a href=http://www.aofa2016.meetings.pl>http://www.aofa2016.meetings.pl</a>
+	</a>
+          </div>
+
+
+<ul class="paginacja" style="float:right;">
+  <a href="wydarzenia">Więcej&raquo;</a>
+  </ul>
+
+						</div>
+
+						
+					
+					
+				
+			
+		
+	
+
+
+
+
+	
+
+
+
+
+	
+		<div class="entry-links">
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		</div>
+	
+
+	
+
+	
+
+	
+
+					
+				
+			
+		
+	
+	
+
+
+
+	</div>
+
+				</div>
+
+				
+			
+		
+	
+
+
+	
+
+
+
+
+
+		
+	</div>
+
+
+
+
+</div>
+		</div>
+
+		<div class="portlet-column portlet-column-last span8" id="_118_INSTANCE_vN6z0kejskNk_column-2">
+			<div class="portlet-dropzone portlet-column-content portlet-column-content-last" id="layout-column__118_INSTANCE_vN6z0kejskNk__column-2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	<div class="portlet-boundary portlet-boundary_56_  portlet-static portlet-static-end portlet-borderless portlet-journal-content " id="p_p_id_56_INSTANCE_yOHdFBHI9MLN_" >
+		<span id="p_56_INSTANCE_yOHdFBHI9MLN"></span>
+
+
+
+	
+	
+	
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+
+		
+
+		
+			
+			
+
+				
+
+				<div class="portlet-borderless-container" style="">
+					
+
+					
+
+
+	<div class="portlet-body">
+
+
+
+	
+		
+			
+			
+				
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+				
+
+				
+					
+					
+						
+
+
+	
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+		
+
+		
+			
+			
+
+				
+
+				
+					
+
+						
+
+						
+
+						<div class="journal-content-article">
+							
+
+<style type="text/css">
+
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ .tytul { color:#666;  font-weight: bold; display:block; }
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ .opis { color:#666; font-weight: normal; }
+
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ p { text-align: left; }
+
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ img.foto {width:36px; height:36px; padding:2px; border:1px solid #cccccc; float:left; display: inline-block; margin: 0px 4px 2px 0px; }
+
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ h1{ margin: 0px 0px 10px 0px;padding: 0px 0px 1px 0px; width: 100%; border-bottom: None; font-weight: bold; font-size: 16px; color: #00519e;}
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ h2{ margin: 0px 0px 10px 0px; padding: 10px 0px 6px 0px; width: 100%; border-bottom: None; font-weight: bold; font-size: 11px; color: #00519e;}
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ h3{ margin: 0px 0px 10px 0px; padding: 10px 0px 6px 0px; width: 100%; border-bottom: None; font-weight: bold; font-size: 11px; color: #00519e;}
+
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ div.box{ clear:both;margin-bottom:10px;}
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ a.box { color:#666; text-decoration:none; height:100%; display:block; padding:3px;}
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ a:hover.box { text-decoration:none;background:#f5f5f5; }
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ a.box_z_obrazkiem{ min-height: 42px;}
+.ie6 #p_p_id_56_INSTANCE_yOHdFBHI9MLN_ a.box_z_obrazkiem { height: 42px;}
+
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ .ikona_audio { margin:1px; padding:0px 1px 0px 8px; display:inline-block; background: url(/image/image_gallery?uuid=26e82bf7-1deb-4583-a90f-c61fb8514f27&groupId=10172&t=1257529901140) left no-repeat }
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ .ikona_foto { margin:1px; padding:0px 1px 0px 8px; display:inline-block; background: url(/image/image_gallery?uuid=56901e74-f170-484b-b7ff-1d8e92714475&groupId=10172&t=1257529901237) left no-repeat }
+#p_p_id_56_INSTANCE_yOHdFBHI9MLN_ .ikona_video { margin:1px; padding:0px 1px 0px 8px; display:inline-block; background: url(/image/image_gallery?uuid=03abf4cf-0067-4f5c-b04c-1385e02321ee&groupId=10172&t=1257529901425) left no-repeat }
+
+ul.paginacja { list-style-type: none; color:#666; margin: 0; }
+ul.paginacja li { float: left; display: block; background-color: #FFF; margin-right: 8px; }
+ul.paginacja li a:link { text-decoration: none; padding: 3px 5px 4px 5px; border: 1px solid #999; color:#666; }
+ul.paginacja li a:visited { text-decoration: none; padding: 3px 5px 4px 5px; color:#666; border: 1px solid #999; }
+ul.paginacja li a:hover { text-decoration: none; padding: 2px 4px 3px 4px; border: 2px solid #00519e; color:#666; }
+ul.paginacja li a:active { text-decoration: none; padding: 2px 4px 3px 4px; border: 2px solid #00519e; color:#666; }
+ul.paginacja li span {font-weight: bold; color: #00519e;}
+
+</style>
+
+
+
+
+  
+
+
+        
+
+<h1><a href="aktualnosci">Aktualności</a></h1>
+
+    
+			
+			
+			
+		    	
+				
+	
+<div class="box" style="margin-bottom: 10px;">   
+	<a class="box" href="aktualnosci#135535751">
+<table><tr><a name="135535751"></a></tr>
+<tr>
+<td style="width: 100px;">
+<b>27.01.2017<br/>
+Paweł Idziak</b></td>      
+<td style="padding-left:5px;"><b>Grant POLONIUM dla Marka Zaionca<br/></b></td>
+</tr>
+	    </table></a>
+	</div>
+    
+			
+			
+			
+		    	
+				
+	
+<div class="box" style="margin-bottom: 10px;">   
+	<a class="box" href="aktualnosci#135137739">
+<table><tr><a name="135137739"></a></tr>
+<tr>
+<td style="width: 100px;">
+<b>09.12.2016<br/>
+Lech Duraj</b></td>      
+<td style="padding-left:5px;"><b>Pierwsze i drugie miejsce drużyn UJ w zawodach MWPZ<br/></b></td>
+</tr>
+	    </table></a>
+	</div>
+    
+			
+			
+			
+		    	
+				
+	
+<div class="box" style="margin-bottom: 10px;">   
+	<a class="box" href="aktualnosci#134999622">
+<table><tr><a name="134999622"></a></tr>
+<tr>
+<td style="width: 100px;">
+<b>24.11.2016<br/>
+Marek Zaionc</b></td>      
+<td style="padding-left:5px;"><b>Nowe granty NCN dla Jakuba Kozika i Macieja Bendkowskiego<br/></b></td>
+</tr>
+	    </table></a>
+	</div>
+    
+			
+			
+			
+		    	
+				
+	
+<div class="box" style="margin-bottom: 10px;">   
+	<a class="box" href="aktualnosci#134973932">
+<table><tr><a name="134973932"></a></tr>
+<tr>
+<td style="width: 100px;">
+<b>23.01.2017<br/>
+Lech Duraj</b></td>      
+<td style="padding-left:5px;"><b>Drużyna Uniwersytetu Jagiellońskiego w finałach ACM ICPC<br/></b></td>
+</tr>
+	    </table></a>
+	</div>
+    
+			
+			
+			
+		    	
+				
+	
+<div class="box" style="margin-bottom: 10px;">   
+	<a class="box" href="aktualnosci#134963917">
+<table><tr><a name="134963917"></a></tr>
+<tr>
+<td style="width: 100px;">
+<b>24.11.2016<br/>
+Marek Zaionc</b></td>      
+<td style="padding-left:5px;"><b>Prof Paweł Idziak wybrany do CK<br/></b></td>
+</tr>
+	    </table></a>
+	</div>
+        <ul class="paginacja" style="float:right;">
+<a href="aktualnosci">Więcej&raquo;</a>
+</ul>
+    
+						</div>
+
+						
+					
+					
+				
+			
+		
+	
+
+
+
+
+	
+
+
+
+
+	
+		<div class="entry-links">
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		</div>
+	
+
+	
+
+	
+
+	
+
+					
+				
+			
+		
+	
+	
+
+
+
+	</div>
+
+				</div>
+
+				
+			
+		
+	
+
+
+	
+
+
+
+
+
+		
+	</div>
+
+
+
+
+</div>
+		</div>
+	</div>
+</div>
+
+
+	
+
+					
+				
+			
+		
+	
+	
+
+
+
+	</div>
+
+				</div>
+
+				
+			
+		
+	
+
+
+	
+
+
+
+
+
+		
+	</div>
+
+
+
+
+</div>
+			</div>
+			<div class="portlet-column portlet-column-last uj-right" id="column-3">
+				<div class="portlet-dropzone portlet-column-content portlet-column-content-last" id="layout-column_column-3">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	<div class="portlet-boundary portlet-boundary_85_  portlet-static portlet-static-end portlet-borderless portlet-site-map " id="p_p_id_85_INSTANCE_GIPDu95QM6Lj_" >
+		<span id="p_85_INSTANCE_GIPDu95QM6Lj"></span>
+
+
+
+	
+	
+	
+
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+	
+
+		
+
+		
+			
+			
+
+				
+
+				<div class="portlet-borderless-container" style="">
+					
+
+					
+
+
+	<div class="portlet-body">
+
+
+
+	
+		
+			
+			
+				
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+				
+
+				
+					
+					
+						
+
+
+	
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+		
+
+		<ul><li><a href="http://www.tcs.uj.edu.pl/strona-glowna" > Strona Główna</a></li><li><a href="http://www.tcs.uj.edu.pl/katedra-algorytmiki" > Katedra Algorytmiki</a></li><li><a href="http://www.tcs.uj.edu.pl/katedra-podstaw-informatyki" > Katedra Podstaw Informatyki</a></li><li><a href="http://www.matinf.uj.edu.pl/" > Wydział Matematyki i Informatyki</a></li><li><a href="http://www.tcs.uj.edu.pl/kontakt" > Kontakt</a></li><li><a href="http://www.tcs.uj.edu.pl/satori" > Satori</a></li><li><a href="http://www.ejournals.eu/rml/" > Reports on Mathematical Logic</a></li><li><a href="https://forum.tcs.uj.edu.pl/" > Forum TCS</a></li><li><a href="http://www.tcs.uj.edu.pl/usosweb1" > UsosWeb</a></li><li><a href="http://www.tcs.uj.edu.pl/ontrail" > Informatyka na szlaku</a></li><li><a href="https://get.google.com/albumarchive/107015463700844075097" > Galeria</a></li><li><a href="http://www.tcs.uj.edu.pl/ludzie" > Ludzie</a><ul><li><a href="http://www.tcs.uj.edu.pl/bendkowski" > Maciej Bendkowski</a></li><li><a href="http://www.tcs.uj.edu.pl/borak" > Szymon Borak</a></li><li><a href="http://www.tcs.uj.edu.pl/bosek" > Bartłomiej Bosek</a></li><li><a href="http://www.tcs.uj.edu.pl/cieslik" > Iwona Cieślik</a></li><li><a href="http://www.tcs.uj.edu.pl/danilewski" > Piotr Danilewski</a></li><li><a href="http://www.tcs.uj.edu.pl/duraj" > Lech Duraj</a></li><li><a href="http://www.tcs.uj.edu.pl/gagol" > Adam Gągol</a></li><li><a href="http://www.tcs.uj.edu.pl/gillert" > Monika Gillert</a></li><li><a href="http://www.tcs.uj.edu.pl/grygiel" > Katarzyna Grygiel</a></li><li><a href="http://www.tcs.uj.edu.pl/grytczuk" > Jarosław Grytczuk</a></li><li><a href="http://www.tcs.uj.edu.pl/guspiel" > Grzegorz Guśpiel</a></li><li><a href="http://www.tcs.uj.edu.pl/gutowski" > Grzegorz Gutowski</a></li><li><a href="http://www.tcs.uj.edu.pl/herman" > Grzegorz Herman</a></li><li><a href="http://www.tcs.uj.edu.pl/horwath" > Leszek Horwath</a></li><li><a href="http://www.tcs.uj.edu.pl/idziak" > Pawel M. Idziak</a></li><li><a href="http://www.tcs.uj.edu.pl/kisielewski" > Tomasz Kisielewski</a></li><li><a href="http://www.tcs.uj.edu.pl/kosinski" > Karol Kosiński</a></li><li><a href="http://www.tcs.uj.edu.pl/kozik" > Marcin Kozik</a></li><li><a href="http://www.tcs.uj.edu.pl/kozikj" > Jakub Kozik</a></li><li><a href="http://www.tcs.uj.edu.pl/krawczyk" > Tomasz Krawczyk</a></li><li><a href="http://www.tcs.uj.edu.pl/krzaczkowski" > Jacek Krzaczkowski</a></li><li><a href="http://www.tcs.uj.edu.pl/lachowski" > Łukasz Lachowski</a></li><li><a href="http://www.tcs.uj.edu.pl/lubawski" > Wojciech Lubawski</a></li><li><a href="http://www.tcs.uj.edu.pl/lupinska" > Agnieszka Łupińska</a></li><li><a href="http://www.tcs.uj.edu.pl/matecki" > Grzegorz Matecki</a></li><li><a href="http://www.tcs.uj.edu.pl/micek" > Piotr Micek</a></li><li><a href="http://www.tcs.uj.edu.pl/mikos" > Patryk Mikos</a></li><li><a href="http://www.tcs.uj.edu.pl/pezarski" > Andrzej Pezarski</a></li><li><a href="http://www.tcs.uj.edu.pl/polak" > Adam Polak</a></li><li><a href="http://www.tcs.uj.edu.pl/staromiejski" > Michał Staromiejski</a></li><li><a href="http://www.tcs.uj.edu.pl/szafruga" > Piotr Szafruga</a></li><li><a href="http://www.tcs.uj.edu.pl/slusarek" > Maciej Ślusarek</a></li><li><a href="http://www.tcs.uj.edu.pl/walczak" > Bartosz Walczak</a></li><li><a href="http://www.tcs.uj.edu.pl/wojcik" > Piotr Wójcik</a></li><li><a href="http://www.tcs.uj.edu.pl/wrona" > Michał Wrona</a></li><li><a href="http://www.tcs.uj.edu.pl/zaionc" > Marek Zaionc</a></li><li><a href="http://www.tcs.uj.edu.pl/zmarz" > Michał Zmarz</a></li></ul></li><li><a href="http://www.tcs.uj.edu.pl/byli-wspolpracownicy" > Byli współpracownicy</a></li></ul>
+	
+
+
+
+	
+
+					
+				
+			
+		
+	
+	
+
+
+
+	</div>
+
+				</div>
+
+				
+			
+		
+	
+
+
+	
+
+
+
+
+
+		
+	</div>
+
+
+
+
+</div>
+			</div>
+	    </div>
+	</div>
+    </div>
+
+
+
+
+
+	
+
+
+
+
+
+<form action="#" id="hrefFm" method="post" name="hrefFm">
+	<span></span>
+</form>
+          <div id="footer">
+        <span id="copyright">&#169; 2010-2017 Uniwersytet Jagiello&#324;ski</span>				
+<div id="cookiesMessage">
+Na stronach internetowych Uniwersytetu Jagiellońskiego stosowane są pliki "cookies" zgodnie 
+z <a href="http://www.portal.uj.edu.pl/obsluga-plikow-cookies" target="_blank">Polityką&nbsp;prywatności</a>. 
+<a href="javascript:closeCookiesWindow();" id="closeCookiesWindow">Akceptuję</a>
+</div>
+
+
+<div id="bottom-corner-container">
+<ul>
+   
+        <li><a class="redakcjaShow" href="javascript:void(0)" onclick="redakcja()">Redakcja strony</a>&nbsp;|</li>
+
+                                                                                                                                                                                                                                                           <li>
+                                 <a href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;mapa-serwisu"  tabindex="0"><span>mapa serwisu</span></a>&nbsp;|
+                        </li>
+                                                                                                      <li>
+                                 <a href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;kontakt0"  tabindex="0"><span>kontakt</span></a>&nbsp;|
+                        </li>
+                                                                                                      <li>
+                                 <a href="http&#x3a;&#x2f;&#x2f;www&#x2e;forum&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl"  tabindex="0"><span>forum tcs</span></a>&nbsp;|
+                        </li>
+                                                                                                      <li>
+                                 <a href="http&#x3a;&#x2f;&#x2f;www&#x2e;tcs&#x2e;uj&#x2e;edu&#x2e;pl&#x2f;satori2"  tabindex="0"><span>satori</span></a>&nbsp;|
+                        </li>
+                                                           
+    					    
+</ul>
+<div id="pretty" class="redakcja" style="display:none;" title="Redakcja">
+  <a href="agnieszka-lupinska">Agnieszka Łupińska</a>
+<a href="lukasz-lachowski">Łukasz Lachowski</a>
+</div>
+</div>
+		<div id="cookies"><a href="http://www.portal.uj.edu.pl/obsluga-plikow-cookies">Polityka obs&#322;ugi ciasteczek</a></div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+	
+
+				<script src="http://www.tcs.uj.edu.pl/html/portlet/dynamic_data_lists/js/main.js?browserId=firefox&amp;minifierType=js&amp;languageId=pl_PL&amp;b=6205&amp;t=1490141267000" type="text/javascript"></script>
+
+	
+
+				<script src="http://www.tcs.uj.edu.pl/html/portlet/dynamic_data_mapping/js/main.js?browserId=firefox&amp;minifierType=js&amp;languageId=pl_PL&amp;b=6205&amp;t=1490141267000" type="text/javascript"></script>
+
+	
+
+				<script src="http://www.tcs.uj.edu.pl/html/portlet/document_library/js/main.js?browserId=firefox&amp;minifierType=js&amp;languageId=pl_PL&amp;b=6205&amp;t=1490141267000" type="text/javascript"></script>
+
+	
+
+				<script src="http://www.tcs.uj.edu.pl/html/portlet/document_library/js/upload.js?browserId=firefox&amp;minifierType=js&amp;languageId=pl_PL&amp;b=6205&amp;t=1490141267000" type="text/javascript"></script>
+
+	
+
+				<script src="http://www.tcs.uj.edu.pl/notifications-portlet/notifications/js/main.js?browserId=firefox&amp;minifierType=js&amp;languageId=pl_PL&amp;b=6205&amp;t=1490141239000" type="text/javascript"></script>
+
+	
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+// <![CDATA[
+
+	Liferay.Util.addInputFocus();
+
+	
+
+	
+		
+		
+
+			
+
+			
+		
+	
+
+// ]]>
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+
+		
+
+		
+	
+
+
+<script type="text/javascript">
+// <![CDATA[
+
+			Liferay.Portlet.onLoad(
+				{
+					canEditTitle: false,
+					columnPos: 0,
+					isStatic: 'end',
+					namespacedId: 'p_p_id_85_INSTANCE_GIPDu95QM6Lj_',
+					portletId: '85_INSTANCE_GIPDu95QM6Lj',
+					refreshURL: '\x2fc\x2fportal\x2frender_portlet\x3fp_l_id\x3d49217399\x26p_p_id\x3d85_INSTANCE_GIPDu95QM6Lj\x26p_p_lifecycle\x3d0\x26p_t_lifecycle\x3d0\x26p_p_state\x3dnormal\x26p_p_mode\x3dview\x26p_p_col_id\x3dcolumn-3\x26p_p_col_pos\x3d0\x26p_p_col_count\x3d1\x26p_p_isolated\x3d1\x26currentURL\x3d\x252F'
+				}
+			);
+		
+			Liferay.Portlet.onLoad(
+				{
+					canEditTitle: false,
+					columnPos: 0,
+					isStatic: 'end',
+					namespacedId: 'p_p_id_56_INSTANCE_qXTGw8v4cU0h_',
+					portletId: '56_INSTANCE_qXTGw8v4cU0h',
+					refreshURL: '\x2fc\x2fportal\x2frender_portlet\x3fp_l_id\x3d49217399\x26p_p_id\x3d56_INSTANCE_qXTGw8v4cU0h\x26p_p_lifecycle\x3d0\x26p_t_lifecycle\x3d0\x26p_p_state\x3dnormal\x26p_p_mode\x3dview\x26p_p_col_id\x3d_118_INSTANCE_vN6z0kejskNk__column-1\x26p_p_col_pos\x3d0\x26p_p_col_count\x3d1\x26p_p_isolated\x3d1\x26currentURL\x3d\x252F'
+				}
+			);
+		
+			Liferay.Portlet.onLoad(
+				{
+					canEditTitle: false,
+					columnPos: 2,
+					isStatic: 'end',
+					namespacedId: 'p_p_id_118_INSTANCE_vN6z0kejskNk_',
+					portletId: '118_INSTANCE_vN6z0kejskNk',
+					refreshURL: '\x2fc\x2fportal\x2frender_portlet\x3fp_l_id\x3d49217399\x26p_p_id\x3d118_INSTANCE_vN6z0kejskNk\x26p_p_lifecycle\x3d0\x26p_t_lifecycle\x3d0\x26p_p_state\x3dnormal\x26p_p_mode\x3dview\x26p_p_col_id\x3dcolumn-2\x26p_p_col_pos\x3d2\x26p_p_col_count\x3d3\x26p_p_isolated\x3d1\x26currentURL\x3d\x252F'
+				}
+			);
+		
+			Liferay.Portlet.onLoad(
+				{
+					canEditTitle: false,
+					columnPos: 0,
+					isStatic: 'end',
+					namespacedId: 'p_p_id_56_INSTANCE_yOHdFBHI9MLN_',
+					portletId: '56_INSTANCE_yOHdFBHI9MLN',
+					refreshURL: '\x2fc\x2fportal\x2frender_portlet\x3fp_l_id\x3d49217399\x26p_p_id\x3d56_INSTANCE_yOHdFBHI9MLN\x26p_p_lifecycle\x3d0\x26p_t_lifecycle\x3d0\x26p_p_state\x3dnormal\x26p_p_mode\x3dview\x26p_p_col_id\x3d_118_INSTANCE_vN6z0kejskNk__column-2\x26p_p_col_pos\x3d0\x26p_p_col_count\x3d1\x26p_p_isolated\x3d1\x26currentURL\x3d\x252F'
+				}
+			);
+		
+			Liferay.Portlet.onLoad(
+				{
+					canEditTitle: false,
+					columnPos: 1,
+					isStatic: 'end',
+					namespacedId: 'p_p_id_56_INSTANCE_Rv5ETo5iDxzm_',
+					portletId: '56_INSTANCE_Rv5ETo5iDxzm',
+					refreshURL: '\x2fc\x2fportal\x2frender_portlet\x3fp_l_id\x3d49217399\x26p_p_id\x3d56_INSTANCE_Rv5ETo5iDxzm\x26p_p_lifecycle\x3d0\x26p_t_lifecycle\x3d0\x26p_p_state\x3dnormal\x26p_p_mode\x3dview\x26p_p_col_id\x3dcolumn-2\x26p_p_col_pos\x3d1\x26p_p_col_count\x3d3\x26p_p_isolated\x3d1\x26currentURL\x3d\x252F'
+				}
+			);
+		
+			Liferay.Portlet.onLoad(
+				{
+					canEditTitle: false,
+					columnPos: 0,
+					isStatic: 'end',
+					namespacedId: 'p_p_id_56_INSTANCE_kvJCCNlvDZe0_',
+					portletId: '56_INSTANCE_kvJCCNlvDZe0',
+					refreshURL: '\x2fc\x2fportal\x2frender_portlet\x3fp_l_id\x3d49217399\x26p_p_id\x3d56_INSTANCE_kvJCCNlvDZe0\x26p_p_lifecycle\x3d0\x26p_t_lifecycle\x3d0\x26p_p_state\x3dnormal\x26p_p_mode\x3dview\x26p_p_col_id\x3dcolumn-2\x26p_p_col_pos\x3d0\x26p_p_col_count\x3d3\x26p_p_isolated\x3d1\x26currentURL\x3d\x252F'
+				}
+			);
+		AUI().use('aui-base', 'liferay-menu', 'liferay-notice', 'liferay-poller', 'liferay-session', function(A) {(function() {
+	Liferay.Util.addInputType();
+
+	Liferay.Portlet.ready(
+		function(portletId, node) {
+			Liferay.Util.addInputType(node);
+		}
+	);
+
+	if (A.UA.mobile) {
+		Liferay.Util.addInputCancel();
+	}
+})();(function() {
+	new Liferay.Menu();
+
+	var liferayNotices = Liferay.Data.notices;
+
+	for (var i = 1; i < liferayNotices.length; i++) {
+		new Liferay.Notice(liferayNotices[i]);
+	}
+
+	
+})();(function() {
+			Liferay.Session = new Liferay.SessionBase(
+				{
+					autoExtend: true,
+					sessionLength: 30,
+					redirectOnExpire: false,
+					redirectUrl: 'http\x3a\x2f\x2fwww\x2euj\x2eedu\x2epl',
+					warningLength: 0
+				}
+			);
+
+			
+		})();});
+// ]]>
+</script>
+
+
+
+
+
+
+
+
+
+<script src="http://www.tcs.uj.edu.pl/uj-main-theme/js/main.js?browserId=firefox&amp;minifierType=js&amp;languageId=pl_PL&amp;b=6205&amp;t=1475886785000" type="text/javascript"></script>
+
+
+
+	
+
+	
+
+	<script type="text/javascript">
+		// <![CDATA[
+			
+
+			
+		// ]]>
+	</script>
+
+
+
+
+
+
+</body>
+</html>
+
+
