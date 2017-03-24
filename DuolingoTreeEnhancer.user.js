@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.6.0
+// @version      0.6.1
 // @description  Enhance reverse trees by adding a TTS (Google, Baidu or Yandex) and turning most exercices into listening exercices by hiding the text in the target language.
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -152,10 +152,10 @@ var enableTTSGlobal = true;
 // Google TTS Functions
 // ====================
 //
-function googleTTSLang(targetLang) {
-    if (targetLang == "dn") { return "nl"; }
-    if (targetLang == "zs") { return "zh"; }
-    return targetLang;
+function googleTTSLang(target) {
+    if (target == "dn") { return "nl"; }
+    if (target == "zs") { return "zh"; }
+    return target;
 }
 
 function googleSay(sentence, lang, slow) {
@@ -174,8 +174,8 @@ function googleSay(sentence, lang, slow) {
 // Yandex TTS Functions
 // ====================
 //
-function yandexTTSLang(targetLang) {
-	switch (targetLang) {
+function yandexTTSLang(target) {
+	switch (target) {
 	case 'ar': return 'ar_AE';
 	case 'ca': return 'ca_ES';
 	case 'cs': return 'cs_CZ';
@@ -445,13 +445,17 @@ function challengeForm(){
     }
 }
 
-function updateUser(ap, mic, spk) {
+function setUserConfig(reload) {
+	var autoplay = isSayText(targetLang);
+	var microphone = isSpeaking();
+	var speakers = isListening();
+
 	// This was reverse engineered, might stop working any time
 	url = "/2016-04-13/users/";
 	fields = "?fields=%2Cautoplay%2CenableMicrophone%2CenableSpeaker";
-	params = '{"":"","autoplay":' + ap +
-	',"enableMicrophone":' + mic +
-	',"enableSpeaker":' + spk +'}';
+	params = '{"":"","autoplay":' + autoplay +
+	',"enableMicrophone":' + microphone +
+	',"enableSpeaker":' + speakers +'}';
 
 	http=new XMLHttpRequest();
 	http.open("PATCH", url + duo.user.id + fields, true);
@@ -465,21 +469,16 @@ function updateUser(ap, mic, spk) {
 	http.onreadystatechange = function() {//Call a function when the state changes.
 		if(http.readyState == 4 && http.status == 200) {
 			console.log("Updated Setup " + params);
+			if (reload) {
+				location.reload();
+			}
 		}
 	}
 	http.send(params);
 }
 
-function setUserConfig() {
-	var autoplay = isSayText(duo.user.attributes.learning_language);
-	var microphone = isSpeaking();
-	var speakers = isListening();
-	updateUser(autoplay, microphone, speakers);
-}
-
 function updateConfig() {
-	var item = "gm_conf-" + duo.user.attributes.ui_language + "-"
-			+ duo.user.attributes.learning_language;
+	var item = "gm_conf-" + sourceLang + "-" + targetLang;
 	var conf = {
 		id : item, // The id used for this instance of GM_config
 		title : 'Enhanced Tree Configurator',
@@ -780,14 +779,29 @@ function updateButton() {
 /* Function dispatching the changes in the page to the other functions */
 
 var oldclass = "";
-var targetLang, sourceLange;
+var targetLang = "-";
+var sourceLang = "-";
 var grade, challenge;
 
 function onChange() {
     var newclass = document.getElementById("app").className;
 
-    sourceLang = duo.user.attributes.ui_language;
-    targetLang = duo.user.attributes.learning_language;
+    newSourceLang = duo.user.attributes.ui_language;
+    newTargetLang = duo.user.attributes.learning_language;
+    if (newSourceLang != sourceLang || newTargetLang !=targetLang) {
+    	reload = sourceLang != targetLang;
+    	saveSource = sourceLang;
+    	saveTarget = targetLang;
+    	sourceLang = newSourceLang;
+    	targetLang = newTargetLang;
+    	updateConfig();
+    	setUserConfig(reload);
+    	if (reload && saveSource != sourceLang) {
+    		duo.user.attributes.ui_language = saveSource;
+    		duo.user.attributes.learning_language = saveTarget;
+    	}
+    	// console.log("CHANGES!!!!");
+    }
     if(/certification_test/.test(newclass)) {
         enableTTSGlobal = false;
     } else {
@@ -858,8 +872,8 @@ function onChange() {
     }
 }
 
-setTimeout(updateConfig, 1000);
-setTimeout(setUserConfig, 1200);
+// setTimeout(updateConfig, 1000);
+// setTimeout(setUserConfig, 1200);
 
 new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
 
