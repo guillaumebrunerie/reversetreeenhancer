@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.6.1
+// @version      0.6.2
 // @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -309,8 +309,12 @@ function challengeTranslate(lang) {
     }
     console.log("challengeTranslate from "+question+" to "+answer);
     if (grade.children.length === 0) {
-        if (isSayQuestion(question))
-            sayCell(cell, question); // Speak only by explicit request in forward tree
+        // Read the question aloud if no TTS is available
+        // We know there is not TTS because there is no play button
+        speak_button = challenge.getElementsByClassName("speaker-small");
+        if ( (speak_button.length == 0) && isSayText(question) ) {
+            sayCell(cell, question);
+        }
         if (isHideText(question)) {
             cell.className = "text-to-translate ttt-hide";
             cell.onclick = function() {
@@ -321,6 +325,8 @@ function challengeTranslate(lang) {
         cell.className = "text-to-translate";
         cell.onclick = null
     }
+
+    // Read the answer aloud if necessary
     if ((grade.children.length > 0) && isSayText(answer)) {
         var betterAnswer = grade.getElementsByTagName("h1")[0].getElementsByTagName("span");
         // Hack for making timed practice work
@@ -767,11 +773,6 @@ function isSpeaking() {
 	return (GM_config.get(['SPEAKING']));
 }
 
-function isSayQuestion(lang)
-{
-    return (lang == sourceLang) && isSayText(lang);
-}
-
 function updateButton() {
     var button = document.getElementById("reverse-tree-enhancer-button");
     if(button === null){ return; }
@@ -856,7 +857,7 @@ function onChange() {
             lang = challenge.getElementsByTagName("textarea")[0].getAttribute("lang");
             if (isCheckSpell()) {
                 challenge.getElementsByTagName("textarea")[0].setAttribute("spellcheck", "true");
-	    }
+            }
             challengeTranslate(lang);
         }
 
