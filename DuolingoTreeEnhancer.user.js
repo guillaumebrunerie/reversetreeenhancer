@@ -149,6 +149,7 @@ function playSound(sentence, lang, slow) {
 var sentenceGlobal = null;
 var lastSaidSlow = false;
 var enableTTSGlobal = true;
+var duo_languages = JSON.parse('{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","gl":"Galician","la":"Latin","tt":"Tatar","tr":"Turkish","lv":"Latvian","tl":"Tagalog","th":"Thai","te":"Telugu","ta":"Tamil","yi":"Yiddish","dk":"Dothraki","de":"German","db":"Dutch (Belgium)","da":"Danish","uz":"Uzbek","el":"Greek","eo":"Esperanto","en":"English","zc":"Chinese (Cantonese)","eu":"Basque","et":"Estonian","ep":"English (Pirate)","es":"Spanish","zs":"Chinese","ru":"Russian","ro":"Romanian","be":"Belarusian","bg":"Bulgarian","ms":"Malay","bn":"Bengali","ja":"Japanese","or":"Oriya","xl":"Lolcat","ca":"Catalan","xe":"Emoji","xz":"Zombie","cy":"Welsh","cs":"Czech","pt":"Portuguese","lt":"Lithuanian","pa":"Punjabi (Gurmukhi)","pl":"Polish","hy":"Armenian","hr":"Croatian","hv":"High Valyrian","ht":"Haitian Creole","hu":"Hungarian","hi":"Hindi","he":"Hebrew","mb":"Malay (Brunei)","mm":"Malay (Malaysia)","ml":"Malayalam","mn":"Mongolian","mk":"Macedonian","ur":"Urdu","kk":"Kazakh","uk":"Ukrainian","mr":"Marathi","my":"Burmese","dn":"Dutch","af":"Afrikaans","vi":"Vietnamese","is":"Icelandic","it":"Italian","kn":"Kannada","zt":"Chinese (Traditional)","as":"Assamese","ar":"Arabic","zu":"Zulu","az":"Azeri","id":"Indonesian","nn":"Norwegian (Nynorsk)","no":"Norwegian","nb":"Norwegian (Bokmål)","ne":"Nepali","fr":"French","fa":"Farsi","fi":"Finnish","fo":"Faroese","ka":"Georgian","ss":"Swedish (Sweden)","sq":"Albanian","ko":"Korean","sv":"Swedish","km":"Khmer","kl":"Klingon","sk":"Slovak","sn":"Sindarin","sl":"Slovenian","ky":"Kyrgyz","sf":"Swedish (Finland)","sw":"Swahili"}');
 
 // Google TTS Functions
 // ====================
@@ -511,12 +512,12 @@ function updateConfig() {
 			'HIDE_TARGET' : { // Hide questions in Duo's target language
 				'section' : [],
 				'labelPos' : 'right',
-				'label' : duo.language_names_ui['en'][targetLang], // SECTION_2
+				'label' : duo_languages[targetLang], // SECTION_2
 				'type' : 'checkbox',
 				'default' : false
 			},
 			'HIDE_SOURCE' : { // Hide questions in Duo's source language
-				'label' : duo.language_names_ui['en'][sourceLang],
+				'label' : duo_languages[sourceLang],
 				'labelPos' : 'right',
 				'type' : 'checkbox',
 				'default' : false
@@ -533,14 +534,14 @@ function updateConfig() {
 			},
 			'READ_TARGET' : { // Read text in Duo's target language
 				'section' : [], // SECTION_4
-				'label' : duo.language_names_ui['en'][targetLang],
+				'label' : duo_languages[targetLang],
 				'labelPos' : 'right',
 				'type' : 'checkbox',
 				'default' : true
 			},
 			'READ_SOURCE' : // Read text in Duo's target language
 			{
-				'label' : duo.language_names_ui['en'][sourceLang],
+				'label' : duo_languages[sourceLang],
 				'labelPos' : 'right',
 				'type' : 'checkbox',
 				'default' : false
@@ -793,10 +794,10 @@ var sourceLang = "-";
 var grade, challenge;
 
 function onChange() {
-    var newclass = document.getElementById("app").className;
+    var newclass = "home";
 
-    newSourceLang = duo.user.attributes.ui_language;
-    newTargetLang = duo.user.attributes.learning_language;
+    newSourceLang = "en";
+    newTargetLang = "es";
     if (newSourceLang != sourceLang || newTargetLang !=targetLang) {
     	reload = sourceLang != targetLang;
     	saveSource = sourceLang;
@@ -805,24 +806,31 @@ function onChange() {
     	targetLang = newTargetLang;
     	updateConfig();
     	setUserConfig(reload);
+        console.log("AAAAAA " + window.location.pathname);
     	if (reload && saveSource != sourceLang) {
-    		duo.user.attributes.ui_language = saveSource;
-    		duo.user.attributes.learning_language = saveTarget;
+    		// duo.user.attributes.ui_language = saveSource;
+    		// duo.user.attributes.learning_language = saveTarget;
     	}
     	// console.log("CHANGES!!!!");
     }
+    console.log("AAAAAA " + window.location.pathname);
+
     if(/certification_test/.test(newclass)) {
         enableTTSGlobal = false;
     } else {
         enableTTSGlobal = true;
     }
 
-    if(/home/.test(newclass) && !document.getElementById("reverse-tree-enhancer-button")){
-        var tree = document.getElementsByClassName("tree")[0];
+    if(window.location.pathname == "/" && !document.getElementById("reverse-tree-enhancer-button")){
+        console.log("AAAAAA");
+        var tree = document.querySelector("div[data-test='skill-tree']");
+        var lingot = document.querySelector("a[data-test='lingot-store-button']");
         var button = document.createElement("button");
         button.id = "reverse-tree-enhancer-button";
         button.onclick = showConfig;
+        console.log("AAAAAA");
         tree.insertBefore(button, tree.firstChild);
+        console.log("AAAAAA");
         updateConfig(); // Make GM_Config point to this language setup
         updateButton()(); // Read setup
     }
