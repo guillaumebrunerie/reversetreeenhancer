@@ -14,6 +14,16 @@
 
 console.debug('Duolingo: Tree Enhancer');
 
+var sentenceGlobal = null;
+var lastSaidSlow = false;
+var enableTTSGlobal = true;
+var duo_languages = JSON.parse('{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","gl":"Galician","la":"Latin","tt":"Tatar","tr":"Turkish","lv":"Latvian","tl":"Tagalog","th":"Thai","te":"Telugu","ta":"Tamil","yi":"Yiddish","dk":"Dothraki","de":"German","db":"Dutch (Belgium)","da":"Danish","uz":"Uzbek","el":"Greek","eo":"Esperanto","en":"English","zc":"Chinese (Cantonese)","eu":"Basque","et":"Estonian","ep":"English (Pirate)","es":"Spanish","zs":"Chinese","ru":"Russian","ro":"Romanian","be":"Belarusian","bg":"Bulgarian","ms":"Malay","bn":"Bengali","ja":"Japanese","or":"Oriya","xl":"Lolcat","ca":"Catalan","xe":"Emoji","xz":"Zombie","cy":"Welsh","cs":"Czech","pt":"Portuguese","lt":"Lithuanian","pa":"Punjabi (Gurmukhi)","pl":"Polish","hy":"Armenian","hr":"Croatian","hv":"High Valyrian","ht":"Haitian Creole","hu":"Hungarian","hi":"Hindi","he":"Hebrew","mb":"Malay (Brunei)","mm":"Malay (Malaysia)","ml":"Malayalam","mn":"Mongolian","mk":"Macedonian","ur":"Urdu","kk":"Kazakh","uk":"Ukrainian","mr":"Marathi","my":"Burmese","dn":"Dutch","af":"Afrikaans","vi":"Vietnamese","is":"Icelandic","it":"Italian","kn":"Kannada","zt":"Chinese (Traditional)","as":"Assamese","ar":"Arabic","zu":"Zulu","az":"Azeri","id":"Indonesian","nn":"Norwegian (Nynorsk)","no":"Norwegian","nb":"Norwegian (Bokmål)","ne":"Nepali","fr":"French","fa":"Farsi","fi":"Finnish","fo":"Faroese","ka":"Georgian","ss":"Swedish (Sweden)","sq":"Albanian","ko":"Korean","sv":"Swedish","km":"Khmer","kl":"Klingon","sk":"Slovak","sn":"Sindarin","sl":"Slovenian","ky":"Kyrgyz","sf":"Swedish (Finland)","sw":"Swahili"}');
+var oldclass = "";
+var DuoState = JSON.parse(localStorage.getItem('duo.state'));
+var targetLang = DuoState.user.learningLanguage;
+var sourceLang = DuoState.user.fromLanguage;
+var grade, challenge;
+
 /* The color used for hiding */
 var hColor = "lightgray";
 
@@ -146,11 +156,6 @@ function playSound(sentence, lang, slow) {
 	}
 }
 
-var sentenceGlobal = null;
-var lastSaidSlow = false;
-var enableTTSGlobal = true;
-var duo_languages = JSON.parse('{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","gl":"Galician","la":"Latin","tt":"Tatar","tr":"Turkish","lv":"Latvian","tl":"Tagalog","th":"Thai","te":"Telugu","ta":"Tamil","yi":"Yiddish","dk":"Dothraki","de":"German","db":"Dutch (Belgium)","da":"Danish","uz":"Uzbek","el":"Greek","eo":"Esperanto","en":"English","zc":"Chinese (Cantonese)","eu":"Basque","et":"Estonian","ep":"English (Pirate)","es":"Spanish","zs":"Chinese","ru":"Russian","ro":"Romanian","be":"Belarusian","bg":"Bulgarian","ms":"Malay","bn":"Bengali","ja":"Japanese","or":"Oriya","xl":"Lolcat","ca":"Catalan","xe":"Emoji","xz":"Zombie","cy":"Welsh","cs":"Czech","pt":"Portuguese","lt":"Lithuanian","pa":"Punjabi (Gurmukhi)","pl":"Polish","hy":"Armenian","hr":"Croatian","hv":"High Valyrian","ht":"Haitian Creole","hu":"Hungarian","hi":"Hindi","he":"Hebrew","mb":"Malay (Brunei)","mm":"Malay (Malaysia)","ml":"Malayalam","mn":"Mongolian","mk":"Macedonian","ur":"Urdu","kk":"Kazakh","uk":"Ukrainian","mr":"Marathi","my":"Burmese","dn":"Dutch","af":"Afrikaans","vi":"Vietnamese","is":"Icelandic","it":"Italian","kn":"Kannada","zt":"Chinese (Traditional)","as":"Assamese","ar":"Arabic","zu":"Zulu","az":"Azeri","id":"Indonesian","nn":"Norwegian (Nynorsk)","no":"Norwegian","nb":"Norwegian (Bokmål)","ne":"Nepali","fr":"French","fa":"Farsi","fi":"Finnish","fo":"Faroese","ka":"Georgian","ss":"Swedish (Sweden)","sq":"Albanian","ko":"Korean","sv":"Swedish","km":"Khmer","kl":"Klingon","sk":"Slovak","sn":"Sindarin","sl":"Slovenian","ky":"Kyrgyz","sf":"Swedish (Finland)","sw":"Swahili"}');
-
 // Google TTS Functions
 // ====================
 //
@@ -215,8 +220,8 @@ function yandexSay(sentence, lang, speed) {
 // ====================
 
 // Duolingo to Baidu language codes
-function baiduTTSLang(targetLang) {
-	switch (targetLang) {
+function baiduTTSLang(lang) {
+	switch (lang) {
 	case 'en': return 'en'; // American English
 	case 'es': return 'es'; // Spanish
 	case 'pt': return 'pt'; // Portuguese
@@ -287,20 +292,11 @@ function keyUpHandler(e) {
 
 document.addEventListener('keyup', keyUpHandler, false);
 
-/* jQuery hack to avoid reading things in display:none, copy-pasted from StackOverflow */
-function sayCell(cell, lang) {
-    var t = $(cell).clone();
-    $('body').append(t);
-    t.find('*:not(:visible)').remove();
-    t.remove();
-    say(t.text(), lang);
-}
-
 /* Functions acting on the various types of exercices */
 
 /* Translation from target language (eg. Polish) */
 function challengeTranslate(lang) {
-    var cell = challenge.getElementsByClassName("text-to-translate")[0];
+    var cell = challenge.getElementsByClassName("_38VWB")[0];
     if (lang == targetLang) {
         question = sourceLang;
         answer = targetLang;
@@ -312,9 +308,9 @@ function challengeTranslate(lang) {
     if (grade.children.length === 0) {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
-        speak_button = challenge.getElementsByClassName("speaker-small");
+        speak_button = challenge.getElementsByClassName("_2GN1p _1ZlfW");
         if ( (speak_button.length == 0) && isSayText(question) ) {
-            sayCell(cell, question);
+            say(cell.innerText, question);
         }
         if (isHideText(question)) {
             cell.className = "text-to-translate ttt-hide";
@@ -348,8 +344,7 @@ function challengeTranslate(lang) {
 
 /* Multiple-choice translation question */
 function challengeJudge() {
-	var textCell = challenge.getElementsByClassName("col-left")[0]
-			.getElementsByTagName("bdi")[0];
+	var textCell = challenge.getElementsByClassName("KRKEd")[0];
 	var ul = challenge.getElementsByTagName("ul")[0];
 
 	if (!document.getElementById("timer") && isHideTranslations()) {
@@ -636,6 +631,9 @@ function updateConfig() {
 	GM_config = new GM_configStruct();
 	GM_config.init(conf);
 	sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
+
+	console.log("Duolingo Tree Enhancer ready from " + sourceLang
+    		+ " to " + targetLang);
 };
 
 function setConfigDefaults(treeType)
@@ -712,9 +710,7 @@ function getConfig() {
 	// Keep a list of reverse trees
     var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
     if(reverseTrees === null) { reverseTrees = {}; }
-    var item = duo.user.attributes.ui_language + "-" + duo.user.attributes.learning_language;
-    reverseTrees[item] = isReverseTree();
-    localStorage.setItem("reverse_trees", JSON.stringify(reverseTrees));
+    var item = sourceLang + "-" + targetLang;
 
     sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
 
@@ -779,25 +775,27 @@ function updateButton() {
     if(button === null){ return; }
     if(isEnhancedTree()) {
         button.textContent = GM_config.get('IS_ENHANCED') + " tree!";
-        button.className = "btn btn-standard right btn-store";
+        button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q";
     } else {
         button.textContent = "Normal tree";
-        button.className = "btn btn-standard right btn-store";
+        button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q";
     }
 }
 
 /* Function dispatching the changes in the page to the other functions */
 
-var oldclass = "";
-var targetLang = "-";
-var sourceLang = "-";
-var grade, challenge;
-
 function onChange() {
     var newclass = "home";
 
-    newSourceLang = "en";
-    newTargetLang = "es";
+    var challenges = document.getElementsByClassName("_1eYrt");
+    if (challenges.length > 0) {
+    	newclass = challenges[0].getAttribute("data-test");
+    }
+
+    DuoState = JSON.parse(localStorage.getItem('duo.state'));
+    newSourceLang = DuoState.user.fromLanguage;
+    newTargetLang = DuoState.user.learningLanguage;
+
     if (newSourceLang != sourceLang || newTargetLang !=targetLang) {
     	reload = sourceLang != targetLang;
     	saveSource = sourceLang;
@@ -805,15 +803,9 @@ function onChange() {
     	sourceLang = newSourceLang;
     	targetLang = newTargetLang;
     	updateConfig();
-    	setUserConfig(reload);
-        console.log("AAAAAA " + window.location.pathname);
-    	if (reload && saveSource != sourceLang) {
-    		// duo.user.attributes.ui_language = saveSource;
-    		// duo.user.attributes.learning_language = saveTarget;
-    	}
-    	// console.log("CHANGES!!!!");
+        updateButton(); // Read setup
+    	// setUserConfig(reload);
     }
-    console.log("AAAAAA " + window.location.pathname);
 
     if(/certification_test/.test(newclass)) {
         enableTTSGlobal = false;
@@ -822,17 +814,21 @@ function onChange() {
     }
 
     if(window.location.pathname == "/" && !document.getElementById("reverse-tree-enhancer-button")){
-        console.log("AAAAAA");
-        var tree = document.querySelector("div[data-test='skill-tree']");
-        var lingot = document.querySelector("a[data-test='lingot-store-button']");
+        var tree = document.getElementsByClassName("mAsUf")[0];
         var button = document.createElement("button");
+
+        // Update DuoState
+        targetLang = DuoState.user.learningLanguage;
+        sourceLang = DuoState.user.fromLanguage;
+
         button.id = "reverse-tree-enhancer-button";
         button.onclick = showConfig;
-        console.log("AAAAAA");
+        button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q";
+        button.style = "margin-left: 5px; height: 42px;";
         tree.insertBefore(button, tree.firstChild);
-        console.log("AAAAAA");
         updateConfig(); // Make GM_Config point to this language setup
-        updateButton()(); // Read setup
+        updateButton(); // Read setup
+        // setUserConfig(false);
     }
 
     if (/slide-session-end/.test(newclass)) {
@@ -844,8 +840,8 @@ function onChange() {
     }
 
     if (newclass != oldclass) {
+        console.debug("New class: " + newclass + " " + oldclass);
         oldclass = newclass;
-        // console.debug("New class: " + newclass);
 
         hideSoundErrorBox();
 
@@ -856,9 +852,12 @@ function onChange() {
             // console.log("Reverse and hide");
         }
 
-        var sec = document.getElementById("session-element-container");
-        if(!sec){return;}
-        challenge = sec.children[0];
+        if (challenges.length == 0) {
+        	return;
+        }
+
+    	console.log("CHALENGES");
+        challenge = challenges[0];
         grade = document.getElementById("grade");
 
         if (/translate/.test(newclass)) {
@@ -891,4 +890,5 @@ function onChange() {
 
 new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
 
-console.log("Duolingo Tree Enhancer ready");
+updateConfig();
+
