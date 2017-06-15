@@ -17,7 +17,7 @@ console.debug('Duolingo: Tree Enhancer');
 var sentenceGlobal = null;
 var enableTTSGlobal = true;
 var duo_languages = JSON.parse('{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","gl":"Galician","la":"Latin","tt":"Tatar","tr":"Turkish","lv":"Latvian","tl":"Tagalog","th":"Thai","te":"Telugu","ta":"Tamil","yi":"Yiddish","dk":"Dothraki","de":"German","db":"Dutch (Belgium)","da":"Danish","uz":"Uzbek","el":"Greek","eo":"Esperanto","en":"English","zc":"Chinese (Cantonese)","eu":"Basque","et":"Estonian","ep":"English (Pirate)","es":"Spanish","zs":"Chinese","ru":"Russian","ro":"Romanian","be":"Belarusian","bg":"Bulgarian","ms":"Malay","bn":"Bengali","ja":"Japanese","or":"Oriya","xl":"Lolcat","ca":"Catalan","xe":"Emoji","xz":"Zombie","cy":"Welsh","cs":"Czech","pt":"Portuguese","lt":"Lithuanian","pa":"Punjabi (Gurmukhi)","pl":"Polish","hy":"Armenian","hr":"Croatian","hv":"High Valyrian","ht":"Haitian Creole","hu":"Hungarian","hi":"Hindi","he":"Hebrew","mb":"Malay (Brunei)","mm":"Malay (Malaysia)","ml":"Malayalam","mn":"Mongolian","mk":"Macedonian","ur":"Urdu","kk":"Kazakh","uk":"Ukrainian","mr":"Marathi","my":"Burmese","dn":"Dutch","af":"Afrikaans","vi":"Vietnamese","is":"Icelandic","it":"Italian","kn":"Kannada","zt":"Chinese (Traditional)","as":"Assamese","ar":"Arabic","zu":"Zulu","az":"Azeri","id":"Indonesian","nn":"Norwegian (Nynorsk)","no":"Norwegian","nb":"Norwegian (Bokmål)","ne":"Nepali","fr":"French","fa":"Farsi","fi":"Finnish","fo":"Faroese","ka":"Georgian","ss":"Swedish (Sweden)","sq":"Albanian","ko":"Korean","sv":"Swedish","km":"Khmer","kl":"Klingon","sk":"Slovak","sn":"Sindarin","sl":"Slovenian","ky":"Kyrgyz","sf":"Swedish (Finland)","sw":"Swahili"}');
-var oldclass = "";
+var activeclass = "";
 var DuoState = JSON.parse(localStorage.getItem('duo.state'));
 var targetLang = DuoState.user.learningLanguage;
 var sourceLang = DuoState.user.fromLanguage;
@@ -59,24 +59,36 @@ var css_button_seb = toStyleElem('' +
 document.head.appendChild(css_button_seb);
 
 /* Stylesheet for the hiding for the multiple-choice questions */
-var css_hiding = toStyleElem('' +
-'.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) ' +
-'{ color: ' + hColor +'; background-color: ' + hColor + '; border-color: ' + hColor + '; }\n' +
-'.list-judge-options.hover-effect:not(.nothiding) .white-label:not(:hover):not(.active) ' +
-'input[type=checkbox] { visibility: hidden; }\n' +
-'\n' +
-'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) { color: ' + hColor +
-'; background-color: ' + hColor + '; border-color: ' + hColor + '; }\n' +
-'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) ' +
-'input[type=radio] { visibility: hidden; }\n' +
-'.select-images.hover-effect:not(.nothiding)>li:not(:hover):not(.selected) .select-images-frame ' +
-'{ visibility: hidden; }');
+var css_hiding_source = toStyleElem('._1SfYc:not(:hover) '
+		+ '{ color: lightgray; background-color: lightgray; '
+		+ 'border-color: lightgray; } \n'
+		+ '.KRKEd:not(:hover) '
+		+ '{ color: lightgray; background-color: lightgray; '
+		+ 'border-color: lightgray; } \n'
+		+ '_1Zqmf:not(:hover) '
+		+ '{ color: lightgray; background-color: lightgray; '
+		+ 'border-color: lightgray; } \n'
+		);
 
-function addCSSHiding() {
+var css_hiding_target = toStyleElem('._1SfYc:not(:hover) '
+		+ '{ color: lightgray; background-color: lightgray; '
+		+ 'border-color: lightgray; } \n'
+		+ '._31nDg:not(:hover) '
+		+ '{ color: lightgray; background-color: lightgray; '
+		+ 'border-color: lightgray; } \n'
+		);
+
+var css_hiding_pics = toStyleElem('._1o8rO '
+		+ '{ color: lightgray; background-color: lightgray; '
+		+ 'border-color: lightgray; opacity: 0; } \n'
+		);
+
+function addCSSHiding(css_hiding) {
+	console.log("Hiding " + css_hiding);
 	document.head.appendChild(css_hiding);
 }
 
-function removeCSSHiding() {
+function removeCSSHiding(css_hiding) {
     document.head.appendChild(css_hiding);
     document.head.removeChild(css_hiding);
 }
@@ -271,8 +283,8 @@ function say(itemsToSay, lang) {
 }
 
 function keyUpHandler(e) {
-	if (e.shiftKey && e.keyCode == 32 && audio) {
-		audio.stop().play();
+	if (e.shiftKey && e.keyCode == 82 && audio) {
+		audio.play();
 	}
 }
 
@@ -281,57 +293,64 @@ document.addEventListener('keyup', keyUpHandler, false);
 /* Functions acting on the various types of exercices */
 
 /* Translation from target language (eg. Polish) */
-function challengeTranslate(lang) {
+function challengeTranslate() {
 	var questionBox = challenge.getElementsByClassName("_38VWB");
+
+	var input_area = challenge.getElementsByTagName("textarea")[0];
+    lang = input_area.getAttribute("lang");
+    if (isCheckSpell()) {
+    	input_area.setAttribute("spellcheck", "true");
+    }
+
 	if (lang == targetLang) {
 		question = sourceLang;
 		answer = targetLang;
+		css_hiding = css_hiding_source;
 	} else {
 		question = targetLang;
 		answer = sourceLang;
+		css_hiding = css_hiding_target;
 	}
+	
+	if (isHideText(question)) {
+		addCSSHiding(css_hiding);
+	} else {
+		removeCSSHiding(css_hiding);
+	}
+	
 	// console.log("challengeTranslate from "+question+" to "+answer);
-	if (grade.length === 0) {
+	if (/answer/.test(activeclass)) {
+		removeCSSHiding(css_hiding);
+		// Read the answer aloud if necessary
+		if ((grade.length > 0) && isSayText(answer)) {
+			say(grade, answer);
+		}
+		
+	} else {
 		// Read the question aloud if no TTS is available
 		// We know there is not TTS because there is no play button
 		speak_button = challenge.getElementsByClassName("_2GN1p _1ZlfW");
 		if ((speak_button.length == 0) && isSayText(question)) {
 			say(questionBox, question);
 		}
-		if (isHideText(question)) {
-			questionBox.className = "text-to-translate ttt-hide";
-			questionBox.onclick = function() {
-				questionBox.className = "text-to-translate ttt-not-hide";
-			};
-		}
-	} else {
-		questionBox.className = "text-to-translate";
-		questionBox.onclick = null
 	}
 
-	// Read the answer aloud if necessary
-	if ((grade.length > 0) && isSayText(answer)) {
-		say(grade, answer);
-	}
 }
 
 /* Multiple-choice translation question */
 function challengeJudge() {
 	var textCell = challenge.getElementsByClassName("KRKEd");
-	var ul = challenge.getElementsByTagName("ul")[0];
 
 	if (!document.getElementById("timer") && isHideTranslations()) {
-		addCSSHiding();
+		addCSSHiding(css_hiding_target);
 	} else {
-		removeCSSHiding();
+		removeCSSHiding(css_hiding_target);
 	}
 
-	if (/answer/.test(oldclass)) {
+	if (/answer/.test(activeclass)) {
 		console.log("Callenge Judge answer");
-		textCell[0].style.color = "";
-		textCell[0].style.backgroundColor = "";
-		ul.className += " nothiding";
-		removeCSSHiding();
+		removeCSSHiding(css_hiding_source);
+		removeCSSHiding(css_hiding_target);
 		if (grade.length == 0) { // Answer is right
 			ansStatus = challenge.getElementsByClassName("BblGF _2zVZG");
 			ansText = challenge.getElementsByClassName("_3EaeX _2zVZG");
@@ -346,18 +365,16 @@ function challengeJudge() {
 		}
 
 		if (isSayText(targetLang))
-			say(grade, sourceLang);
-
+			say(grade, targetLang);
 	} else {
 		console.log("Callenge Judge question");
 		if (isHideText(sourceLang)) {
-			textCell[0].style.color = hColor;
-			textCell[0].style.backgroundColor = hColor;
-			textCell[0].style.display = "block";
+			addCSSHiding(css_hiding_source);
 		}
 
-		if (isSayText(sourceLang))
+		if (isSayText(sourceLang)) {
 			say(textCell, sourceLang);
+		}
 	}
 }
 
@@ -365,70 +382,37 @@ var quotMark = /(["“”「」])/;
 
 /* Select the correct image */
 function challengeSelect() {
-	var hone = challenge.getElementsByTagName("h1")[0];
-	var ul = challenge.getElementsByTagName("ul")[0];
-	var span;
-
 	if (isHidePics()) {
-		addCSSHiding();
+		addCSSHiding(css_hiding_pics);
 	} else {
-		removeCSSHiding();
+		removeCSSHiding(css_hiding_pics);
 	}
 
-	if (grade.children.length === 0) {
-		var sp = hone.textContent.split(quotMark);
-		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3]
-				+ sp[4];
-		span = hone.getElementsByTagName("span")[0];
-
-		if (isSayText(sourceLang))
-			say(span.textContent, sourcetLang);
-		if (isHideText(sourceLang)) {
-			span.style.color = hColor;
-			span.style.backgroundColor = hColor;
-		}
+	if (/answer/.test(activeclass)) {
+		removeCSSHiding(css_hiding_pics);
 	} else {
-		span = hone.getElementsByTagName("span")[0];
-		span.style.color = "";
-		span.style.backgroundColor = "";
-		ul.className += " nothiding";
-		removeCSSHiding();
+		textCell = challenge.getElementsByClassName("_1Zqmf");
+		if (isSayText(sourceLang)) {
+			say(textCell, sourceLang);
+		}
+		
 	}
 }
 
 /* Type the word corresponding to the images */
 function challengeName() {
-	var lis = challenge.getElementsByClassName("list-tilted-images")[0]
-			.getElementsByTagName("li");
-	var hone = challenge.getElementsByTagName("h1")[0];
-	var span, i;
-	if (grade.children.length === 0) {
-		var sp = hone.textContent.split(quotMark);
-		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3]
-				+ sp[4];
-		span = hone.getElementsByTagName("span")[0];
-
-		if (isSayText(sourceLang))
-			say(span.textContent, sourceLang);
-
-		if (isHideText(sourceLang)) {
-			span.style.color = hColor;
-			span.style.backgroundColor = hColor;
-		}
-		if (isHidePics()) {
-			for (i = 0; i < lis.length; i++) {
-				lis[i].style.backgroundColor = hColor;
-				lis[i].dataset.oldImage = lis[i].style.backgroundImage;
-				lis[i].style.backgroundImage = "";
-			}
-		}
+	if (isHidePics()) {
+		addCSSHiding(css_hiding_pics);
 	} else {
-		span = hone.getElementsByTagName("span")[0];
-		span.style.color = "";
-		span.style.backgroundColor = "";
+		removeCSSHiding(css_hiding_pics);
+	}
 
-		for (i = 0; i < lis.length; i++) {
-			lis[i].style.backgroundImage = lis[i].dataset.oldImage;
+	if (/answer/.test(activeclass)) {
+		removeCSSHiding(css_hiding_pics);
+	} else {
+		textCell = challenge.getElementsByClassName("_1Zqmf");
+		if (isSayText(sourceLang)) {
+			say(textCell, sourceLang);
 		}
 	}
 }
@@ -438,9 +422,22 @@ function challengeName() {
  * language. Those are useless exercices, but we can’t get rid of them.
  */
 function challengeForm() {
-	if (grade.length !== 0) {
-		if (isSayText(sourceLang))
-			say(grade, sourceLang);
+	if (/answer/.test(activeclass)) {
+	} else {
+	}
+}
+
+function challengeListen()
+{
+	if (/answer/.test(activeclass)) {
+//		if (isSayText(sourceLang))
+//			say(grade, sourceLang);
+	} else {
+        if (isCheckSpell()) {
+        	var input_box = challenge.getElementsByTagName("input")[0];
+            input_box.setAttribute("spellcheck", "true");
+            input_box.setAttribute("lang", targetLang);
+        }
 	}
 }
 
@@ -790,7 +787,7 @@ function getGrade(mutations) {
 			// var footer_incorrect = target.getElementsByClassName("YhrsP
 			// _1cuVQ");
 
-			if (/challenge/.test(oldclass) && target.className == "_1l6NK") {
+			if (/challenge/.test(activeclass) && target.className == "_1l6NK") {
 
 				for (var j = 0; j < mutation.addedNodes.length; ++j) {
 					// was a child added with ID of 'bar'?
@@ -848,12 +845,11 @@ function onChange(mutations) {
     var challenges = document.getElementsByClassName("_1eYrt");
     if (challenges.length > 0) {
     	newclass = challenges[0].getAttribute("data-test");
+    	newclass = newclass + getGrade(mutations);
 
-	newclass = newclass + getGrade(mutations);
-
-        if (newclass != oldclass) {
-            // console.log("New class: " + newclass + ", old class: " + oldclass);
-            oldclass = newclass;
+        if (newclass != activeclass) {
+            // console.log("New class: " + newclass + ", old class: " + activeclass);
+            activeclass = newclass;
 
             hideSoundErrorBox();
 
@@ -871,12 +867,7 @@ function onChange(mutations) {
             challenge = challenges[0];
 
             if (/translate/.test(newclass)) {
-            	var input_area = challenge.getElementsByTagName("textarea")[0];
-                lang = input_area.getAttribute("lang");
-                if (isCheckSpell()) {
-                	input_area.setAttribute("spellcheck", "true");
-                }
-                challengeTranslate(lang);
+                challengeTranslate();
             }
 
             if (/judge/.test(newclass)) {
@@ -892,11 +883,7 @@ function onChange(mutations) {
                 challengeForm();
             }
             if (/listen/.test(newclass)) {
-                if (isCheckSpell()) {
-                	var input_box = challenge.getElementsByTagName("input")[0];
-                    input_box.setAttribute("spellcheck", "true");
-                    input_box.setAttribute("lang", targetLang);
-                }
+            	challengeListen();
             }
         }
     }
