@@ -15,7 +15,6 @@
 console.debug('Duolingo: Tree Enhancer');
 
 var sentenceGlobal = null;
-var lastSaidSlow = false;
 var enableTTSGlobal = true;
 var duo_languages = JSON.parse('{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","gl":"Galician","la":"Latin","tt":"Tatar","tr":"Turkish","lv":"Latvian","tl":"Tagalog","th":"Thai","te":"Telugu","ta":"Tamil","yi":"Yiddish","dk":"Dothraki","de":"German","db":"Dutch (Belgium)","da":"Danish","uz":"Uzbek","el":"Greek","eo":"Esperanto","en":"English","zc":"Chinese (Cantonese)","eu":"Basque","et":"Estonian","ep":"English (Pirate)","es":"Spanish","zs":"Chinese","ru":"Russian","ro":"Romanian","be":"Belarusian","bg":"Bulgarian","ms":"Malay","bn":"Bengali","ja":"Japanese","or":"Oriya","xl":"Lolcat","ca":"Catalan","xe":"Emoji","xz":"Zombie","cy":"Welsh","cs":"Czech","pt":"Portuguese","lt":"Lithuanian","pa":"Punjabi (Gurmukhi)","pl":"Polish","hy":"Armenian","hr":"Croatian","hv":"High Valyrian","ht":"Haitian Creole","hu":"Hungarian","hi":"Hindi","he":"Hebrew","mb":"Malay (Brunei)","mm":"Malay (Malaysia)","ml":"Malayalam","mn":"Mongolian","mk":"Macedonian","ur":"Urdu","kk":"Kazakh","uk":"Ukrainian","mr":"Marathi","my":"Burmese","dn":"Dutch","af":"Afrikaans","vi":"Vietnamese","is":"Icelandic","it":"Italian","kn":"Kannada","zt":"Chinese (Traditional)","as":"Assamese","ar":"Arabic","zu":"Zulu","az":"Azeri","id":"Indonesian","nn":"Norwegian (Nynorsk)","no":"Norwegian","nb":"Norwegian (Bokmål)","ne":"Nepali","fr":"French","fa":"Farsi","fi":"Finnish","fo":"Faroese","ka":"Georgian","ss":"Swedish (Sweden)","sq":"Albanian","ko":"Korean","sv":"Swedish","km":"Khmer","kl":"Klingon","sk":"Slovak","sn":"Sindarin","sl":"Slovenian","ky":"Kyrgyz","sf":"Swedish (Finland)","sw":"Swahili"}');
 var oldclass = "";
@@ -74,7 +73,7 @@ var css_hiding = toStyleElem('' +
 '{ visibility: hidden; }');
 
 function addCSSHiding() {
-    document.head.appendChild(css_hiding);
+	document.head.appendChild(css_hiding);
 }
 
 function removeCSSHiding() {
@@ -136,12 +135,12 @@ function playURL(url) {
 }
 
 // Play a sentence using the first available TTS
-function playSound(sentence, lang, slow) {
+function playSound(sentence, lang) {
 	var url = "";
 	for (i = 0; i < sayFuncOrder.length; i++) {
 		try {
 			// console.log("loop " + sayFuncOrder[i]);
-			if (sayFunc[sayFuncOrder[i]](sentence, lang, slow)) {
+			if (sayFunc[sayFuncOrder[i]](sentence, lang)) {
 				break;
 			}
 		} catch (err) {
@@ -159,17 +158,19 @@ function googleTTSLang(target) {
     return target;
 }
 
-function googleSay(sentence, lang, slow) {
+function googleSay(sentence, lang) {
 
-    // Create Google TTS in a way that it doesn't get tired that quickly.
-    var gRand = function () { return Math.floor(Math.random() * 1000000) + '|' +
-                                       Math.floor(Math.random() * 1000000) };
-    url = "http://translate.google.com/translate_tts?ie=UTF-8&tl=" + googleTTSLang(lang) +
-          "&total=1&textlen=" + sentence.length + "&tk=" + gRand() +
-          "&q=" + encodeURIComponent(sentence) + "&client=tw-ob";
-    if (slow) url = url + "&ttsspeed=0"
-    playURL(url);
-    return true;
+	// Create Google TTS in a way that it doesn't get tired that quickly.
+	var gRand = function() {
+		return Math.floor(Math.random() * 1000000) + '|'
+				+ Math.floor(Math.random() * 1000000)
+	};
+	url = "http://translate.google.com/translate_tts?ie=UTF-8&tl="
+			+ googleTTSLang(lang) + "&total=1&textlen=" + sentence.length
+			+ "&tk=" + gRand() + "&q=" + encodeURIComponent(sentence)
+			+ "&client=tw-ob";
+	playURL(url);
+	return true;
 }
 
 // Yandex TTS Functions
@@ -199,12 +200,13 @@ function yandexTTSLang(target) {
 	return undefined;
 };
 
-function yandexSay(sentence, lang, speed) {
+function yandexSay(sentence, lang) {
 	var sayLang = yandexTTSLang(lang);
 	// console.log("Yandex " + sayLang);
 	if (sayLang != undefined) {
-		url = 'http://tts.voicetech.yandex.net/tts?text=' + sentence +
-			'&lang=' + sayLang + '&format=mp3&quality=hi';
+		url = 'http://tts.voicetech.yandex.net/tts?text='
+				+ encodeURIComponent(sentence) + '&lang=' + sayLang
+				+ '&format=mp3&quality=hi';
 		playURL(url);
 		return true;
 	}
@@ -225,11 +227,12 @@ function baiduTTSLang(lang) {
 	return undefined;
 };
 
-function baiduSay(sentence, lang, speed) {
+function baiduSay(sentence, lang) {
 	var sayLang = baiduTTSLang(lang);
 	if (sayLang != undefined) {
-		url = 'http://tts.baidu.com/text2audio?text=' + sentence +
-			'&lan=' + sayLang + '&ie=UTF-8';
+		url = 'http://tts.baidu.com/text2audio?text='
+				+ encodeURIComponent(sentence) + '&lan=' + sayLang
+				+ '&ie=UTF-8';
 		playURL(url);
 		return true;
 	}
@@ -243,47 +246,34 @@ function ansObserver() {
 
 // List of supported TTS providers
 var sayFunc = new Array();
-sayFunc['baidu']  = baiduSay;
+sayFunc['baidu'] = baiduSay;
 sayFunc['google'] = googleSay;
 sayFunc['yandex'] = yandexSay;
 var sayFuncOrder = [ 'baidu', 'yandex', 'google', ];
 
 // Say a sentence
-function say(sentence, lang) {
-    sentence = sentence.replace(/•/g,"");
-    // console.log("Duolingo Tree Enhancer: language '" + lang + "'");
-    // console.log("Duolingo Tree Enhancer: saying '" + sentence + "'");
-    sentenceGlobal = sentence;
-    playSound(sentence, lang, false);
-    lastSaidSlow = false;
-    lastSaidLang = lang;
-}
+function say(itemsToSay, lang) {
+	var sentence = "";
+	for (var i = 0; i < itemsToSay.length; ++i) {
+		var text = itemsToSay[i].type == "textarea" ? itemsToSay[i].textContent
+				: itemsToSay[i].innerText;
+		sentence = sentence + text + ". ";
+	}
 
-// Repeat las sentece slowly
-function sayslow(lang) {
-    var sentence = sentenceGlobal;
-    // console.log("Duolingo Tree Enhancer: saying slowly '" + sentence + "'");
-    playSound(sentenceGlobal, lang, true);
-    lastSaidSlow = true;
-    lastSaidLang = lang;
+	sentence = sentence.replace(/•/g, "");
+	sentence = sentence.replace(/\.\./g, ".");
+
+	// console.log("Duolingo Tree Enhancer: language '" + lang + "'");
+	console.log("Duolingo Tree Enhancer: saying '" + sentence + "'");
+	sentenceGlobal = sentence;
+	playSound(sentence, lang);
+	lastSaidLang = lang;
 }
 
 function keyUpHandler(e) {
-    if (e.shiftKey && e.keyCode == 32 && audio) {
-        if (e.altKey) {
-            if (lastSaidSlow) {
-                audio.stop().play();
-            } else {
-                sayslow(lastSaidLang);
-            }
-        } else {
-            if (lastSaidSlow) {
-                say(sentenceGlobal, lastSaidLang);
-            } else {
-                audio.stop().play();
-            }
-        }
-    }
+	if (e.shiftKey && e.keyCode == 32 && audio) {
+		audio.stop().play();
+	}
 }
 
 document.addEventListener('keyup', keyUpHandler, false);
@@ -292,46 +282,42 @@ document.addEventListener('keyup', keyUpHandler, false);
 
 /* Translation from target language (eg. Polish) */
 function challengeTranslate(lang) {
-    var cell = challenge.getElementsByClassName("_38VWB")[0];
-    if (lang == targetLang) {
-        question = sourceLang;
-        answer = targetLang;
-    } else {
-        question = targetLang;
-        answer = sourceLang;
-    }
-    // console.log("challengeTranslate from "+question+" to "+answer);
-    if (grade.length === 0) {
-        // Read the question aloud if no TTS is available
-        // We know there is not TTS because there is no play button
-        speak_button = challenge.getElementsByClassName("_2GN1p _1ZlfW");
-        if ( (speak_button.length == 0) && isSayText(question) ) {
-            say(cell.innerText, question);
-        }
-        if (isHideText(question)) {
-            cell.className = "text-to-translate ttt-hide";
-            cell.onclick = function() {
-                cell.className = "text-to-translate ttt-not-hide";
-            };
-        }
-    } else {
-        cell.className = "text-to-translate";
-        cell.onclick = null
-    }
+	var questionBox = challenge.getElementsByClassName("_38VWB");
+	if (lang == targetLang) {
+		question = sourceLang;
+		answer = targetLang;
+	} else {
+		question = targetLang;
+		answer = sourceLang;
+	}
+	// console.log("challengeTranslate from "+question+" to "+answer);
+	if (grade.length === 0) {
+		// Read the question aloud if no TTS is available
+		// We know there is not TTS because there is no play button
+		speak_button = challenge.getElementsByClassName("_2GN1p _1ZlfW");
+		if ((speak_button.length == 0) && isSayText(question)) {
+			say(questionBox, question);
+		}
+		if (isHideText(question)) {
+			questionBox.className = "text-to-translate ttt-hide";
+			questionBox.onclick = function() {
+				questionBox.className = "text-to-translate ttt-not-hide";
+			};
+		}
+	} else {
+		questionBox.className = "text-to-translate";
+		questionBox.onclick = null
+	}
 
-    // Read the answer aloud if necessary
-    if ((grade.length > 0) && isSayText(answer)) {
-    	var betterAnswer = "";
-    	for (var i = 0; i < grade.length; ++i) {
-    		betterAnswer = betterAnswer + grade[i].textContent + ". ";
-    	}
-        say(betterAnswer, answer);
-    }
+	// Read the answer aloud if necessary
+	if ((grade.length > 0) && isSayText(answer)) {
+		say(grade, answer);
+	}
 }
 
 /* Multiple-choice translation question */
 function challengeJudge() {
-	var textCell = challenge.getElementsByClassName("KRKEd")[0];
+	var textCell = challenge.getElementsByClassName("KRKEd");
 	var ul = challenge.getElementsByTagName("ul")[0];
 
 	if (!document.getElementById("timer") && isHideTranslations()) {
@@ -340,99 +326,122 @@ function challengeJudge() {
 		removeCSSHiding();
 	}
 
-	if (grade.children.length === 0) {
+	if (/answer/.test(oldclass)) {
+		console.log("Callenge Judge answer");
+		textCell[0].style.color = "";
+		textCell[0].style.backgroundColor = "";
+		ul.className += " nothiding";
+		removeCSSHiding();
+		if (grade.length == 0) { // Answer is right
+			ansStatus = challenge.getElementsByClassName("BblGF _2zVZG");
+			ansText = challenge.getElementsByClassName("_3EaeX _2zVZG");
+
+			for (var i = 0; i < ansStatus.length; ++i) {
+				if (ansStatus[i].firstChild.checked == true) {
+					ansText[i].className = "_3EaeX _2zVZG valid-ans";
+				}
+			}
+
+			grade = challenge.getElementsByClassName("_3EaeX _2zVZG valid-ans");
+		}
+
+		if (isSayText(targetLang))
+			say(grade, sourceLang);
+
+	} else {
+		console.log("Callenge Judge question");
 		if (isHideText(sourceLang)) {
-			textCell.style.color = hColor;
-			textCell.style.backgroundColor = hColor;
-			textCell.style.display = "block";
+			textCell[0].style.color = hColor;
+			textCell[0].style.backgroundColor = hColor;
+			textCell[0].style.display = "block";
 		}
 
 		if (isSayText(sourceLang))
-			say(textCell.textContent, sourceLang);
-	} else {
-		textCell.style.color = "";
-		textCell.style.backgroundColor = "";
-		ul.className += " nothiding";
-		removeCSSHiding();
+			say(textCell, sourceLang);
 	}
 }
 
 var quotMark = /(["“”「」])/;
 
 /* Select the correct image */
-function challengeSelect(){
-    var hone = challenge.getElementsByTagName("h1")[0];
-    var ul = challenge.getElementsByTagName("ul")[0];
-	    var span;
+function challengeSelect() {
+	var hone = challenge.getElementsByTagName("h1")[0];
+	var ul = challenge.getElementsByTagName("ul")[0];
+	var span;
 
-    if (isHidePics()) {
+	if (isHidePics()) {
 		addCSSHiding();
-    } else {
+	} else {
 		removeCSSHiding();
-    }
+	}
 
-    if(grade.children.length === 0){
-        var sp = hone.textContent.split(quotMark);
-		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
+	if (grade.children.length === 0) {
+		var sp = hone.textContent.split(quotMark);
+		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3]
+				+ sp[4];
 		span = hone.getElementsByTagName("span")[0];
 
 		if (isSayText(sourceLang))
-		    say(span.textContent, sourcetLang);
-        if (isHideText(sourceLang)) {
+			say(span.textContent, sourcetLang);
+		if (isHideText(sourceLang)) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
-        }
-    } else {
-        span = hone.getElementsByTagName("span")[0];
-        span.style.color = "";
-        span.style.backgroundColor = "";
-        ul.className += " nothiding";
+		}
+	} else {
+		span = hone.getElementsByTagName("span")[0];
+		span.style.color = "";
+		span.style.backgroundColor = "";
+		ul.className += " nothiding";
 		removeCSSHiding();
-    }
+	}
 }
 
 /* Type the word corresponding to the images */
-function challengeName(){
-    var lis = challenge.getElementsByClassName("list-tilted-images")[0].getElementsByTagName("li");
-    var hone = challenge.getElementsByTagName("h1")[0];
-    var span, i;
-    if(grade.children.length === 0){
-        var sp = hone.textContent.split(quotMark);
-       	hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3] + sp[4];
+function challengeName() {
+	var lis = challenge.getElementsByClassName("list-tilted-images")[0]
+			.getElementsByTagName("li");
+	var hone = challenge.getElementsByTagName("h1")[0];
+	var span, i;
+	if (grade.children.length === 0) {
+		var sp = hone.textContent.split(quotMark);
+		hone.innerHTML = sp[0] + sp[1] + "<span>" + sp[2] + "</span>" + sp[3]
+				+ sp[4];
 		span = hone.getElementsByTagName("span")[0];
 
-        if (isSayText(sourceLang))
-            say(span.textContent, sourceLang);
+		if (isSayText(sourceLang))
+			say(span.textContent, sourceLang);
 
-        if (isHideText(sourceLang)) {
+		if (isHideText(sourceLang)) {
 			span.style.color = hColor;
 			span.style.backgroundColor = hColor;
-        }
-        if (isHidePics()) {
-            for (i = 0; i < lis.length; i++) {
-                lis[i].style.backgroundColor = hColor;
-                lis[i].dataset.oldImage = lis[i].style.backgroundImage;
-                lis[i].style.backgroundImage = "";
-            }
-        }
-    } else {
-        span = hone.getElementsByTagName("span")[0];
-        span.style.color = "";
-        span.style.backgroundColor = "";
+		}
+		if (isHidePics()) {
+			for (i = 0; i < lis.length; i++) {
+				lis[i].style.backgroundColor = hColor;
+				lis[i].dataset.oldImage = lis[i].style.backgroundImage;
+				lis[i].style.backgroundImage = "";
+			}
+		}
+	} else {
+		span = hone.getElementsByTagName("span")[0];
+		span.style.color = "";
+		span.style.backgroundColor = "";
 
-        for(i=0; i < lis.length; i++){
-            lis[i].style.backgroundImage = lis[i].dataset.oldImage;
-        }
-    }
+		for (i = 0; i < lis.length; i++) {
+			lis[i].style.backgroundImage = lis[i].dataset.oldImage;
+		}
+	}
 }
 
-/* Multiple-choice question where we have to choose a word in the source language.
- * Those are useless exercices, but we can’t get rid of them. */
-function challengeForm(){
-    if(grade.children.length !== 0){
-        if (isSayText(sourceLang))
-            say(grade.getElementsByTagName("h2")[0].children[1].textContent, sourceLang);
-    }
+/*
+ * Multiple-choice question where we have to choose a word in the source
+ * language. Those are useless exercices, but we can’t get rid of them.
+ */
+function challengeForm() {
+	if (grade.length !== 0) {
+		if (isSayText(sourceLang))
+			say(grade, sourceLang);
+	}
 }
 
 function setUserConfig() {
@@ -445,25 +454,25 @@ function setUserConfig() {
 	// This was reverse engineered, might stop working any time
 	url = "/2016-04-13/users/";
 	fields = "?fields=%2Cautoplay%2CenableMicrophone%2CenableSpeaker";
-	params = '{"":"","autoplay":' + autoplay +
-	',"enableMicrophone":' + microphone +
-	',"enableSpeaker":' + speakers +'}';
+	params = '{"":"","autoplay":' + autoplay + ',"enableMicrophone":'
+			+ microphone + ',"enableSpeaker":' + speakers + '}';
 
-	http=new XMLHttpRequest();
+	http = new XMLHttpRequest();
 	http.open("PATCH", url + DuoState.user.id + fields, true);
 
-	//Send the proper header information along with the request
+	// Send the proper header information along with the request
 	// http.setRequestHeader("Content-type", "application/json; charset=UTF-8");
 	// http.setRequestHeader("Content-length", params.length);
 	// http.setRequestHeader("Connection", "keep-alive");
 	// http.setRequestHeader("Cookie", document.cookie);
 
-	http.onreadystatechange = function() {//Call a function when the state changes.
-		if(http.readyState == 4 && http.status == 200) {
+	http.onreadystatechange = function() {// Call a function when the state
+											// changes.
+		if (http.readyState == 4 && http.status == 200) {
 			console.log("Updated Setup " + params);
 		}
 	}
-	
+
 	// console.log("About to send config");
 	http.send(params);
 }
@@ -571,7 +580,7 @@ function updateConfig() {
 		},
 		full_css : [
 				"#GM_config * * { font: 500 15px/20px 'museo-sans-rounded',sans-serif; "
-				        + "margin-right: 6px; color: #333 }",
+						+ "margin-right: 6px; color: #333 }",
 				"#GM_config { background: #FFF; }",
 				"#GM_config input[type='radio'] { margin-right: 8px; }",
 				"#GM_config .indent40 { margin-left: 40%; }",
@@ -590,7 +599,7 @@ function updateConfig() {
 				"#GM_config .section_header_holder { margin-top: 8px; }",
 				"#GM_config .config_var { margin: 0 0 4px; }",
 				"#GM_config .section_header { background: #F0F0F0; border: 1px solid #CCC; "
-				        + "color: #404040; font-size: 11pt; margin: 0; text-align: left; }",
+						+ "color: #404040; font-size: 11pt; margin: 0; text-align: left; }",
 				"#GM_config .section_desc { background: #F0F0F0; border: 1px solid #CCC; color: #404040;"
 						+ " font-size: 11pt; margin: 0 0 6px; text-align: left; }",
 				"#GM_config_section_0 .config_var, #GM_config_section_7 .config_var "
@@ -599,8 +608,9 @@ function updateConfig() {
 				"#GM_config_section_2 .config_var, "
 						+ "#GM_config_section_4 .config_var, "
 						+ "#GM_config_section_6 .config_var "
-						+ "{ margin: 5% !important;display: inline !important; }", 
-				].join('\n') + '\n',
+						+ "{ margin: 5% !important;display: inline !important; }", ]
+				.join('\n')
+				+ '\n',
 		events : { // Callback functions object
 			save : function() {
 				GM_config.close()
@@ -771,13 +781,14 @@ function updateButton() {
 /* Get a grade from mutations */
 function getGrade(mutations) {
 	// By default, we get an empty collection here
-	var right_answer = document.getElementsByClassName("_34Ym5");
+	grade = document.getElementsByClassName("_34Ym5");
 	for (var i = 0; i < mutations.length; ++i) {
 		mutation = mutations[i];
 		if (mutation.type === 'childList') {
 			var target = mutation.target;
 			var footer_correct = target.getElementsByClassName("t55Fx _1cuVQ");
-			// var footer_incorrect = target.getElementsByClassName("YhrsP _1cuVQ");
+			// var footer_incorrect = target.getElementsByClassName("YhrsP
+			// _1cuVQ");
 
 			if (/challenge/.test(oldclass) && target.className == "_1l6NK") {
 
@@ -786,20 +797,19 @@ function getGrade(mutations) {
 					var added_class = mutation.addedNodes[j].className;
 					if (added_class == "_3rrAo _1RUUp") {
 						// console.log("We got an answer");
-						oldclass = oldclass + " no_answer";
-						if (right_answer.length == 0 &&
-								footer_correct.lenth != 0) {
+						if (grade.length == 0 && footer_correct.lenth != 0) {
 							// console.log("You are right no alt answer");
-							right_answer = document.getElementsByClassName(
-									"_7q434 _1qCW5 _3cX7c _3LmPy _3Z8Ye vvZSt");
+							grade = document
+									.getElementsByClassName("_7q434 _1qCW5 _3cX7c _3LmPy _3Z8Ye vvZSt");
 						}
+						return " answer";
 					}
 				}
 
 			}
 		}
 	}
-	return right_answer;
+	return "";
 }
 
 /* Function dispatching the changes in the page to the other functions */
@@ -839,7 +849,7 @@ function onChange(mutations) {
     if (challenges.length > 0) {
     	newclass = challenges[0].getAttribute("data-test");
 
-    	grade = getGrade(mutations);
+	newclass = newclass + getGrade(mutations);
 
         if (newclass != oldclass) {
             // console.log("New class: " + newclass + ", old class: " + oldclass);
@@ -906,7 +916,9 @@ function onChange(mutations) {
     }
 }
 
-new MutationObserver(onChange).observe(document.body, {childList: true, subtree: true});
+new MutationObserver(onChange).observe(document.body, {
+	childList : true,
+	subtree : true
+});
 
 updateConfig();
-
