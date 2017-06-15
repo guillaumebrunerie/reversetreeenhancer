@@ -782,53 +782,140 @@ function updateButton() {
     }
 }
 
-/* Function dispatching the changes in the page to the other functions */
+/* Get a grade from mutations */
+function getGrade(mutations) {
+	var right_answer = document.getElementsByClassName("_34Ym5");
+	for (var i = 0; i < mutations.length; ++i) {
+		mutation = mutations[i];
+		if (mutation.type === 'childList') {
+			var target = mutation.target;
+			var footer_correct = target.getElementsByClassName("t55Fx _1cuVQ");
+			var footer_incorrect = target.getElementsByClassName("YhrsP _1cuVQ");
 
-function onChange() {
-    var newclass = "home";
+			if (/challenge/.test(oldclass) && target.className == "_1l6NK") {
+
+				for (var j = 0; j < mutation.addedNodes.length; ++j) {
+					// was a child added with ID of 'bar'?
+					var added_class = mutation.addedNodes[j].className;
+					if (added_class == "_3rrAo _1RUUp") {
+						console.log("We got an answer");
+						oldclass = oldclass + " no_answer";
+						if (right_answer.length != 0) {
+							console.log("wrong! " + right_answer.length);
+						} else if (footer_correct.lenth != 0) {
+							console.log("You are right");
+						} else {
+							console.log("Nothing to see here");
+						}
+					}
+				}
+
+			}
+		}
+	}
+	return right_answer;
+}
+
+/* Function dispatching the changes in the page to the other functions */
+function onChange(mutations) {
+	var newclass = "";
+
+	// General setup
+	DuoState = JSON.parse(localStorage.getItem('duo.state'));
+	newSourceLang = DuoState.user.fromLanguage;
+	newTargetLang = DuoState.user.learningLanguage;
+
+	if (newSourceLang != sourceLang || newTargetLang != targetLang) {
+		reload = sourceLang != targetLang;
+		saveSource = sourceLang;
+		saveTarget = targetLang;
+		sourceLang = newSourceLang;
+		targetLang = newTargetLang;
+		updateConfig();
+		updateButton(); // Read setup
+		// setUserConfig(reload);
+	}
+
+	if (window.location.pathname == "/"
+			&& !document.getElementById("reverse-tree-enhancer-button")) {
+		var tree = document.getElementsByClassName("mAsUf")[0];
+		var button = document.createElement("button");
+
+		// Update DuoState
+		targetLang = DuoState.user.learningLanguage;
+		sourceLang = DuoState.user.fromLanguage;
+
+		button.id = "reverse-tree-enhancer-button";
+		button.onclick = showConfig;
+		button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q";
+		button.style = "margin-left: 5px; height: 42px;";
+		tree.insertBefore(button, tree.firstChild);
+		updateConfig(); // Make GM_Config point to this language setup
+		updateButton(); // Read setup
+		// setUserConfig(false);
+	}
 
     var challenges = document.getElementsByClassName("_1eYrt");
     if (challenges.length > 0) {
     	newclass = challenges[0].getAttribute("data-test");
-    }
+    	
+    	grade = getGrade(mutations);
+    	
+        if (newclass != oldclass) {
+            console.log("New class: " + newclass + ", old class: " + oldclass);
+            oldclass = newclass;
 
-    DuoState = JSON.parse(localStorage.getItem('duo.state'));
-    newSourceLang = DuoState.user.fromLanguage;
-    newTargetLang = DuoState.user.learningLanguage;
+            hideSoundErrorBox();
 
-    if (newSourceLang != sourceLang || newTargetLang !=targetLang) {
-    	reload = sourceLang != targetLang;
-    	saveSource = sourceLang;
-    	saveTarget = targetLang;
-    	sourceLang = newSourceLang;
-    	targetLang = newTargetLang;
-    	updateConfig();
-        updateButton(); // Read setup
-    	// setUserConfig(reload);
+            if (!isEnhancedTree()) {
+                removeCSSHiding();
+                return;
+            } else {
+                // console.log("Reverse and hide");
+            }
+
+            if (challenges.length == 0) {
+            	return;
+            }
+
+            challenge = challenges[0];
+            grade = document.getElementById("grade");
+
+            if (/translate/.test(newclass)) {
+            	var input_area = challenge.getElementsByTagName("textarea")[0];
+                lang = input_area.getAttribute("lang");
+                if (isCheckSpell()) {
+                	input_area.setAttribute("spellcheck", "true");
+                }
+                challengeTranslate(lang);
+            }
+
+            if (/judge/.test(newclass)) {
+                challengeJudge();
+            }
+            if (/select/.test(newclass)) {
+                challengeSelect();
+            }
+            if (/name/.test(newclass)) {
+                challengeName();
+            }
+            if (/form/.test(newclass)) {
+                challengeForm();
+            }
+            if (/listen/.test(newclass)) {
+                if (isCheckSpell()) {
+                	var input_box = challenge.getElementsByTagName("input")[0];
+                    input_box.setAttribute("spellcheck", "true");
+                    input_box.setAttribute("lang", targetLang);
+                }
+            }
+        }
     }
 
     if(/certification_test/.test(newclass)) {
         enableTTSGlobal = false;
     } else {
         enableTTSGlobal = true;
-    }
-
-    if(window.location.pathname == "/" && !document.getElementById("reverse-tree-enhancer-button")){
-        var tree = document.getElementsByClassName("mAsUf")[0];
-        var button = document.createElement("button");
-
-        // Update DuoState
-        targetLang = DuoState.user.learningLanguage;
-        sourceLang = DuoState.user.fromLanguage;
-
-        button.id = "reverse-tree-enhancer-button";
-        button.onclick = showConfig;
-        button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q";
-        button.style = "margin-left: 5px; height: 42px;";
-        tree.insertBefore(button, tree.firstChild);
-        updateConfig(); // Make GM_Config point to this language setup
-        updateButton(); // Read setup
-        // setUserConfig(false);
     }
 
     if (/slide-session-end/.test(newclass)) {
@@ -838,57 +925,9 @@ function onChange() {
         // don't cause the audio to repeat in, e.g., the tree or discussions.
         audio = null;
     }
-
-    if (newclass != oldclass) {
-        console.debug("New class: " + newclass + " " + oldclass);
-        oldclass = newclass;
-
-        hideSoundErrorBox();
-
-        if (!isEnhancedTree()) {
-            removeCSSHiding();
-            return;
-        } else {
-            // console.log("Reverse and hide");
-        }
-
-        if (challenges.length == 0) {
-        	return;
-        }
-
-    	console.log("CHALENGES");
-        challenge = challenges[0];
-        grade = document.getElementById("grade");
-
-        if (/translate/.test(newclass)) {
-            lang = challenge.getElementsByTagName("textarea")[0].getAttribute("lang");
-            if (isCheckSpell()) {
-                challenge.getElementsByTagName("textarea")[0].setAttribute("spellcheck", "true");
-            }
-            challengeTranslate(lang);
-        }
-
-        if (/judge/.test(newclass)) {
-            challengeJudge();
-        }
-        if (/select/.test(newclass)) {
-            challengeSelect();
-        }
-        if (/name/.test(newclass)) {
-            challengeName();
-        }
-        if (/form/.test(newclass)) {
-            challengeForm();
-        }
-        if (/listen/.test(newclass)) {
-            if (isCheckSpell()) {
-                challenge.getElementsByTagName("input")[0].setAttribute("spellcheck", "true");
-	    }
-        }
-    }
 }
 
-new MutationObserver(onChange).observe(document.body, {attributes: true, childList: true, subtree: true});
+new MutationObserver(onChange).observe(document.body, {childList: true, subtree: true});
 
 updateConfig();
 
