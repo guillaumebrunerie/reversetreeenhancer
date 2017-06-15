@@ -120,6 +120,7 @@ function playURL(url) {
     if(prevAudio){ prevAudio.destruct(); }
     prevAudio = audio;
     waiting = (prevAudio && prevAudio.playState == 1);
+	console.log("Playing " + url);
     // race condition here…
     audio = soundManager.createSound({
         id: "sound-" + counter,
@@ -139,6 +140,7 @@ function playURL(url) {
             }
         }
     });
+	console.log("Playing " + url);
 }
 
 // Play a sentence using the first available TTS
@@ -146,7 +148,7 @@ function playSound(sentence, lang, slow) {
 	var url = "";
 	for (i = 0; i < sayFuncOrder.length; i++) {
 		try {
-			// console.log("loop " + sayFuncOrder[i]);
+			console.log("loop " + sayFuncOrder[i]);
 			if (sayFunc[sayFuncOrder[i]](sentence, lang, slow)) {
 				break;
 			}
@@ -207,6 +209,7 @@ function yandexTTSLang(target) {
 
 function yandexSay(sentence, lang, speed) {
 	var sayLang = yandexTTSLang(lang);
+	console.log("Yandex " + sayLang);
 	if (sayLang != undefined) {
 		url = 'http://tts.voicetech.yandex.net/tts?text=' + sentence +
 			'&lang=' + sayLang + '&format=mp3&quality=hi';
@@ -256,7 +259,8 @@ var sayFuncOrder = [ 'baidu', 'yandex', 'google', ];
 // Say a sentence
 function say(sentence, lang) {
     sentence = sentence.replace(/•/g,"");
-    console.debug("Duolingo Tree Enhancer: saying '" + sentence + "'");
+    console.log("Duolingo Tree Enhancer: language '" + lang + "'");
+    console.log("Duolingo Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
     playSound(sentence, lang, false);
     lastSaidSlow = false;
@@ -266,7 +270,7 @@ function say(sentence, lang) {
 // Repeat las sentece slowly
 function sayslow(lang) {
     var sentence = sentenceGlobal;
-    console.debug("Duolingo Tree Enhancer: saying slowly '" + sentence + "'");
+    console.log("Duolingo Tree Enhancer: saying slowly '" + sentence + "'");
     playSound(sentenceGlobal, lang, true);
     lastSaidSlow = true;
     lastSaidLang = lang;
@@ -305,7 +309,7 @@ function challengeTranslate(lang) {
         answer = sourceLang;
     }
     console.log("challengeTranslate from "+question+" to "+answer);
-    if (grade.children.length === 0) {
+    if (grade.length === 0) {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
         speak_button = challenge.getElementsByClassName("_2GN1p _1ZlfW");
@@ -324,21 +328,12 @@ function challengeTranslate(lang) {
     }
 
     // Read the answer aloud if necessary
-    if ((grade.children.length > 0) && isSayText(answer)) {
-        var betterAnswer = grade.getElementsByTagName("h1")[0].getElementsByTagName("span");
-        // Hack for making timed practice work
-        var isTimedPractice = (grade.getElementsByClassName("icon-clock-medium").length !== 0);
-        var blame = document.getElementById("blame-1")
-        var isTypo = blame && blame.offsetParent !== null
-        if (isTimedPractice && !isTypo) {
-            betterAnswer = [];
-        }
-
-        if (betterAnswer.length === 0) {
-            say(document.getElementById("submitted-text").textContent, answer);
-        } else {
-            say(betterAnswer[0].textContent, answer);
-        }
+    if ((grade.length > 0) && isSayText(answer)) {
+    	var betterAnswer = "";
+    	for (var i = 0; i < grade.length; ++i) {
+    		betterAnswer = betterAnswer + grade[i].textContent + ". ";
+    	}
+        say(betterAnswer, answer);
     }
 }
 
@@ -784,13 +779,14 @@ function updateButton() {
 
 /* Get a grade from mutations */
 function getGrade(mutations) {
+	// By default, we get an empty collection here
 	var right_answer = document.getElementsByClassName("_34Ym5");
 	for (var i = 0; i < mutations.length; ++i) {
 		mutation = mutations[i];
 		if (mutation.type === 'childList') {
 			var target = mutation.target;
 			var footer_correct = target.getElementsByClassName("t55Fx _1cuVQ");
-			var footer_incorrect = target.getElementsByClassName("YhrsP _1cuVQ");
+			// var footer_incorrect = target.getElementsByClassName("YhrsP _1cuVQ");
 
 			if (/challenge/.test(oldclass) && target.className == "_1l6NK") {
 
@@ -800,12 +796,11 @@ function getGrade(mutations) {
 					if (added_class == "_3rrAo _1RUUp") {
 						console.log("We got an answer");
 						oldclass = oldclass + " no_answer";
-						if (right_answer.length != 0) {
-							console.log("wrong! " + right_answer.length);
-						} else if (footer_correct.lenth != 0) {
-							console.log("You are right");
-						} else {
-							console.log("Nothing to see here");
+						if (right_answer.length == 0 &&
+								footer_correct.lenth != 0) {
+							console.log("You are right no alt answer");
+							right_answer = document.getElementsByClassName(
+									"_7q434 _1qCW5 _3cX7c _3LmPy _3Z8Ye vvZSt");
 						}
 					}
 				}
@@ -858,9 +853,9 @@ function onChange(mutations) {
     var challenges = document.getElementsByClassName("_1eYrt");
     if (challenges.length > 0) {
     	newclass = challenges[0].getAttribute("data-test");
-    	
+
     	grade = getGrade(mutations);
-    	
+
         if (newclass != oldclass) {
             console.log("New class: " + newclass + ", old class: " + oldclass);
             oldclass = newclass;
@@ -879,7 +874,6 @@ function onChange(mutations) {
             }
 
             challenge = challenges[0];
-            grade = document.getElementById("grade");
 
             if (/translate/.test(newclass)) {
             	var input_area = challenge.getElementsByTagName("textarea")[0];
