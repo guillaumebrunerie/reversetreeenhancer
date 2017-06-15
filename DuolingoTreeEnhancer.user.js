@@ -467,6 +467,7 @@ function setUserConfig() {
 											// changes.
 		if (http.readyState == 4 && http.status == 200) {
 			console.log("Updated Setup " + params);
+			location.reload();
 		}
 	}
 
@@ -812,6 +813,7 @@ function getGrade(mutations) {
 /* Function dispatching the changes in the page to the other functions */
 function onChange(mutations) {
 	var newclass = "";
+	var reload = false;
 
 	// General setup
 	DuoState = JSON.parse(localStorage.getItem('duo.state'));
@@ -819,8 +821,15 @@ function onChange(mutations) {
 	newTargetLang = DuoState.user.learningLanguage;
 
 	if (newSourceLang != sourceLang || newTargetLang != targetLang) {
+		// Update DuoState
+		targetLang = DuoState.user.learningLanguage;
+		sourceLang = DuoState.user.fromLanguage;
+		updateConfig(); // Make GM_Config point to this language setup
 		setUserConfig();
-		location.reload();
+
+		var tree = document.getElementsByClassName("mAsUf")[0];
+		var button = document.getElementById("reverse-tree-enhancer-button");
+		if (window.location.pathname == "/") tree.removeChild(button);
 	}
 
 	if (window.location.pathname == "/"
@@ -839,7 +848,7 @@ function onChange(mutations) {
 		tree.insertBefore(button, tree.firstChild);
 		updateConfig(); // Make GM_Config point to this language setup
 		updateButton(); // Read setup
-		setUserConfig();
+		// setUserConfig();
 	}
 
     var challenges = document.getElementsByClassName("_1eYrt");
