@@ -435,10 +435,12 @@ function challengeForm(){
     }
 }
 
-function setUserConfig(reload) {
+function setUserConfig() {
 	var autoplay = isSayText(targetLang);
 	var microphone = isSpeaking();
 	var speakers = isListening();
+	DuoState.user.enableMicrophone = microphone;
+	DuoState.user.enableSpeaker = speakers;
 
 	// This was reverse engineered, might stop working any time
 	url = "/2016-04-13/users/";
@@ -448,22 +450,21 @@ function setUserConfig(reload) {
 	',"enableSpeaker":' + speakers +'}';
 
 	http=new XMLHttpRequest();
-	http.open("PATCH", url + duo.user.id + fields, true);
+	http.open("PATCH", url + DuoState.user.id + fields, true);
 
 	//Send the proper header information along with the request
-	http.setRequestHeader("Content-type", "application/json; charset=UTF-8");
-	http.setRequestHeader("Content-length", params.length);
-	http.setRequestHeader("Connection", "keep-alive");
-	http.setRequestHeader("Cookie", document.cookie);
+	// http.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	// http.setRequestHeader("Content-length", params.length);
+	// http.setRequestHeader("Connection", "keep-alive");
+	// http.setRequestHeader("Cookie", document.cookie);
 
 	http.onreadystatechange = function() {//Call a function when the state changes.
 		if(http.readyState == 4 && http.status == 200) {
 			console.log("Updated Setup " + params);
-			if (reload) {
-				location.reload();
-			}
 		}
 	}
+	
+	// console.log("About to send config");
 	http.send(params);
 }
 
@@ -695,8 +696,6 @@ function showConfig() {
 
 function getConfig() {
 	// Keep a list of reverse trees
-    var reverseTrees = JSON.parse(localStorage.getItem("reverse_trees"));
-    if(reverseTrees === null) { reverseTrees = {}; }
     var item = sourceLang + "-" + targetLang;
 
     sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
@@ -813,14 +812,8 @@ function onChange(mutations) {
 	newTargetLang = DuoState.user.learningLanguage;
 
 	if (newSourceLang != sourceLang || newTargetLang != targetLang) {
-		reload = sourceLang != targetLang;
-		saveSource = sourceLang;
-		saveTarget = targetLang;
-		sourceLang = newSourceLang;
-		targetLang = newTargetLang;
-		updateConfig();
-		updateButton(); // Read setup
-		// setUserConfig(reload);
+		setUserConfig();
+		location.reload();
 	}
 
 	if (window.location.pathname == "/"
@@ -839,7 +832,7 @@ function onChange(mutations) {
 		tree.insertBefore(button, tree.firstChild);
 		updateConfig(); // Make GM_Config point to this language setup
 		updateButton(); // Read setup
-		// setUserConfig(false);
+		setUserConfig();
 	}
 
     var challenges = document.getElementsByClassName("_1eYrt");
