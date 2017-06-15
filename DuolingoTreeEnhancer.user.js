@@ -112,35 +112,27 @@ function displaySoundErrorBox(url) {
 var audio;
 var prevAudio;
 var waiting = false;
-var counter = 0;
 
 // Play an audio element.
 function playURL(url) {
-    counter = counter + 1;
-    if(prevAudio){ prevAudio.destruct(); }
-    prevAudio = audio;
-    waiting = (prevAudio && prevAudio.playState == 1);
-	console.log("Playing " + url);
-    // race condition here…
-    audio = soundManager.createSound({
-        id: "sound-" + counter,
-        url: url,
-        autoLoad: true,
-        onload: function() {
-            if(this.readyState == 2){
-                displaySoundErrorBox(this.url);
-            } else if(!waiting){
-                this.play();
-            }
-        },
-        onfinish: function () {
-            if(waiting) {
-                waiting = false;
-                this.play();
-            }
-        }
-    });
-	console.log("Playing " + url);
+
+	console.log("Playing URL " + url);
+	audio = document.getElementById("audio-userscript-cm");
+
+	if (audio != null) {
+		// Delete audio element
+		document.body.parentNode.removeChild(audio);
+	}
+	audio = document.createElement('audio');
+	audio.setAttribute("id", "audio-userscript-cm")
+	audio.setAttribute("autoplay", "true")
+	source = document.createElement('source');
+	source.setAttribute("type", "audio/mpeg");
+	audio.appendChild(source);
+	document.body.parentNode.insertBefore(audio, document.body);
+	source.setAttribute("src", url);
+
+	audio.load();
 }
 
 // Play a sentence using the first available TTS
@@ -148,7 +140,7 @@ function playSound(sentence, lang, slow) {
 	var url = "";
 	for (i = 0; i < sayFuncOrder.length; i++) {
 		try {
-			console.log("loop " + sayFuncOrder[i]);
+			// console.log("loop " + sayFuncOrder[i]);
 			if (sayFunc[sayFuncOrder[i]](sentence, lang, slow)) {
 				break;
 			}
@@ -209,7 +201,7 @@ function yandexTTSLang(target) {
 
 function yandexSay(sentence, lang, speed) {
 	var sayLang = yandexTTSLang(lang);
-	console.log("Yandex " + sayLang);
+	// console.log("Yandex " + sayLang);
 	if (sayLang != undefined) {
 		url = 'http://tts.voicetech.yandex.net/tts?text=' + sentence +
 			'&lang=' + sayLang + '&format=mp3&quality=hi';
@@ -259,8 +251,8 @@ var sayFuncOrder = [ 'baidu', 'yandex', 'google', ];
 // Say a sentence
 function say(sentence, lang) {
     sentence = sentence.replace(/•/g,"");
-    console.log("Duolingo Tree Enhancer: language '" + lang + "'");
-    console.log("Duolingo Tree Enhancer: saying '" + sentence + "'");
+    // console.log("Duolingo Tree Enhancer: language '" + lang + "'");
+    // console.log("Duolingo Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
     playSound(sentence, lang, false);
     lastSaidSlow = false;
@@ -270,7 +262,7 @@ function say(sentence, lang) {
 // Repeat las sentece slowly
 function sayslow(lang) {
     var sentence = sentenceGlobal;
-    console.log("Duolingo Tree Enhancer: saying slowly '" + sentence + "'");
+    // console.log("Duolingo Tree Enhancer: saying slowly '" + sentence + "'");
     playSound(sentenceGlobal, lang, true);
     lastSaidSlow = true;
     lastSaidLang = lang;
@@ -308,7 +300,7 @@ function challengeTranslate(lang) {
         question = targetLang;
         answer = sourceLang;
     }
-    console.log("challengeTranslate from "+question+" to "+answer);
+    // console.log("challengeTranslate from "+question+" to "+answer);
     if (grade.length === 0) {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
@@ -794,11 +786,11 @@ function getGrade(mutations) {
 					// was a child added with ID of 'bar'?
 					var added_class = mutation.addedNodes[j].className;
 					if (added_class == "_3rrAo _1RUUp") {
-						console.log("We got an answer");
+						// console.log("We got an answer");
 						oldclass = oldclass + " no_answer";
 						if (right_answer.length == 0 &&
 								footer_correct.lenth != 0) {
-							console.log("You are right no alt answer");
+							// console.log("You are right no alt answer");
 							right_answer = document.getElementsByClassName(
 									"_7q434 _1qCW5 _3cX7c _3LmPy _3Z8Ye vvZSt");
 						}
@@ -857,7 +849,7 @@ function onChange(mutations) {
     	grade = getGrade(mutations);
 
         if (newclass != oldclass) {
-            console.log("New class: " + newclass + ", old class: " + oldclass);
+            // console.log("New class: " + newclass + ", old class: " + oldclass);
             oldclass = newclass;
 
             hideSoundErrorBox();
