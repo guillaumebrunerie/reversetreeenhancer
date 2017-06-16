@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.6.2
+// @version      0.9.0
 // @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -78,7 +78,6 @@ var css_hiding_pics = toStyleElem('._1o8rO '
         + 'border-color: lightgray; opacity: 0; } \n');
 
 function addCSSHiding(css_hiding) {
-    console.log("Hiding " + css_hiding);
     document.head.appendChild(css_hiding);
 }
 
@@ -346,7 +345,7 @@ function challengeJudge() {
     }
 
     if (/answer/.test(activeclass)) {
-        console.log("Callenge Judge answer");
+        // console.log("Callenge Judge answer");
         removeCSSHiding(css_hiding_source);
         removeCSSHiding(css_hiding_target);
         if (grade.length == 0) { // Answer is right
@@ -365,7 +364,7 @@ function challengeJudge() {
         if (isSayText(targetLang))
             say(grade, targetLang);
     } else {
-        console.log("Callenge Judge question");
+        // console.log("Callenge Judge question");
         if (isHideText(sourceLang)) {
             addCSSHiding(css_hiding_source);
         }
@@ -463,7 +462,7 @@ function setUserConfig() {
     http.onreadystatechange = function() {// Call a function when the state
         // changes.
         if (http.readyState == 4 && http.status == 200) {
-            console.log("Updated Setup " + params);
+            console.info("Updated Setup " + params);
             location.reload();
         }
     }
