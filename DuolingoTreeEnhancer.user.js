@@ -21,7 +21,7 @@ var activeclass = "";
 var DuoState = JSON.parse(localStorage.getItem('duo.state'));
 var targetLang = DuoState.user.learningLanguage;
 var sourceLang = DuoState.user.fromLanguage;
-var grade, challenge;
+var challenge;
 
 /* The color used for hiding */
 var hColor = "lightgray";
@@ -319,6 +319,12 @@ function challengeTranslate() {
     if (/answer/.test(activeclass)) {
         removeCSSHiding(css_hiding);
         // Read the answer aloud if necessary
+        var grade = document.getElementsByClassName("_34Ym5");
+        if (grade.length == 0 ) {
+        	var answerbox = "_7q434 _1qCW5 _3cX7c _3LmPy _3Z8Ye vvZSt";
+            grade = document.getElementsByClassName(answerbox);
+        }
+
         if ((grade.length > 0) && isSayText(answer)) {
             say(grade, answer);
         }
@@ -348,6 +354,7 @@ function challengeJudge() {
         // console.log("Callenge Judge answer");
         removeCSSHiding(css_hiding_source);
         removeCSSHiding(css_hiding_target);
+        var grade = document.getElementsByClassName("_34Ym5");
         if (grade.length == 0) { // Answer is right
             ansStatus = challenge.getElementsByClassName("BblGF _2zVZG");
             ansText = challenge.getElementsByClassName("_3EaeX _2zVZG");
@@ -776,10 +783,9 @@ function updateButton() {
     }
 }
 
-/* Get a grade from mutations */
-function getGrade(mutations) {
+/* Check if mutations correspond to an answer */
+function isAnswer(mutations) {
     // By default, we get an empty collection here
-    grade = document.getElementsByClassName("_34Ym5");
     for (var i = 0; i < mutations.length; ++i) {
         mutation = mutations[i];
         if (mutation.type === 'childList') {
@@ -795,10 +801,9 @@ function getGrade(mutations) {
                     var added_class = mutation.addedNodes[j].className;
                     if (added_class == "_3rrAo _1RUUp") {
                         // console.log("We got an answer");
-                        if (grade.length == 0 && footer_correct.lenth != 0) {
+                        if (footer_correct.lenth != 0) {
                             // console.log("You are right no alt answer");
-                            grade = document
-                                    .getElementsByClassName("_7q434 _1qCW5 _3cX7c _3LmPy _3Z8Ye vvZSt");
+                            return " correct answer";
                         }
                         return " answer";
                     }
@@ -855,7 +860,7 @@ function onChange(mutations) {
     var challenges = document.getElementsByClassName("_1eYrt");
     if (challenges.length > 0) {
         newclass = challenges[0].getAttribute("data-test");
-        newclass = newclass + getGrade(mutations);
+        newclass = newclass + isAnswer(mutations);
 
         if (newclass != activeclass) {
             // console.log("New class: " + newclass + ", old class: " +
@@ -903,14 +908,6 @@ function onChange(mutations) {
         enableTTSGlobal = false;
     } else {
         enableTTSGlobal = true;
-    }
-
-    if (/slide-session-end/.test(newclass)) {
-        // End screen ("you beat the clock...").
-        // Destroy the reference to the audio object
-        // so that subsequent <S-Space> keypresses
-        // don't cause the audio to repeat in, e.g., the tree or discussions.
-        audio = null;
     }
 }
 
