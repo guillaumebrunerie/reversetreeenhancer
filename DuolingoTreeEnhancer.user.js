@@ -16,7 +16,36 @@ console.debug('Duolingo: Tree Enhancer');
 
 var sentenceGlobal = null;
 var enableTTSGlobal = true;
-var duo_languages = JSON.parse('{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","gl":"Galician","la":"Latin","tt":"Tatar","tr":"Turkish","lv":"Latvian","tl":"Tagalog","th":"Thai","te":"Telugu","ta":"Tamil","yi":"Yiddish","dk":"Dothraki","de":"German","db":"Dutch (Belgium)","da":"Danish","uz":"Uzbek","el":"Greek","eo":"Esperanto","en":"English","zc":"Chinese (Cantonese)","eu":"Basque","et":"Estonian","ep":"English (Pirate)","es":"Spanish","zs":"Chinese","ru":"Russian","ro":"Romanian","be":"Belarusian","bg":"Bulgarian","ms":"Malay","bn":"Bengali","ja":"Japanese","or":"Oriya","xl":"Lolcat","ca":"Catalan","xe":"Emoji","xz":"Zombie","cy":"Welsh","cs":"Czech","pt":"Portuguese","lt":"Lithuanian","pa":"Punjabi (Gurmukhi)","pl":"Polish","hy":"Armenian","hr":"Croatian","hv":"High Valyrian","ht":"Haitian Creole","hu":"Hungarian","hi":"Hindi","he":"Hebrew","mb":"Malay (Brunei)","mm":"Malay (Malaysia)","ml":"Malayalam","mn":"Mongolian","mk":"Macedonian","ur":"Urdu","kk":"Kazakh","uk":"Ukrainian","mr":"Marathi","my":"Burmese","dn":"Dutch","af":"Afrikaans","vi":"Vietnamese","is":"Icelandic","it":"Italian","kn":"Kannada","zt":"Chinese (Traditional)","as":"Assamese","ar":"Arabic","zu":"Zulu","az":"Azeri","id":"Indonesian","nn":"Norwegian (Nynorsk)","no":"Norwegian","nb":"Norwegian (Bokmål)","ne":"Nepali","fr":"French","fa":"Farsi","fi":"Finnish","fo":"Faroese","ka":"Georgian","ss":"Swedish (Sweden)","sq":"Albanian","ko":"Korean","sv":"Swedish","km":"Khmer","kl":"Klingon","sk":"Slovak","sn":"Sindarin","sl":"Slovenian","ky":"Kyrgyz","sf":"Swedish (Finland)","sw":"Swahili"}');
+var duo_languages = JSON.parse(
+        '{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","' 
+        + 'gl":"Galician","la":"Latin","tt":"Tatar","tr":"Turkish",'
+        + '"lv":"Latvian","tl":"Tagalog","th":"Thai","te":"Telugu",'
+        + '"ta":"Tamil","yi":"Yiddish","dk":"Dothraki","de":"German",'
+        + '"db":"Dutch (Belgium)","da":"Danish","uz":"Uzbek",'
+        + '"el":"Greek","eo":"Esperanto","en":"English",'
+        + '"zc":"Chinese (Cantonese)","eu":"Basque","et":"Estonian",'
+        + '"ep":"English (Pirate)","es":"Spanish","zs":"Chinese",'
+        + '"ru":"Russian","ro":"Romanian","be":"Belarusian",'
+        + '"bg":"Bulgarian","ms":"Malay","bn":"Bengali",'
+        + '"ja":"Japanese","or":"Oriya","xl":"Lolcat","ca":"Catalan",'
+        + '"xe":"Emoji","xz":"Zombie","cy":"Welsh","cs":"Czech",'
+        + '"pt":"Portuguese","lt":"Lithuanian","pa":"Punjabi (Gurmukhi)",'
+        + '"pl":"Polish","hy":"Armenian","hr":"Croatian",'
+        + '"hv":"High Valyrian","ht":"Haitian Creole","hu":"Hungarian",'
+        + '"hi":"Hindi","he":"Hebrew","mb":"Malay (Brunei)",'
+        + '"mm":"Malay (Malaysia)","ml":"Malayalam","mn":"Mongolian",'
+        + '"mk":"Macedonian","ur":"Urdu","kk":"Kazakh","uk":"Ukrainian",'
+        + '"mr":"Marathi","my":"Burmese","dn":"Dutch","af":"Afrikaans",'
+        + '"vi":"Vietnamese","is":"Icelandic","it":"Italian",'
+        + '"kn":"Kannada","zt":"Chinese (Traditional)","as":"Assamese",'
+        + '"ar":"Arabic","zu":"Zulu","az":"Azeri","id":"Indonesian",'
+        + '"nn":"Norwegian (Nynorsk)","no":"Norwegian",'
+        + '"nb":"Norwegian (Bokmål)","ne":"Nepali","fr":"French",'
+        + '"fa":"Farsi","fi":"Finnish","fo":"Faroese","ka":"Georgian",'
+        + '"ss":"Swedish (Sweden)","sq":"Albanian","ko":"Korean",'
+        + '"sv":"Swedish","km":"Khmer","kl":"Klingon","sk":"Slovak",'
+        + '"sn":"Sindarin","sl":"Slovenian","ky":"Kyrgyz",'
+        + '"sf":"Swedish (Finland)","sw":"Swahili"}');
 var activeclass = "";
 var DuoState = JSON.parse(localStorage.getItem('duo.state'));
 var targetLang = DuoState.user.learningLanguage;
@@ -41,23 +70,23 @@ function toStyleElem(css) {
 }
 
 /* Stylesheet for the hiding for the multiple-choice questions */
-var css_hiding_source = toStyleElem('._1SfYc:not(:hover) '
-        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
-        + 'border-color: ' + hColor +'; } \n' + '.KRKEd:not(:hover) '
-        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
-        + 'border-color: ' + hColor +'; } \n' + '_1Zqmf:not(:hover) '
-        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
-        + 'border-color: ' + hColor +'; } \n');
+var css_hiding_source = toStyleElem('._1SfYc:not(:hover) ' + '{ color: '
+        + hColor + '; background-color: ' + hColor + '; ' + 'border-color: '
+        + hColor + '; } \n' + '.KRKEd:not(:hover) ' + '{ color: ' + hColor
+        + '; background-color: ' + hColor + '; ' + 'border-color: ' + hColor
+        + '; } \n' + '_1Zqmf:not(:hover) ' + '{ color: ' + hColor
+        + '; background-color: ' + hColor + '; ' + 'border-color: ' + hColor
+        + '; } \n');
 
-var css_hiding_target = toStyleElem('._1SfYc:not(:hover) '
-        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
-        + 'border-color: ' + hColor +'; } \n' + '._31nDg:not(:hover) '
-        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
-        + 'border-color: ' + hColor +'; } \n');
+var css_hiding_target = toStyleElem('._1SfYc:not(:hover) ' + '{ color: '
+        + hColor + '; background-color: ' + hColor + '; ' + 'border-color: '
+        + hColor + '; } \n' + '._31nDg:not(:hover) ' + '{ color: ' + hColor
+        + '; background-color: ' + hColor + '; ' + 'border-color: ' + hColor
+        + '; } \n');
 
-var css_hiding_pics = toStyleElem('._1o8rO '
-        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
-        + 'border-color: ' + hColor +'; opacity: 0; } \n');
+var css_hiding_pics = toStyleElem('._1o8rO ' + '{ color: ' + hColor
+        + '; background-color: ' + hColor + '; ' + 'border-color: ' + hColor
+        + '; opacity: 0; } \n');
 
 function addCSSHiding(css_hiding) {
     document.head.appendChild(css_hiding);
@@ -103,7 +132,7 @@ var waiting = false;
 function playURL(url, lang) {
 
     console.log("Playing URL " + url);
-    audio = document.getElementById("audio-userscript-cm-"+lang);
+    audio = document.getElementById("audio-userscript-cm-" + lang);
 
     if (audio != null) {
         // Delete audio element
@@ -114,9 +143,9 @@ function playURL(url, lang) {
         }
     }
     audio = document.createElement('audio');
-    audio.setAttribute("id", "audio-userscript-cm-"+lang);
+    audio.setAttribute("id", "audio-userscript-cm-" + lang);
     audio.setAttribute("autoplay", "true");
-    audio.className = "_1rpnX _3on-X cCL9P _3Lwfw";
+    audio.className = "_1rpnX _3on-X cCL9P _3Lwfw enhancer-media-element";
     source = document.createElement('source');
     source.setAttribute("type", "audio/mpeg");
     source.setAttribute("src", url);
@@ -124,8 +153,8 @@ function playURL(url, lang) {
 
     var div = document.getElementById("empty-play-button-cm");
     if (div != null) {
-        audio.setAttribute("controls","default");
-        div.removeAttribute("id");  // Make it anonymous
+        audio.setAttribute("controls", "default");
+        div.removeAttribute("id"); // Make it anonymous
         div.appendChild(audio);
     } else {
         document.body.parentNode.insertBefore(audio, document.body);
@@ -250,8 +279,25 @@ sayFunc['google'] = googleSay;
 sayFunc['yandex'] = yandexSay;
 var sayFuncOrder = [ 'baidu', 'yandex', 'google', ];
 
+function insertNodeAfter(node, after)
+{
+    if (after.nextSibling != null) {
+        // console.log("New button after!");
+        after.parentNode.insertBefore(node, after.nextSibling);
+    } else {
+        // console.log("New button end!");
+        after.parentNode.appendChild(node);
+    }
+}
+
+function insertNodeBefore(node, before)
+{
+    // console.log("New button before!");
+    before.parentNode.insertBefore(node, before);
+}
+
 // Say a sentence
-function say(itemsToSay, lang, after, css) {
+function say(itemsToSay, lang, node, css) {
     var sentence = "";
     for (var i = 0; i < itemsToSay.length; ++i) {
         var text = itemsToSay[i].type == "textarea" ? itemsToSay[i].textContent
@@ -266,20 +312,15 @@ function say(itemsToSay, lang, after, css) {
     sentenceGlobal = sentence;
 
     var div = document.createElement('div');
-    div.className = "_2GN1p _1ZlfW";
+    div.className = "_2GN1p _1ZlfW enhancer-media-button";
     div.id = "empty-play-button-cm";
 
     try {
-        if (after.nextSibling != null ) {
-            console.log("New button before!");
-            after.parentNode.insertBefore(div, after.nextSibling);
-        } else {
-            console.log("New button after!");
-            after.parentNode.appendChild(div);
-        }
+        insertNodeAfter(div, node);
         div.style = css;
-    } catch(err) {
+    } catch (err) {
         // Do nothing
+        // console.log("Old method");
     }
 
     playSound(sentence, lang);
@@ -333,8 +374,8 @@ function challengeTranslate() {
         }
 
         if ((grade.length > 0) && isSayText(answer)) {
-            var input_css = "display: inline; "
-                + "margin: 16px 0px 0px -36px; position: fixed;";
+            var input_css = "display: inline-block; "
+                    + "margin: 12px 0px 0px -40px; position: absolute;";
             say(grade, answer, input_area, input_css);
         }
 
@@ -377,8 +418,12 @@ function challengeJudge() {
             grade = challenge.getElementsByClassName("_3EaeX _2zVZG valid-ans");
         }
 
-        if (isSayText(targetLang))
-            say(grade, targetLang);
+        if (isSayText(targetLang)) {
+            var answers = challenge.getElementsByClassName("_2Ma9W")[0];
+            var answer_css = "display: inline-block; "
+                + "margin: 0px 0px 140px -60px; position: relative;";
+            say(grade, targetLang, answers, answer_css);
+        }
     } else {
         // console.log("Callenge Judge question");
         if (isHideText(sourceLang)) {
@@ -386,7 +431,10 @@ function challengeJudge() {
         }
 
         if (isSayText(sourceLang)) {
-            say(textCell, sourceLang, textCell[0], "");
+            // console.log("Challenge judge: Sentence to translate");
+            var question_css = "display: inline-block; "
+                + "margin: 0px 0px 140px -360px; position: relative;";
+            say(textCell, sourceLang, textCell[0], question_css);
         }
     }
 }
@@ -631,8 +679,7 @@ function updateConfig() {
                 getConfig();
             },
             open : function() {
-                this.frame
-                        .setAttribute(
+                this.frame.setAttribute(
                                 'style',
                                 'bottom: auto; border: 1px solid #000;'
                                         + ' display: none; height: 60%; left: 0; margin: 0; max-height: 95%;'
@@ -795,7 +842,7 @@ function updateButton() {
 }
 
 /* Check if mutations correspond to an answer */
-function isAnswer(mutations) {
+function isAnswer(mutations, challengeclass) {
     // By default, we get an empty collection here
     for (var i = 0; i < mutations.length; ++i) {
         mutation = mutations[i];
@@ -805,25 +852,32 @@ function isAnswer(mutations) {
             // var footer_incorrect = target.getElementsByClassName("YhrsP
             // _1cuVQ");
 
-            if (/challenge/.test(activeclass) && target.className == "_1l6NK") {
-
-                for (var j = 0; j < mutation.addedNodes.length; ++j) {
-                    // was a child added with ID of 'bar'?
-                    var added_class = mutation.addedNodes[j].className;
-                    if (added_class == "_3rrAo _1RUUp") {
-                        // console.log("We got an answer");
-                        if (footer_correct.lenth != 0) {
-                            // console.log("You are right no alt answer");
-                            return " correct answer";
+            if (/challenge/.test(challengeclass)) {
+                // console.log("Challenge activity" + challengeclass);
+                if (/enhancer/.test(target.className)) {
+                    // console.log("We are adding a button here");
+                    return activeclass;
+                }
+                if (target.className == "_1l6NK") {
+                    // console.log("We care about this change");
+                    // Something importan happened here
+                    for (var j = 0; j < mutation.addedNodes.length; ++j) {
+                        // was a child added with ID of 'bar'?
+                        var added_class = mutation.addedNodes[j].className;
+                        if (added_class == "_3rrAo _1RUUp") {
+                            // console.log("We got an answer");
+                            if (footer_correct.lenth != 0) {
+                                // console.log("You are right no alt answer");
+                                return challengeclass + " correct answer";
+                            }
+                            return challengeclass + " answer";
                         }
-                        return " answer";
                     }
                 }
-
             }
         }
     }
-    return "";
+    return challengeclass;
 }
 
 /* Function dispatching the changes in the page to the other functions */
@@ -860,7 +914,8 @@ function onChange(mutations) {
 
         button.id = "reverse-tree-enhancer-button";
         button.onclick = showConfig;
-        button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q";
+        button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q"
+                + " reverse-tree-enhancer-button"
         button.style = "margin-left: 5px; height: 42px;";
         tree.insertBefore(button, tree.firstChild);
         updateConfig(); // Make GM_Config point to this language setup
@@ -871,11 +926,11 @@ function onChange(mutations) {
     var challenges = document.getElementsByClassName("_1eYrt");
     if (challenges.length > 0) {
         newclass = challenges[0].getAttribute("data-test");
-        newclass = newclass + isAnswer(mutations);
+        newclass = isAnswer(mutations, newclass);
+        // console.log("Challenge: " + newclass);
 
         if (newclass != activeclass) {
-            // console.log("New class: " + newclass + ", old class: " +
-            // activeclass);
+            // console.log("Old class: " + activeclass);
             activeclass = newclass;
 
             hideSoundErrorBox();
@@ -923,8 +978,8 @@ function onChange(mutations) {
 }
 
 new MutationObserver(onChange).observe(document.body, {
-	childList : true,
-	subtree : true
+    childList : true,
+    subtree : true
 });
 
 updateConfig();
