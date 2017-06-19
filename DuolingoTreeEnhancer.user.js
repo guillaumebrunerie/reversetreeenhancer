@@ -114,7 +114,7 @@ function playURL(url, lang) {
         }
     }
     audio = document.createElement('audio');
-    audio.setAttribute("id", "audio-userscript-cm");
+    audio.setAttribute("id", "audio-userscript-cm-"+lang);
     audio.setAttribute("autoplay", "true");
     audio.className = "_1rpnX _3on-X cCL9P _3Lwfw";
     source = document.createElement('source');
@@ -130,11 +130,6 @@ function playURL(url, lang) {
     } else {
         document.body.parentNode.insertBefore(audio, document.body);
     }
-    try {
-
-    } catch (err) {
-    }
-
 
     audio.load();
 }
@@ -256,7 +251,7 @@ sayFunc['yandex'] = yandexSay;
 var sayFuncOrder = [ 'baidu', 'yandex', 'google', ];
 
 // Say a sentence
-function say(itemsToSay, lang, before) {
+function say(itemsToSay, lang, after, css) {
     var sentence = "";
     for (var i = 0; i < itemsToSay.length; ++i) {
         var text = itemsToSay[i].type == "textarea" ? itemsToSay[i].textContent
@@ -267,16 +262,22 @@ function say(itemsToSay, lang, before) {
     sentence = sentence.replace(/•/g, "");
     sentence = sentence.replace(/\.\./g, ".");
 
-    // console.log("Duolingo Tree Enhancer: language '" + lang + "'");
     console.log("Duolingo Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
 
     var div = document.createElement('div');
-    div.className = "_2GN1p _1ZlfW _1okOW";
+    div.className = "_2GN1p _1ZlfW";
     div.id = "empty-play-button-cm";
 
     try {
-        before.parentNode.insertBefore(div, before);
+        if (after.nextSibling != null ) {
+            console.log("New button before!");
+            after.parentNode.insertBefore(div, after.nextSibling);
+        } else {
+            console.log("New button after!");
+            after.parentNode.appendChild(div);
+        }
+        div.style = css;
     } catch(err) {
         // Do nothing
     }
@@ -326,13 +327,15 @@ function challengeTranslate() {
         removeCSSHiding(css_hiding);
         // Read the answer aloud if necessary
         var grade = document.getElementsByClassName("_34Ym5");
-        if (grade.length == 0 ) {
-        	var answerbox = "_7q434 _1qCW5 _3cX7c _3LmPy _3Z8Ye vvZSt";
+        if (grade.length == 0) {
+            var answerbox = "_7q434 _1qCW5 _3cX7c _3LmPy _3Z8Ye vvZSt";
             grade = document.getElementsByClassName(answerbox);
         }
 
         if ((grade.length > 0) && isSayText(answer)) {
-            say(grade, answer, input_area);
+            var input_css = "display: inline; "
+                + "margin: 16px 0px 0px -36px; position: fixed;";
+            say(grade, answer, input_area, input_css);
         }
 
     } else {
@@ -340,7 +343,7 @@ function challengeTranslate() {
         // We know there is not TTS because there is no play button
         speak_button = challenge.getElementsByClassName("_2GN1p _1ZlfW");
         if ((speak_button.length == 0) && isSayText(question)) {
-            say(questionBox, question, questionBox);
+            say(questionBox, question, questionBox[0], "");
         }
     }
 
@@ -383,7 +386,7 @@ function challengeJudge() {
         }
 
         if (isSayText(sourceLang)) {
-            say(textCell, sourceLang);
+            say(textCell, sourceLang, textCell[0], "");
         }
     }
 }
