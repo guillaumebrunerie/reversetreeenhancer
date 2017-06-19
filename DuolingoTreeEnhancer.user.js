@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.9.0
+// @version      0.9.1
 // @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -24,7 +24,7 @@ var sourceLang = DuoState.user.fromLanguage;
 var challenge;
 
 /* The color used for hiding */
-var hColor = "lightgray";
+var hColor = "#def0a5"; // "##dadada"
 
 /* Turns a stylesheet (as a string) into a style element */
 function toStyleElem(css) {
@@ -40,42 +40,24 @@ function toStyleElem(css) {
     return style;
 }
 
-/* Stylesheet for the button, the error box and the show-on-click box */
-var css_button_seb = toStyleElem('' +
-'#reverse-tree-enhancer-button { margin-left: 10px; }\n' +
-'#reverse-tree-enhancer-button.selected { background-color: purple; color: ' +
-'white; border-color: purple; }\n' +
-'#reverse-tree-enhancer-button.selected:hover { background-color: #A000A0; border-color: #A000A0; }\n' +
-'\n' +
-'#sound-error-box { left: 50%; transform: translate(-50%, 0); top: 20px; ' +
-'color: #FF3333; font-weight: bold; }\n' +
-'#sound-error-box .tooltip-inner { color: #FF3333; font-weight: bold; }\n' +
-'#sound-error-box button { padding: 5px 10px; border: none; border-radius: 100px; }\n' +
-'#sound-error-box button:hover { background-color: #EEE; }\n' +
-'\n' +
-'.ttt-hide, .ttt-not-hide:not(:hover) { color: ' + hColor + '; background-color: ' + hColor + '; }\n' +
-'.ttt-hide bdi, .ttt-not-hide:not(:hover) bdi { display: none; }');
-
-document.head.appendChild(css_button_seb);
-
 /* Stylesheet for the hiding for the multiple-choice questions */
 var css_hiding_source = toStyleElem('._1SfYc:not(:hover) '
-        + '{ color: lightgray; background-color: lightgray; '
-        + 'border-color: lightgray; } \n' + '.KRKEd:not(:hover) '
-        + '{ color: lightgray; background-color: lightgray; '
-        + 'border-color: lightgray; } \n' + '_1Zqmf:not(:hover) '
-        + '{ color: lightgray; background-color: lightgray; '
-        + 'border-color: lightgray; } \n');
+        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
+        + 'border-color: ' + hColor +'; } \n' + '.KRKEd:not(:hover) '
+        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
+        + 'border-color: ' + hColor +'; } \n' + '_1Zqmf:not(:hover) '
+        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
+        + 'border-color: ' + hColor +'; } \n');
 
 var css_hiding_target = toStyleElem('._1SfYc:not(:hover) '
-        + '{ color: lightgray; background-color: lightgray; '
-        + 'border-color: lightgray; } \n' + '._31nDg:not(:hover) '
-        + '{ color: lightgray; background-color: lightgray; '
-        + 'border-color: lightgray; } \n');
+        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
+        + 'border-color: ' + hColor +'; } \n' + '._31nDg:not(:hover) '
+        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
+        + 'border-color: ' + hColor +'; } \n');
 
 var css_hiding_pics = toStyleElem('._1o8rO '
-        + '{ color: lightgray; background-color: lightgray; '
-        + 'border-color: lightgray; opacity: 0; } \n');
+        + '{ color: ' + hColor +'; background-color: ' + hColor +'; '
+        + 'border-color: ' + hColor +'; opacity: 0; } \n');
 
 function addCSSHiding(css_hiding) {
     document.head.appendChild(css_hiding);
@@ -118,23 +100,41 @@ var prevAudio;
 var waiting = false;
 
 // Play an audio element.
-function playURL(url) {
+function playURL(url, lang) {
 
     console.log("Playing URL " + url);
-    audio = document.getElementById("audio-userscript-cm");
+    audio = document.getElementById("audio-userscript-cm-"+lang);
 
     if (audio != null) {
         // Delete audio element
-        document.body.parentNode.removeChild(audio);
+        try {
+            audio.parentNode.removeChild(audio);
+        } catch (err) {
+            // Do nothing, I don't care
+        }
     }
     audio = document.createElement('audio');
-    audio.setAttribute("id", "audio-userscript-cm")
-    audio.setAttribute("autoplay", "true")
+    audio.setAttribute("id", "audio-userscript-cm");
+    audio.setAttribute("autoplay", "true");
+    audio.className = "_1rpnX _3on-X cCL9P _3Lwfw";
     source = document.createElement('source');
     source.setAttribute("type", "audio/mpeg");
-    audio.appendChild(source);
-    document.body.parentNode.insertBefore(audio, document.body);
     source.setAttribute("src", url);
+    audio.appendChild(source);
+
+    var div = document.getElementById("empty-play-button-cm");
+    if (div != null) {
+        audio.setAttribute("controls","default");
+        div.removeAttribute("id");  // Make it anonymous
+        div.appendChild(audio);
+    } else {
+        document.body.parentNode.insertBefore(audio, document.body);
+    }
+    try {
+
+    } catch (err) {
+    }
+
 
     audio.load();
 }
@@ -178,7 +178,7 @@ function googleSay(sentence, lang) {
             + googleTTSLang(lang) + "&total=1&textlen=" + sentence.length
             + "&tk=" + gRand() + "&q=" + encodeURIComponent(sentence)
             + "&client=tw-ob";
-    playURL(url);
+    playURL(url, lang);
     return true;
 }
 
@@ -216,7 +216,7 @@ function yandexSay(sentence, lang) {
         url = 'http://tts.voicetech.yandex.net/tts?text='
                 + encodeURIComponent(sentence) + '&lang=' + sayLang
                 + '&format=mp3&quality=hi';
-        playURL(url);
+        playURL(url, lang);
         return true;
     }
     return false;
@@ -242,15 +242,10 @@ function baiduSay(sentence, lang) {
         url = 'http://tts.baidu.com/text2audio?text='
                 + encodeURIComponent(sentence) + '&lan=' + sayLang
                 + '&ie=UTF-8';
-        playURL(url);
+        playURL(url, lang);
         return true;
     }
     return false;
-}
-
-function ansObserver() {
-    url = tts_ans.getAttribute("data-value");
-    playURL(url);
 }
 
 // List of supported TTS providers
@@ -261,7 +256,7 @@ sayFunc['yandex'] = yandexSay;
 var sayFuncOrder = [ 'baidu', 'yandex', 'google', ];
 
 // Say a sentence
-function say(itemsToSay, lang) {
+function say(itemsToSay, lang, before) {
     var sentence = "";
     for (var i = 0; i < itemsToSay.length; ++i) {
         var text = itemsToSay[i].type == "textarea" ? itemsToSay[i].textContent
@@ -275,6 +270,17 @@ function say(itemsToSay, lang) {
     // console.log("Duolingo Tree Enhancer: language '" + lang + "'");
     console.log("Duolingo Tree Enhancer: saying '" + sentence + "'");
     sentenceGlobal = sentence;
+
+    var div = document.createElement('div');
+    div.className = "_2GN1p _1ZlfW _1okOW";
+    div.id = "empty-play-button-cm";
+
+    try {
+        before.parentNode.insertBefore(div, before);
+    } catch(err) {
+        // Do nothing
+    }
+
     playSound(sentence, lang);
     lastSaidLang = lang;
 }
@@ -326,7 +332,7 @@ function challengeTranslate() {
         }
 
         if ((grade.length > 0) && isSayText(answer)) {
-            say(grade, answer);
+            say(grade, answer, input_area);
         }
 
     } else {
@@ -334,7 +340,7 @@ function challengeTranslate() {
         // We know there is not TTS because there is no play button
         speak_button = challenge.getElementsByClassName("_2GN1p _1ZlfW");
         if ((speak_button.length == 0) && isSayText(question)) {
-            say(questionBox, question);
+            say(questionBox, question, questionBox);
         }
     }
 
@@ -433,8 +439,10 @@ function challengeForm() {
 
 function challengeListen() {
     if (/answer/.test(activeclass)) {
-        // if (isSayText(sourceLang))
-        // say(grade, sourceLang);
+        translations = challenge.getElementsByClassName("TVAVJ");
+        if (isSayText(sourceLang) && translations.length > 0) {
+            say(translations, sourceLang);
+        }
     } else {
         if (isCheckSpell()) {
             var input_box = challenge.getElementsByTagName("input")[0];
