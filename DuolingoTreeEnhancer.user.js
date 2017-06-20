@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.9.2
+// @version      0.9.3
 // @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -851,6 +851,20 @@ function isAnswer(mutations, challengeclass) {
     return challengeclass;
 }
 
+function addButton() {
+    var tree = document.getElementsByClassName("mAsUf")[0];
+    var button = document.createElement("button");
+
+    button.id = "reverse-tree-enhancer-button";
+    button.onclick = showConfig;
+    button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q"
+            + " reverse-tree-enhancer-button"
+    button.style = "margin-left: 5px; height: 42px;";
+    tree.insertBefore(button, tree.firstChild);
+
+    updateButton(); // Read setup
+}
+
 /* Function dispatching the changes in the page to the other functions */
 function onChange(mutations) {
     var newclass = "";
@@ -876,21 +890,11 @@ function onChange(mutations) {
 
     if (window.location.pathname == "/"
             && !document.getElementById("reverse-tree-enhancer-button")) {
-        var tree = document.getElementsByClassName("mAsUf")[0];
-        var button = document.createElement("button");
-
         // console.log("[DuolingoTreeEnhancer] Update DuoState new window");
         targetLang = DuoState.user.learningLanguage;
         sourceLang = DuoState.user.fromLanguage;
 
-        button.id = "reverse-tree-enhancer-button";
-        button.onclick = showConfig;
-        button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q"
-                + " reverse-tree-enhancer-button"
-        button.style = "margin-left: 5px; height: 42px;";
-        tree.insertBefore(button, tree.firstChild);
-
-        updateButton(); // Read setup
+        addButton();
     }
 
     var challenges = document.getElementsByClassName("_1eYrt");
@@ -951,3 +955,4 @@ new MutationObserver(onChange).observe(document.body, {
 });
 
 updateConfig();
+if (window.location.pathname == "/") addButton();
