@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.9.1
+// @version      0.9.2
 // @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -12,7 +12,7 @@
 // @grant        none
 // ==/UserScript==
 
-console.debug('Duolingo: Tree Enhancer');
+// console.log('DuolingoTreeEnhancer');
 
 var sentenceGlobal = null;
 var enableTTSGlobal = true;
@@ -97,31 +97,6 @@ function removeCSSHiding(css_hiding) {
     document.head.removeChild(css_hiding);
 }
 
-/* Sound Error box */
-var soundErrorBox = document.createElement('div');
-soundErrorBox.className = "tooltip top";
-soundErrorBox.id = "sound-error-box";
-soundErrorBox.innerHTML = '<div class="tooltip-inner">'
-        + 'Error when loading the sound, click <a id="sound-error-link" target="_blank">here</a> '
-        + 'and try to fix the problem. <button id="sound-error-button">Done</button></div>';
-
-function tryagain() {
-    hideSoundErrorBox();
-    audio.load();
-}
-
-function hideSoundErrorBox() {
-    soundErrorBox.style.display = "none";
-}
-
-function displaySoundErrorBox(url) {
-    var container = document.getElementsByClassName("player-container")[0];
-    container.insertBefore(soundErrorBox, container.firstChild);
-    document.getElementById("sound-error-link").href = url;
-    soundErrorBox.style.display = "";
-    document.getElementById("sound-error-button").onclick = tryagain;
-}
-
 /* Audio functions */
 
 var audio;
@@ -131,7 +106,7 @@ var waiting = false;
 // Play an audio element.
 function playURL(url, lang) {
 
-    console.log("Playing URL " + url);
+    console.log("[DuolingoTreeEnhancer] Playing URL " + url);
     audio = document.getElementById("audio-userscript-cm-" + lang);
 
     if (audio != null) {
@@ -168,7 +143,7 @@ function playSound(sentence, lang) {
     var url = "";
     for (i = 0; i < sayFuncOrder.length; i++) {
         try {
-            // console.log("loop " + sayFuncOrder[i]);
+            // console.log("[DuolingoTreeEnhancer] playSound loop " + sayFuncOrder[i]);
             if (sayFunc[sayFuncOrder[i]](sentence, lang)) {
                 break;
             }
@@ -235,7 +210,7 @@ function yandexTTSLang(target) {
 
 function yandexSay(sentence, lang) {
     var sayLang = yandexTTSLang(lang);
-    // console.log("Yandex " + sayLang);
+    // console.log("[DuolingoTreeEnhancer] Yandex " + sayLang);
     if (sayLang != undefined) {
         url = 'http://tts.voicetech.yandex.net/tts?text='
                 + encodeURIComponent(sentence) + '&lang=' + sayLang
@@ -282,17 +257,17 @@ var sayFuncOrder = [ 'baidu', 'yandex', 'google', ];
 function insertNodeAfter(node, after)
 {
     if (after.nextSibling != null) {
-        // console.log("New button after!");
+        // console.log("[DuolingoTreeEnhancer] New play button after!");
         after.parentNode.insertBefore(node, after.nextSibling);
     } else {
-        // console.log("New button end!");
+        // console.log("[DuolingoTreeEnhancer] New play button end!");
         after.parentNode.appendChild(node);
     }
 }
 
 function insertNodeBefore(node, before)
 {
-    // console.log("New button before!");
+    // console.log("[DuolingoTreeEnhancer] New button before!");
     before.parentNode.insertBefore(node, before);
 }
 
@@ -308,7 +283,7 @@ function say(itemsToSay, lang, node, css) {
     sentence = sentence.replace(/•/g, "");
     sentence = sentence.replace(/\.\./g, ".");
 
-    console.log("Duolingo Tree Enhancer: saying '" + sentence + "'");
+    console.log("[DuolingoTreeEnhancer] Saying '" + sentence + "'");
     sentenceGlobal = sentence;
 
     var div = document.createElement('div');
@@ -319,8 +294,7 @@ function say(itemsToSay, lang, node, css) {
         insertNodeAfter(div, node);
         div.style = css;
     } catch (err) {
-        // Do nothing
-        // console.log("Old method");
+        // console.log("[DuolingoTreeEnhancer] say: No play button, use old method");
     }
 
     playSound(sentence, lang);
@@ -328,7 +302,7 @@ function say(itemsToSay, lang, node, css) {
 }
 
 function keyUpHandler(e) {
-    if (e.shiftKey && e.keyCode == 82 && audio) {
+    if (e.shiftKey && e.keyCode == 32 && audio) {
         audio.play();
     }
 }
@@ -363,7 +337,7 @@ function challengeTranslate() {
         removeCSSHiding(css_hiding);
     }
 
-    // console.log("challengeTranslate from "+question+" to "+answer);
+    // console.log("[DuolingoTreeEnhancer] challengeTranslate from "+question+" to "+answer);
     if (/answer/.test(activeclass)) {
         removeCSSHiding(css_hiding);
         // Read the answer aloud if necessary
@@ -401,7 +375,7 @@ function challengeJudge() {
     }
 
     if (/answer/.test(activeclass)) {
-        // console.log("Callenge Judge answer");
+        // console.log("[DuolingoTreeEnhancer] callengeJudge answer");
         removeCSSHiding(css_hiding_source);
         removeCSSHiding(css_hiding_target);
         var grade = document.getElementsByClassName("_34Ym5");
@@ -425,13 +399,13 @@ function challengeJudge() {
             say(grade, targetLang, answers, answer_css);
         }
     } else {
-        // console.log("Callenge Judge question");
+        // console.log("[DuolingoTreeEnhancer] callengeJudge question");
         if (isHideText(sourceLang)) {
             addCSSHiding(css_hiding_source);
         }
 
         if (isSayText(sourceLang)) {
-            // console.log("Challenge judge: Sentence to translate");
+            // console.log("[DuolingoTreeEnhancer] challengeJudge: Sentence to translate");
             var question_css = "display: inline-block; "
                 + "margin: 0px 0px 140px -360px; position: relative;";
             say(textCell, sourceLang, textCell[0], question_css);
@@ -519,21 +493,15 @@ function setUserConfig() {
     http = new XMLHttpRequest();
     http.open("PATCH", url + DuoState.user.id + fields, true);
 
-    // Send the proper header information along with the request
-    // http.setRequestHeader("Content-type", "application/json; charset=UTF-8");
-    // http.setRequestHeader("Content-length", params.length);
-    // http.setRequestHeader("Connection", "keep-alive");
-    // http.setRequestHeader("Cookie", document.cookie);
-
     http.onreadystatechange = function() {// Call a function when the state
         // changes.
         if (http.readyState == 4 && http.status == 200) {
-            console.info("Updated Setup " + params);
+            console.info("[DuolingoTreeEnhancer] Updated Setup " + params);
             location.reload();
         }
     }
 
-    // console.log("About to send config");
+    // console.log("[DuolingoTreeEnhancer] About to send config");
     http.send(params);
 }
 
@@ -691,9 +659,15 @@ function updateConfig() {
     GM_config = new GM_configStruct();
     GM_config.init(conf);
     sayFuncOrder = GM_config.get('TTS_ORDER').split(" ");
-
-    console.log("Duolingo Tree Enhancer ready from " + sourceLang + " to "
-            + targetLang);
+    try {
+        console.log("DuolingoTreeEnhancer version " + GM_info.script.version
+                + " ready from " + duo_languages[sourceLang]
+                + " to " + duo_languages[targetLang]);
+    } catch (err) {
+        console.log("DuolingoTreeEnhancer"
+                + " ready from " + duo_languages[sourceLang]
+                + " to " + duo_languages[targetLang]);
+    }
 };
 
 function setConfigDefaults(treeType) {
@@ -849,25 +823,22 @@ function isAnswer(mutations, challengeclass) {
         if (mutation.type === 'childList') {
             var target = mutation.target;
             var footer_correct = target.getElementsByClassName("t55Fx _1cuVQ");
-            // var footer_incorrect = target.getElementsByClassName("YhrsP
-            // _1cuVQ");
 
             if (/challenge/.test(challengeclass)) {
-                // console.log("Challenge activity" + challengeclass);
+                // console.log("[DuolingoTreeEnhancer] Challenge activity" + challengeclass);
                 if (/enhancer/.test(target.className)) {
                     // console.log("We are adding a button here");
                     return activeclass;
                 }
                 if (target.className == "_1l6NK") {
-                    // console.log("We care about this change");
-                    // Something importan happened here
+                    // console.log("[DuolingoTreeEnhancer] An important change in the challenge");
                     for (var j = 0; j < mutation.addedNodes.length; ++j) {
                         // was a child added with ID of 'bar'?
                         var added_class = mutation.addedNodes[j].className;
                         if (added_class == "_3rrAo _1RUUp") {
-                            // console.log("We got an answer");
+                            // console.log("[DuolingoTreeEnhancer] We got an answer");
                             if (footer_correct.lenth != 0) {
-                                // console.log("You are right no alt answer");
+                                // console.log("[DuolingoTreeEnhancer] You are right, no alt answer");
                                 return challengeclass + " correct answer";
                             }
                             return challengeclass + " answer";
@@ -891,7 +862,7 @@ function onChange(mutations) {
     newTargetLang = DuoState.user.learningLanguage;
 
     if (newSourceLang != sourceLang || newTargetLang != targetLang) {
-        // Update DuoState
+        // console.log("[DuolingoTreeEnhancer] Update DuoState language change");
         targetLang = DuoState.user.learningLanguage;
         sourceLang = DuoState.user.fromLanguage;
         updateConfig(); // Make GM_Config point to this language setup
@@ -908,7 +879,7 @@ function onChange(mutations) {
         var tree = document.getElementsByClassName("mAsUf")[0];
         var button = document.createElement("button");
 
-        // Update DuoState
+        // console.log("[DuolingoTreeEnhancer] Update DuoState new window");
         targetLang = DuoState.user.learningLanguage;
         sourceLang = DuoState.user.fromLanguage;
 
@@ -918,28 +889,25 @@ function onChange(mutations) {
                 + " reverse-tree-enhancer-button"
         button.style = "margin-left: 5px; height: 42px;";
         tree.insertBefore(button, tree.firstChild);
-        updateConfig(); // Make GM_Config point to this language setup
+
         updateButton(); // Read setup
-        // setUserConfig();
     }
 
     var challenges = document.getElementsByClassName("_1eYrt");
     if (challenges.length > 0) {
         newclass = challenges[0].getAttribute("data-test");
         newclass = isAnswer(mutations, newclass);
-        // console.log("Challenge: " + newclass);
+        // console.log("[DuolingoTreeEnhancer] Challenge: " + newclass);
 
         if (newclass != activeclass) {
-            // console.log("Old class: " + activeclass);
+            // console.log("[DuolingoTreeEnhancer] Old class: " + activeclass);
             activeclass = newclass;
-
-            hideSoundErrorBox();
 
             if (!isEnhancedTree()) {
                 removeCSSHiding();
                 return;
             } else {
-                // console.log("Reverse and hide");
+                // console.log("[DuolingoTreeEnhancer] Reverse and hide");
             }
 
             if (challenges.length == 0) {
