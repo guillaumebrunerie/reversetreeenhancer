@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.9.3
+// @version      0.9.4
 // @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -291,6 +291,7 @@ function say(itemsToSay, lang, node, css) {
     div.id = "empty-play-button-cm";
 
     try {
+        // console.log("[DuolingoTreeEnhancer] say: Insert play button");
         insertNodeAfter(div, node);
         div.style = css;
     } catch (err) {
@@ -305,6 +306,26 @@ function keyUpHandler(e) {
     if (e.shiftKey && e.keyCode == 32 && audio) {
         audio.play();
     }
+}
+
+/* Get the right answers if the user answered wrong*/
+function getRightAnswers()
+{
+}
+
+/* Get the translations*/
+function getTranslations()
+{
+    var possible = document.getElementsByClassName("TVAVJ");
+    var translations = [];
+    if (possible.length > 0) {
+        console.log("[DuolingoTreeEnhancer] There are translations")
+        for (var i = 0; i < possible.length; ++i) {
+            translations[i] = possible[i].cloneNode(true);
+            translations[i].removeChild(translations[i].firstChild);
+        }
+    }
+    return translations;
 }
 
 document.addEventListener('keyup', keyUpHandler, false);
@@ -413,8 +434,6 @@ function challengeJudge() {
     }
 }
 
-var quotMark = /(["“”「」])/;
-
 /* Select the correct image */
 function challengeSelect() {
     if (isHidePics()) {
@@ -458,13 +477,37 @@ function challengeName() {
  */
 function challengeForm() {
     if (/answer/.test(activeclass)) {
+        var translations = getTranslations();
+        var grade = document.getElementsByClassName("_34Ym5");
+        var sentences = [];
+        if (grade.length == 0) {
+            // Right selection
+            prompt = document.getElementsByClassName("_2Pbs9")[0].cloneNode(true);
+            selection = prompt.getElementsByClassName("_27Ohn")[0];
+            index = document.getElementsByClassName("_27Ohn")[0].selectedIndex;
+            sp = document.createElement("span");
+            sp.textContent = selection.options[index];
+            prompt.replaceChild(sp, selection.parentNode);
+            sentences[0] = prompt;
+        } else {
+            // Wrong selection?
+            sentences = grade;
+            // Translation, just as Listen
+        }
+        if (isSayText(sourceLang) && sentences.length > 0) {
+            say(sentences, sourceLang);
+        } else if (isSayText(targetLang) && translations.length > 0) {
+            say(translations, targetLang);
+        }
     } else {
+        // console.log("[DuolingoTreeEnhancer] Challenge Form: nothing to read here");
     }
 }
 
 function challengeListen() {
     if (/answer/.test(activeclass)) {
-        translations = challenge.getElementsByClassName("TVAVJ");
+        console.log("[DuolingoTreeEnhancer] Check if a translation is available");
+        var translations = getTranslations();
         if (isSayText(sourceLang) && translations.length > 0) {
             say(translations, sourceLang);
         }
