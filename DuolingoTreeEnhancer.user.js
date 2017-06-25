@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.9.4
+// @version      0.9.5
 // @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -17,7 +17,7 @@
 var sentenceGlobal = null;
 var enableTTSGlobal = true;
 var duo_languages = JSON.parse(
-        '{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","' 
+        '{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","'
         + 'gl":"Galician","la":"Latin","tt":"Tatar","tr":"Turkish",'
         + '"lv":"Latvian","tl":"Tagalog","th":"Thai","te":"Telugu",'
         + '"ta":"Tamil","yi":"Yiddish","dk":"Dothraki","de":"German",'
@@ -481,23 +481,23 @@ function challengeForm() {
         var grade = document.getElementsByClassName("_34Ym5");
         var sentences = [];
         if (grade.length == 0) {
-            // Right selection
-            prompt = document.getElementsByClassName("_2Pbs9")[0].cloneNode(true);
-            selection = prompt.getElementsByClassName("_27Ohn")[0];
-            index = document.getElementsByClassName("_27Ohn")[0].selectedIndex;
+            // console.log("[DuolingoTreeEnhancer] Right selection");
+            var prompt = document.getElementsByClassName("_2Pbs9")[0].cloneNode(true);
+            var selection = prompt.getElementsByClassName("_27Ohn")[0];
+            var selOption = document.getElementsByClassName("_27Ohn")[0].firstChild.selectedIndex;
             sp = document.createElement("span");
-            sp.textContent = selection.options[index];
-            prompt.replaceChild(sp, selection.parentNode);
+            sp.textContent = selection.firstChild.options[selOption].innerText;
+            prompt.replaceChild(sp, selection);
             sentences[0] = prompt;
         } else {
-            // Wrong selection?
+            // console.log("[DuolingoTreeEnhancer] Wrong selection");
             sentences = grade;
             // Translation, just as Listen
         }
-        if (isSayText(sourceLang) && sentences.length > 0) {
-            say(sentences, sourceLang);
-        } else if (isSayText(targetLang) && translations.length > 0) {
-            say(translations, targetLang);
+        if (isSayText(targetLang) && sentences.length > 0) {
+            say(sentences, targetLang);  // Say selection as first option
+        } else if (isSayText(sourceLang) && translations.length > 0) {
+            say(translations, sourceLang);  // Otherwise say translation
         }
     } else {
         // console.log("[DuolingoTreeEnhancer] Challenge Form: nothing to read here");
@@ -949,13 +949,6 @@ function onChange(mutations) {
         if (newclass != activeclass) {
             // console.log("[DuolingoTreeEnhancer] Old class: " + activeclass);
             activeclass = newclass;
-
-            if (!isEnhancedTree()) {
-                removeCSSHiding();
-                return;
-            } else {
-                // console.log("[DuolingoTreeEnhancer] Reverse and hide");
-            }
 
             if (challenges.length == 0) {
                 return;
