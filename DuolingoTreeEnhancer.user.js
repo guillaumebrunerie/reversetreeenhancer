@@ -456,6 +456,8 @@ function challengeSelect() {
 /* Type the word corresponding to the images */
 function challengeName() {
     if (isHidePics()) {
+        // class "_3usrL CCKMN" -> all pictures
+        // class "_1o8rO" -> individual pictures
         addCSSHiding(css_hiding_pics);
     } else {
         removeCSSHiding(css_hiding_pics);
