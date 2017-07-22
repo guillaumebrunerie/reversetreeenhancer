@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.9.5
+// @version      0.9.6
 // @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -283,7 +283,7 @@ function say(itemsToSay, lang, node, css) {
     sentence = sentence.replace(/•/g, "");
     sentence = sentence.replace(/\.\./g, ".");
 
-    console.log("[DuolingoTreeEnhancer] Saying '" + sentence + "'");
+    // console.log("[DuolingoTreeEnhancer] Saying '" + sentence + "'");
     sentenceGlobal = sentence;
 
     var div = document.createElement('div');
@@ -319,7 +319,7 @@ function getTranslations()
     var possible = document.getElementsByClassName("TVAVJ");
     var translations = [];
     if (possible.length > 0) {
-        console.log("[DuolingoTreeEnhancer] There are translations")
+        // console.log("[DuolingoTreeEnhancer] There are translations")
         for (var i = 0; i < possible.length; ++i) {
             translations[i] = possible[i].cloneNode(true);
             translations[i].removeChild(translations[i].firstChild);
@@ -355,7 +355,8 @@ function challengeTranslate() {
     if (isHideText(question)) {
         addCSSHiding(css_hiding);
     } else {
-        removeCSSHiding(css_hiding);
+        removeCSSHiding(css_hiding_source);
+        removeCSSHiding(css_hiding_target);
     }
 
     // console.log("[DuolingoTreeEnhancer] challengeTranslate from "+question+" to "+answer);
@@ -508,7 +509,7 @@ function challengeForm() {
 
 function challengeListen() {
     if (/answer/.test(activeclass)) {
-        console.log("[DuolingoTreeEnhancer] Check if a translation is available");
+        // console.log("[DuolingoTreeEnhancer] Check if a translation is available");
         var translations = getTranslations();
         if (isSayText(sourceLang) && translations.length > 0) {
             say(translations, sourceLang);
