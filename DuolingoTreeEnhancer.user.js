@@ -283,7 +283,7 @@ function say(itemsToSay, lang, node, css) {
     sentence = sentence.replace(/•/g, "");
     sentence = sentence.replace(/\.\./g, ".");
 
-    // console.log("[DuolingoTreeEnhancer] Saying '" + sentence + "'");
+    console.log("[DuolingoTreeEnhancer] Saying '" + sentence + "'");
     sentenceGlobal = sentence;
 
     var div = document.createElement('div');
