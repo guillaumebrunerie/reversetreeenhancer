@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.9.6
+// @version      0.9.7
 // @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -107,7 +107,8 @@ var waiting = false;
 function playURL(url, lang) {
 
     console.log("[DuolingoTreeEnhancer] Playing URL " + url);
-    audio = document.getElementById("audio-userscript-cm-" + lang);
+    var audio_id = "audio-userscript-cm-" + lang;
+    audio = document.getElementById(audio_id);
 
     if (audio != null) {
         // Delete audio element
@@ -118,9 +119,8 @@ function playURL(url, lang) {
         }
     }
     audio = document.createElement('audio');
-    audio.setAttribute("id", "audio-userscript-cm-" + lang);
+    audio.setAttribute("id", audio_id);
     audio.setAttribute("autoplay", "true");
-    audio.className = "_1rpnX _3on-X cCL9P _3Lwfw enhancer-media-element";
     source = document.createElement('source');
     source.setAttribute("type", "audio/mpeg");
     source.setAttribute("src", url);
@@ -128,9 +128,13 @@ function playURL(url, lang) {
 
     var div = document.getElementById("empty-play-button-cm");
     if (div != null) {
-        audio.setAttribute("controls", "default");
+        var play_button = document.createElement('span');
+        play_button.className = "_1rpnX _3on-X cCL9P _3Lwfw enhancer-media-element";
+        play_button.setAttribute("onclick", "document.getElementById('"
+                + audio_id + "').play()");
         div.removeAttribute("id"); // Make it anonymous
         div.appendChild(audio);
+        div.appendChild(play_button);
     } else {
         document.body.parentNode.insertBefore(audio, document.body);
     }
@@ -872,6 +876,7 @@ function isAnswer(mutations, challengeclass) {
 
             if (/challenge/.test(challengeclass)) {
                 // console.log("[DuolingoTreeEnhancer] Challenge activity" + challengeclass);
+                // console.log("[DuolingoTreeEnhancer] Changed class " + target.className);
                 if (/enhancer/.test(target.className)) {
                     // console.log("We are adding a button here");
                     return activeclass;
@@ -881,6 +886,7 @@ function isAnswer(mutations, challengeclass) {
                     for (var j = 0; j < mutation.addedNodes.length; ++j) {
                         // was a child added with ID of 'bar'?
                         var added_class = mutation.addedNodes[j].className;
+                        // console.log("[DuolingoTreeEnhancer] class: " + added_class);
                         if (added_class == "_3rrAo _1RUUp") {
                             // console.log("[DuolingoTreeEnhancer] We got an answer");
                             if (footer_correct.lenth != 0) {
