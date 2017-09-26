@@ -14,15 +14,10 @@
 
 // console.debug('DuolingoTreeEnhancer');
 
-CHALLENGE_FOOTER = "_2DwcV";
 CHALLENGE_CLASS  = "_25rpC";
-CHALLENGE_QUESTION_BOX = "tr8af _2qdCV";
 CHALLENGE_CORRECT_ANSWER = "_1Gtrg";
 CHALLENGE_TRANSLATIONS = "_2OMW1";
-ANSWER_FOOTER = "_1byVg _1RUUp";
-FOOTER_CORRECT = "_3Mlwu _1AI9_";
-SPEAKER_BUTTON = "_3Z9Fs _1ZlfW _1r10N";
-SPEAKER_ICON = "GVggs _3on-X cCL9P _3Lwfw";
+CHALLENGE_QUESTION_BOX = "tr8af _2qdCV";
 CHALLENGE_TRANSLATE_TEXT = "tr8af _2qdCV";
 CHALLENGE_JUDGE_QUESTION = "_2dst1 _1UNVv _3hECj";
 CHALLENGE_JUDGE_OPTIONS = "_32oGE";
@@ -30,6 +25,11 @@ CHALLENGE_JUDGE_TEXT = "zh1AD";
 CHALLENGE_JUDGE_CHECKBOX = "_2Rztt";
 CHALLENGE_SELECT_PIC = "_38fbd";
 CHALLENGE_NAME_PIC = "_38fbd";
+CHALLENGE_FOOTER = "_2DwcV";
+ANSWER_FOOTER = "_1byVg _1RUUp";
+FOOTER_CORRECT = "_3Mlwu _1AI9_";
+SPEAKER_BUTTON = "_3Z9Fs _1ZlfW _1r10N";
+SPEAKER_ICON = "GVggs _3on-X cCL9P _3Lwfw";
 
 var enableTTSGlobal = true;
 var duo_languages = JSON.parse(
@@ -76,6 +76,7 @@ function toStyleElem(css) {
     var style = document.createElement('style');
 
     style.type = 'text/css';
+    style.className = "enhancer-stylesheet";
     if (style.styleSheet) {
         style.styleSheet.cssText = css;
     } else {
@@ -85,34 +86,35 @@ function toStyleElem(css) {
     return style;
 }
 
-/* Stylesheet for the hiding for the multiple-choice questions */
-/* Elements to hide: Translate, judge & name questions */
-var css_hiding_source = toStyleElem('.tr8af:not(:hover) ' + '{ color: '
-        + hColor + '; background-color: ' + hColor + '; ' + 'border-color: '
-        + hColor + '; } \n' + '._2dst1:not(:hover) ' + '{ color: ' + hColor
-        + '; background-color: ' + hColor + '; ' + 'border-color: ' + hColor
-        + '; } \n' + '_38fbd:not(:hover) ' + '{ color: ' + hColor
-        + '; background-color: ' + hColor + '; ' + 'border-color: ' + hColor
-        + '; } \n');
+/* Stylesheet for the hiding text */
+var css_hiding_style = 'not(:hover) ' + '{ color: '
+    + hColor + '; background-color: ' + hColor + '; ' + 'border-color: '
+    + hColor + '; } \n';
+
+/* Elements to hide: Translate & judge questions */
+var css_hiding_source = toStyleElem('.tr8af:' + css_hiding_style
+        + '._2dst1:' + css_hiding_style);
+
+/* Elements to hide: Name & select questions */
+var css_hiding_title = toStyleElem('._38fbd:' + css_hiding_style);
 
 /* Elements to hide: Translate questions & judge options */
-var css_hiding_target = toStyleElem('.tr8af:not(:hover) ' + '{ color: '
-        + hColor + '; background-color: ' + hColor + '; ' + 'border-color: '
-        + hColor + '; } \n' + '._2226n:not(:hover) ' + '{ color: ' + hColor
-        + '; background-color: ' + hColor + '; ' + 'border-color: ' + hColor
-        + '; } \n');
+var css_hiding_target = toStyleElem('.tr8af:' + css_hiding_style
+        + '._2226n:' + css_hiding_style);
 
-var css_hiding_pics = toStyleElem('._1TFTy ' + '{ color: ' + hColor
-        + '; background-color: ' + hColor + '; ' + 'border-color: ' + hColor
-        + '; opacity: 0; } \n');
+var css_hiding_pics = toStyleElem('._1TFTy { opacity: 0; } \n'
+        + '.TFInO { opacity: 0; } \n' );
 
 function addCSSHiding(node, css_hiding) {
     node.appendChild(css_hiding);
 }
 
-function removeCSSHiding(node, css_hiding) {
-    node.appendChild(css_hiding);
-    node.removeChild(css_hiding);
+function removeCSSHiding(node) {
+    var styles = node.getElementsByClassName("enhancer-stylesheet");
+
+    for (var i = styles.length - 1; i >= 0; i--) {
+        node.removeChild(styles[i]);
+    }
 }
 
 /* Audio functions */
@@ -310,16 +312,23 @@ function say(itemsToSay, lang, node, css) {
     div.id = "empty-play-button-cm";
 
     try {
+        div.style = css;
+    } catch (err) {
+        // Do nothing, really
+    }
+
+    try {
         // console.debug("[DuolingoTreeEnhancer] say: Insert play button");
         insertNodeBefore(div, node);
-        div.style = css;
     } catch (err) {
         // console.debug("[DuolingoTreeEnhancer] say: No play button, use old method");
     }
 
-    if (lang != "XXX") {
+    try {
         playSound(sentence, lang);
         lastSaidLang = lang;
+    } catch (err) {
+        // Do nothing, really
     }
 }
 
@@ -379,7 +388,7 @@ function challengeTranslate() {
 
     // console.debug("[DuolingoTreeEnhancer] challengeTranslate from "+question+" to "+answer);
     if (/answer/.test(activeclass)) {
-        removeCSSHiding(challenge, css_hiding);
+        removeCSSHiding(challenge);
         // Read the answer aloud if necessary
         var grade = document.getElementsByClassName(CHALLENGE_CORRECT_ANSWER);
         if (grade.length == 0) {
@@ -388,7 +397,8 @@ function challengeTranslate() {
 
         if ((grade.length > 0) && isSayText(answer)) {
             var input_css = "display: inline-block; "
-                    + "margin: 12px 0px 0px -40px; position: absolute;";
+                    + "margin: 12px 0px 0px -40px; "
+                    + "position: absolute;";
             say(grade, answer, input_area, input_css);
         }
 
@@ -400,7 +410,7 @@ function challengeTranslate() {
             if (speak_button.length == 0) {
                 say(questionBox, question, questionBox[0].firstChild, "");
             } else if (!/enhancer-media-button/.test(speak_button[0].className)) {
-                say(questionBox, "XXX", null, ""); // No lang
+                say(questionBox); // No lang
             }
         }
     }
@@ -418,8 +428,7 @@ function challengeJudge() {
 
     if (/answer/.test(activeclass)) {
         // console.debug("[DuolingoTreeEnhancer] callengeJudge answer");
-        removeCSSHiding(challenge, css_hiding_source);
-        removeCSSHiding(challenge, css_hiding_target);
+        removeCSSHiding(challenge);
         var grade = document.getElementsByClassName(CHALLENGE_CORRECT_ANSWER);
         if (grade.length == 0) { // Answer is right
             ansStatus = challenge.getElementsByClassName(CHALLENGE_JUDGE_CHECKBOX);
@@ -438,7 +447,8 @@ function challengeJudge() {
             // console.debug("[DuolingoTreeEnhancer] challengeJudge Hiding source");
             var answers = challenge.getElementsByClassName(CHALLENGE_JUDGE_OPTIONS)[0];
             var answer_css = "display: inline-block; "
-                    + "margin: 0px 0px -40px -40px; position: relative;";
+                    + "margin: 0px 0px -40px -40px; "
+                    + "position: relative;";
             say(grade, targetLang, answers, answer_css);
         }
     } else {
@@ -450,7 +460,8 @@ function challengeJudge() {
         if (isSayText(sourceLang)) {
             // console.debug("[DuolingoTreeEnhancer] challengeJudge: Sentence to translate");
             var question_css = "display: inline-block; "
-                    + "margin: 0px 0px -40px -40px; position: relative;";
+                    + "margin: 0px 0px -40px -40px; "
+                    + "position: relative;";
             say(textCell, sourceLang, textCell[0], question_css);
         }
     }
@@ -458,18 +469,24 @@ function challengeJudge() {
 
 /* Select the correct image */
 function challengeSelect() {
-    if (isHidePics()) {
-        addCSSHiding(challenge, css_hiding_pics);
-    } else {
-        removeCSSHiding(challenge, css_hiding_pics);
-    }
-
     if (/answer/.test(activeclass)) {
-        removeCSSHiding(challenge, css_hiding_pics);
+        removeCSSHiding(challenge);
     } else {
+        if (isHidePics()) {
+            addCSSHiding(challenge, css_hiding_pics);
+        }
+        if (isHideText(sourceLang)) {
+            addCSSHiding(challenge, css_hiding_title);
+        }
+        console.debug("[DuolingoTreeEnhancer] challengeSelect question");
         textCell = challenge.getElementsByClassName(CHALLENGE_SELECT_PIC);
         if (isSayText(sourceLang)) {
-            say(textCell, sourceLang);
+            question_css = "display: inline-block; "
+                + "margin: 12px 0px 0px -40px; "
+                + "top: 30px; "
+                + "position: relative; "
+                + "align-self:left";
+            say(textCell, sourceLang, textCell[0], question_css);
         }
 
     }
@@ -477,25 +494,29 @@ function challengeSelect() {
 
 /* Type the word corresponding to the images */
 function challengeName() {
-    if (isHidePics()) {
-        addCSSHiding(challenge, css_hiding_pics);
-    } else {
-        removeCSSHiding(challenge, css_hiding_pics);
-    }
-
     if (/answer/.test(activeclass)) {
-        removeCSSHiding(document.head, css_hiding_pics);
+        removeCSSHiding(challenge);
     } else {
+        if (isHidePics()) {
+            addCSSHiding(challenge, css_hiding_pics);
+        }
+        if (isHideText(sourceLang)) {
+            addCSSHiding(challenge, css_hiding_title);
+        }
         textCell = challenge.getElementsByClassName(CHALLENGE_NAME_PIC);
         if (isSayText(sourceLang)) {
-            say(textCell, sourceLang);
+            question_css = "display: inline-block; "
+                + "margin: 12px 0px 0px -40px; "
+                + "top: 30px; "
+                + "position: relative; "
+                + "align-self:left";
+            say(textCell, sourceLang, textCell[0], question_css);
         }
     }
 }
 
 /*
- * Multiple-choice question where we have to choose a word in the source
- * language. Those are useless exercices, but we can’t get rid of them.
+ * Choose the missing word in the sentence. 
  */
 function challengeForm() {
     // _1VfeV -> Question
@@ -506,13 +527,6 @@ function challengeForm() {
         var sentences = [];
         if (grade.length == 0) {
             // console.debug("[DuolingoTreeEnhancer] Right selection");
-            var prompt = document.getElementsByClassName("_2Pbs9")[0].cloneNode(true);
-            var selection = prompt.getElementsByClassName("_27Ohn")[0];
-            var selOption = document.getElementsByClassName("_27Ohn")[0].firstChild.selectedIndex;
-            sp = document.createElement("span");
-            sp.textContent = selection.firstChild.options[selOption].innerText;
-            prompt.replaceChild(sp, selection);
-            sentences[0] = prompt;
         } else {
             // console.debug("[DuolingoTreeEnhancer] Wrong selection");
             sentences = grade;
