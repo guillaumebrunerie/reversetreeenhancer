@@ -26,7 +26,7 @@ In September 2017, Duolingo implemented a [new look for lessons on the website](
 and started deploying it slowly. If you are not in the group of users that are using the new website,
 the latest update **won't work for you**.
 
-If that's your case, you can [reinstall version 0.9.10](https://github.com/camiloaa/duolingotreeenhancer/raw/OldUI/DuolingoTreeEnhancer.user.js).
+If that's your case, you can [reinstall version 0.9.9](https://github.com/camiloaa/duolingotreeenhancer/raw/OldUI/DuolingoTreeEnhancer.user.js).
 It won't auto-update anymore until the new site is deployed for all users.
 If you get the new design before that, just use the link in the Installation section again.
 
