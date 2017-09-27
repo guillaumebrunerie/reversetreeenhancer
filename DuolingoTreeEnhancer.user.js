@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.9.10
+// @version      0.9.11
 // @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
 // @author       Guillaume Brunerie, Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -942,7 +942,9 @@ function addButton() {
     button.onclick = showConfig;
     button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q"
             + " reverse-tree-enhancer-button"
-    button.style = "margin-left: 5px; height: 42px;";
+    button.style = "margin-left: 5px; height: 42px; "
+        + "display: block;"
+        + "visibility: visible;";
     tree.insertBefore(button, tree.firstChild);
 
     updateButton(); // Read setup
