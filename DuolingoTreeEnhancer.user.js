@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      0.9.11
-// @description  Enhance trees by customizing difficulty and providing extra functionality. Check https://github.com/camiloaa/duolingotreeenhancer
-// @author       Guillaume Brunerie, Camilo Arboleda
+// @version      1.0.0
+// @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
+// @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
 // @icon         https://raw.githubusercontent.com/camiloaa/duolingotreeenhancer/master/duolingo.png
 // @require      https://github.com/camiloaa/GM_config/raw/master/gm_config.js
@@ -547,7 +547,9 @@ function challengeListen() {
         // console.debug("[DuolingoTreeEnhancer] Check if a translation is available");
         var translations = getTranslations();
         if (isSayText(sourceLang) && translations.length > 0) {
-            say(translations, sourceLang);
+            var first_translation =
+                document.getElementsByClassName(CHALLENGE_TRANSLATIONS)[0];
+            say(translations, sourceLang, first_translation);
         }
     } else {
         if (isCheckSpell()) {
