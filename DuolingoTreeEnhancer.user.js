@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.0
+// @version      1.0.1
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -324,10 +324,10 @@ function say(itemsToSay, lang, node, css) {
         // console.debug("[DuolingoTreeEnhancer] say: No play button, use old method");
     }
 
-    try {
+    if (typeof(lang) != 'undefined')  {
         playSound(sentence, lang);
         lastSaidLang = lang;
-    } catch (err) {
+    } else {
         // Do nothing, really
     }
 }
@@ -397,7 +397,7 @@ function challengeTranslate() {
 
         if ((grade.length > 0) && isSayText(answer)) {
             var input_css = "display: inline-block; "
-                    + "margin: 12px 0px 0px -40px; "
+                    + "margin: 20px 0px 0px -40px; "
                     + "position: absolute;";
             say(grade, answer, input_area, input_css);
         }
@@ -460,7 +460,7 @@ function challengeJudge() {
         if (isSayText(sourceLang)) {
             // console.debug("[DuolingoTreeEnhancer] challengeJudge: Sentence to translate");
             var question_css = "display: inline-block; "
-                    + "margin: 0px 0px -40px -40px; "
+                    + "margin: 0px 0px -45px -40px; "
                     + "position: relative;";
             say(textCell, sourceLang, textCell[0], question_css);
         }
@@ -523,19 +523,22 @@ function challengeForm() {
     // 
     if (/answer/.test(activeclass)) {
         var translations = getTranslations();
+        var first_translation =
+            document.getElementsByClassName(CHALLENGE_TRANSLATIONS)[0];
         var grade = document.getElementsByClassName(CHALLENGE_CORRECT_ANSWER);
         var sentences = [];
         if (grade.length == 0) {
             // console.debug("[DuolingoTreeEnhancer] Right selection");
         } else {
             // console.debug("[DuolingoTreeEnhancer] Wrong selection");
-            sentences = grade;
             // Translation, just as Listen
         }
         if (isSayText(targetLang) && sentences.length > 0) {
-            say(sentences, targetLang); // Say selection as first option
+            // Say selection as first option
+            say(sentences, targetLang);
         } else if (isSayText(sourceLang) && translations.length > 0) {
-            say(translations, sourceLang); // Otherwise say translation
+            // Otherwise say translation
+            say(translations, sourceLang, first_translation);
         }
     } else {
         // console.debug("[DuolingoTreeEnhancer] Challenge Form: nothing to read here");
