@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.2
+// @version      1.0.3
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -24,7 +24,7 @@ K_CHALLENGE_JUDGE_OPTIONS = "_-YZ3";
 K_CHALLENGE_JUDGE_TEXT = "_3EaeX";
 K_CHALLENGE_JUDGE_CHECKBOX = "BblGF";
 K_CHALLENGE_SELECT_PIC = "_38fbd";
-K_CHALLENGE_NAME_PIC = "_38fbd";
+K_CHALLENGE_NAME_PIC = "_1Zqmf";
 K_CHALLENGE_FOOTER = "_1l6NK";
 K_ANSWER_FOOTER = "_3rrAo _1RUUp";
 K_FOOTER_CORRECT = "t55Fx _1cuVQ";
@@ -96,13 +96,13 @@ var css_hiding_source = toStyleElem('._1SfYc:' + css_hiding_style
        + '.KRKEd:' + css_hiding_style);
 
 /* Elements to hide: Name & select questions */
-var css_hiding_title = toStyleElem('._38fbd:' + css_hiding_style);
+var css_hiding_title = toStyleElem('._1Zqmf:' + css_hiding_style);
 
 /* Elements to hide: Translate questions & judge options */
 var css_hiding_target = toStyleElem('._1SfYc:' + css_hiding_style 
         + '._31nDg:' + css_hiding_style);
 
-var css_hiding_pics = toStyleElem('._1TFTy { opacity: 0; } \n'
+var css_hiding_pics = toStyleElem('._1o8rO { opacity: 0; } \n'
         + '.TFInO { opacity: 0; } \n');
 
 function addCSSHiding(node, css_hiding) {
