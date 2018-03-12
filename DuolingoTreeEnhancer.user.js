@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.5
+// @version      1.0.6
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -28,7 +28,8 @@ K_CHALLENGE_NAME_PIC = "_1Zqmf";
 K_CHALLENGE_FOOTER = "_1l6NK";
 K_ANSWER_FOOTER = "_3rrAo _1RUUp";
 K_FOOTER_CORRECT = "t55Fx _1cuVQ";
-K_SPEAKER_BUTTON = "_2GN1p _1ZlfW _2cIrv";
+K_SPEAKER_BUTTON = "_2GN1p _2Nzej _2cIrv";
+K_CONFIG_BUTTON = "_3LN9C _3e75V _3f25b _3hso2 _3skMI oNqWF _3hso2 _3skMI";
 K_SPEAKER_ICON = "_1rpnX _3on-X cCL9P _3Lwfw";
 
 var enableTTSGlobal = true;
@@ -895,10 +896,10 @@ function updateButton() {
     }
     if (isEnhancedTree()) {
         button.textContent = GM_config.get('IS_ENHANCED') + " tree!";
-        button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q";
+        button.className = K_CONFIG_BUTTON;
     } else {
         button.textContent = "Normal tree";
-        button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q";
+        button.className = K_CONFIG_BUTTON;
     }
 }
 
@@ -947,12 +948,12 @@ function addButton() {
 
     button.id = "reverse-tree-enhancer-button";
     button.onclick = showConfig;
-    button.className = "_3LN9C _3QG2_ _1vaUe _3IS_q _1XnsG _1vaUe _3IS_q"
+    button.className = K_CONFIG_BUTTON;
             + " reverse-tree-enhancer-button"
     button.style = "margin-left: 5px; height: 42px; "
         + "display: block;"
             + "visibility: visible;";
-    tree.insertBefore(button, flag);
+    tree.insertBefore(button, tree.firstChild);
 
     updateButton(); // Read setup
 }
