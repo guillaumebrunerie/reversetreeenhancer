@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.7
+// @version      1.0.8
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -14,23 +14,24 @@
 
 // console.debug('DuolingoTreeEnhancer');
 
-K_CHALLENGE_CLASS = "_1Y5M_";
-K_CHALLENGE_CORRECT_ANSWER = "_34Ym5";
-K_CHALLENGE_TRANSLATIONS = "TVAVJ";
-K_CHALLENGE_TRANSLATE_QUESTION = "_1SfYc _1qCW5";
-K_CHALLENGE_TRANSLATE_ANSWER = "_7q434 _1qCW5 _2fPEB _3_NyK _1Juqt _3WbPm";
-K_CHALLENGE_JUDGE_QUESTION = "KRKEd _2UAIZ _1LyQh";
-K_CHALLENGE_JUDGE_OPTIONS = "_-YZ3";
-K_CHALLENGE_JUDGE_TEXT = "_3EaeX";
-K_CHALLENGE_JUDGE_CHECKBOX = "BblGF";
-K_CHALLENGE_SELECT_PIC = "_1Zqmf";
-K_CHALLENGE_NAME_PIC = "_1Zqmf";
-K_CHALLENGE_FOOTER = "_1l6NK";
-K_ANSWER_FOOTER = "_3rrAo _1RUUp";
-K_FOOTER_CORRECT = "t55Fx _1cuVQ";
-K_SPEAKER_BUTTON = "_2GN1p _2Nzej _2cIrv";
-K_CONFIG_BUTTON = "_3LN9C _3e75V _3f25b _3hso2 _3skMI oNqWF _3hso2 _3skMI";
-K_SPEAKER_ICON = "_1rpnX _3on-X cCL9P _3Lwfw";
+let K_CHALLENGE_CLASS = "_1Y5M_";
+let K_CHALLENGE_CORRECT_ANSWER = "_34Ym5";
+let K_CHALLENGE_TRANSLATIONS = "TVAVJ";
+let K_CHALLENGE_TRANSLATE_QUESTION = "_1SfYc _1qCW5";
+let K_CHALLENGE_TRANSLATE_ANSWER = "_7q434 _1qCW5 _2fPEB _3_NyK _1Juqt _3WbPm";
+let K_CHALLENGE_TRANSLATE_BANK = "_3xKXD"
+let K_CHALLENGE_JUDGE_QUESTION = "KRKEd _2UAIZ _1LyQh";
+let K_CHALLENGE_JUDGE_OPTIONS = "_-YZ3";
+let K_CHALLENGE_JUDGE_TEXT = "_3EaeX";
+let K_CHALLENGE_JUDGE_CHECKBOX = "cwpAZ";
+let K_CHALLENGE_SELECT_PIC = "_1Zqmf";
+let K_CHALLENGE_NAME_PIC = "_1Zqmf";
+let K_CHALLENGE_FOOTER = "_1l6NK";
+let K_ANSWER_FOOTER = "_3rrAo _1RUUp";
+let K_FOOTER_CORRECT = "t55Fx _1cuVQ";
+let K_SPEAKER_BUTTON = "_2GN1p _2Nzej _2cIrv";
+let K_CONFIG_BUTTON = "_3LN9C _3e75V _3f25b _3hso2 _3skMI oNqWF _3hso2 _3skMI";
+let K_SPEAKER_ICON = "_1rpnX _3on-X cCL9P _3Lwfw";
 
 var enableTTSGlobal = true;
 var duo_languages = JSON.parse(
