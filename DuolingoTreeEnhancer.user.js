@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.8
+// @version      1.0.9
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -19,7 +19,7 @@ let K_CHALLENGE_CORRECT_ANSWER = "_34Ym5";
 let K_CHALLENGE_TRANSLATIONS = "TVAVJ";
 let K_CHALLENGE_TRANSLATE_QUESTION = "_1SfYc _1qCW5";
 let K_CHALLENGE_TRANSLATE_ANSWER = "_7q434 _1qCW5 _2fPEB _3_NyK _1Juqt _3WbPm";
-let K_CHALLENGE_TRANSLATE_BANK = "_3xKXD"
+let K_CHALLENGE_TRANSLATE_BANK = "_3xKXD";
 let K_CHALLENGE_JUDGE_QUESTION = "KRKEd _2UAIZ _1LyQh";
 let K_CHALLENGE_JUDGE_OPTIONS = "_-YZ3";
 let K_CHALLENGE_JUDGE_TEXT = "_3EaeX";
@@ -509,11 +509,8 @@ function challengeName() {
         textCell = challenge.getElementsByClassName(K_CHALLENGE_NAME_PIC);
         if (isSayText(sourceLang)) {
             question_css = "display: inline-block; "
-                + "margin: 12px 0px 0px -40px; "
-                + "top: 30px; "
-                + "position: relative; "
-                + "align-self:left";
-            say(textCell, sourceLang, textCell[0], question_css);
+                + "position: relative; ";
+            say(textCell, sourceLang, textCell[0].firstChild, question_css);
         }
     }
 }
@@ -783,7 +780,7 @@ function setConfigDefaults(treeType) {
         GM_config.fields['HIDE_PICS'].value = true;
         GM_config.fields['SPELL_CHECK'].value = true;
         GM_config.fields['HIDE_TRANSLATIONS'].value = true;
-        break
+        break;
 
     case 'Enhanced':
         GM_config.fields['HIDE_TARGET'].value = true;
