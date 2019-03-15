@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.12
+// @version      1.0.13
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -30,7 +30,7 @@ let K_CHALLENGE_FOOTER = "_1l6NK";
 let K_ANSWER_FOOTER = "_3rrAo _1RUUp";
 let K_FOOTER_CORRECT = "t55Fx _1cuVQ";
 let K_SPEAKER_BUTTON = "_2GN1p _2Nzej _2cIrv";
-let K_CONFIG_BUTTON = "_3LN9C _3e75V _3f25b _3hso2 _3skMI oNqWF _3hso2 _3skMI";
+let K_CONFIG_BUTTON = "_1YIzB _3e75V _3f25b _3hso2 _3skMI oNqWF _3hso2 _3skMI";
 let K_SPEAKER_ICON = "_1rpnX _3on-X cCL9P _3Lwfw";
 
 var enableTTSGlobal = true;
@@ -946,8 +946,7 @@ function isAnswer(mutations, challengeclass) {
 }
 
 function addButton() {
-    var tree = document.getElementsByClassName("mAsUf")[0];
-    var flag = tree.getElementsByClassName("_2XSZu")[0];
+    var tree = document.getElementsByClassName("w8Lxd")[0];
     var button = document.createElement("button");
 
     button.id = "reverse-tree-enhancer-button";
