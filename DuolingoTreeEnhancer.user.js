@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.13
+// @version      1.0.14
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -29,9 +29,9 @@ let K_CHALLENGE_NAME_PIC = "_1Zqmf";
 let K_CHALLENGE_FOOTER = "_1l6NK";
 let K_ANSWER_FOOTER = "_3rrAo _1RUUp";
 let K_FOOTER_CORRECT = "t55Fx _1cuVQ";
-let K_SPEAKER_BUTTON = "_2GN1p _2Nzej _2cIrv";
+let K_SPEAKER_BUTTON = "c_gLl _2Nzej _3skMI _1AM95 _2arQ0 _3skMI _1AM95 _2ESN4 _3oc5M";
 let K_CONFIG_BUTTON = "_1YIzB _3e75V _3f25b _3hso2 _3skMI oNqWF _3hso2 _3skMI";
-let K_SPEAKER_ICON = "_1rpnX _3on-X cCL9P _3Lwfw";
+let K_SPEAKER_ICON = "_1rpnX _3on-X cCL9P _3Lwfw⎄";
 
 var enableTTSGlobal = true;
 var duo_languages = JSON.parse(
@@ -90,7 +90,7 @@ function toStyleElem(css) {
 
 /* Stylesheet for the hiding text */
 var css_hiding_style = 'not(:hover) ' + '{ color: ' + hColor
-       + '; background-color: ' + hColor 
+       + '!important; background-color: ' + hColor 
        + '; border-color: ' + hColor + '; } \n';
 
 /* Elements to hide: Translate & judge questions */
@@ -309,7 +309,7 @@ function say(itemsToSay, lang, node, css) {
 
     console.debug("[DuolingoTreeEnhancer] Saying '" + sentence + "'");
 
-    var div = document.createElement('div');
+    var div = document.createElement('button');
     div.className = K_SPEAKER_BUTTON + " enhancer-media-button";
     div.id = "empty-play-button-cm";
 
