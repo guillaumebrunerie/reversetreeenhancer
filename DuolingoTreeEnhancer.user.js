@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.15
+// @version      1.0.16
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -29,9 +29,10 @@ let K_CHALLENGE_NAME_PIC = "_1Zqmf";
 let K_CHALLENGE_FOOTER = "_1l6NK";
 let K_ANSWER_FOOTER = "_3rrAo _1RUUp";
 let K_FOOTER_CORRECT = "t55Fx _1cuVQ";
-let K_SPEAKER_BUTTON = "c_gLl _2Nzej _3skMI _1AM95 _2arQ0 _3skMI _1AM95 _2ESN4 _3oc5M";
-let K_CONFIG_BUTTON = "_1YIzB _3e75V _3f25b _3hso2 _3skMI oNqWF _3hso2 _3skMI";
-let K_SPEAKER_ICON = "_12VBw _2Ay3m cCL9P _3Lwfw";
+let K_SPEAKER_BUTTON = "c_gLl _2ESN4 _2arQ0 _3skMI _1AM95";
+let K_CONFIG_BUTTON = "oNqWF _3hso2 _3skMI _1AM95";
+let K_SPEAKER_ICON = "_1rpnX _3on-X _2JUTo";
+let K_SIDE_PANEL = "_21w25 _1E3L7";
 
 var enableTTSGlobal = true;
 var duo_languages = JSON.parse(
@@ -395,6 +396,7 @@ function challengeTranslate() {
 
     // console.debug("[DuolingoTreeEnhancer] challengeTranslate from "+question+" to "+answer);
     if (/answer/.test(activeclass)) {
+        // console.debug("[DuolingoTreeEnhancer] We have an answer");
         removeCSSHiding(challenge);
         // Read the answer aloud if necessary
         var grade = document.getElementsByClassName(K_CHALLENGE_CORRECT_ANSWER);
@@ -946,6 +948,7 @@ function isAnswer(mutations, challengeclass) {
 }
 
 function addButton() {
+	var sidepanel = document.getElementsByClassName(K_SIDE_PANEL);
     var tree = document.getElementsByClassName("w8Lxd")[0];
     var button = document.createElement("button");
 
@@ -953,9 +956,14 @@ function addButton() {
     button.onclick = showConfig;
     button.className = K_CONFIG_BUTTON
             + " reverse-tree-enhancer-button"
-    button.style = "margin-left: 5px; height: 42px; "
-            + "display: block;"
-            + "visibility: visible;";
+    if (sidepanel.length > 0) { // Full width browser
+        button.style = "visibility: visible;" +
+                       "position: absolute; " +
+                       "right: 0; " +
+                       "top: 52px; ";
+    } else { // Small screen
+        button.style = "visibility: visible;";
+    }
     tree.insertBefore(button, tree.firstChild);
 
     updateButton(); // Read setup
