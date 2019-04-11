@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.16
+// @version      1.0.17
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -310,7 +310,7 @@ function say(itemsToSay, lang, node, css) {
 
     console.debug("[DuolingoTreeEnhancer] Saying '" + sentence + "'");
 
-    var div = document.createElement('button');
+    var div = document.createElement('div');
     div.className = K_SPEAKER_BUTTON + " enhancer-media-button";
     div.id = "empty-play-button-cm";
 
