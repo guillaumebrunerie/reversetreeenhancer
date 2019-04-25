@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.17
+// @version      1.0.18
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -31,7 +31,7 @@ let K_ANSWER_FOOTER = "_3rrAo _1RUUp";
 let K_FOOTER_CORRECT = "t55Fx _1cuVQ";
 let K_SPEAKER_BUTTON = "c_gLl _2ESN4 _2arQ0 _3skMI _1AM95";
 let K_CONFIG_BUTTON = "oNqWF _3hso2 _3skMI _1AM95";
-let K_SPEAKER_ICON = "_1rpnX _3on-X _2JUTo";
+let K_SPEAKER_ICON = "_1rpnX _3on-X _1rEAJi";
 let K_SIDE_PANEL = "_21w25 _1E3L7";
 
 var enableTTSGlobal = true;
