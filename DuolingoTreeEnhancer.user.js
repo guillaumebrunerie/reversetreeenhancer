@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.18
+// @version      1.0.19
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -22,8 +22,8 @@ let K_CHALLENGE_TRANSLATE_ANSWER = "_7q434 _1qCW5 _2fPEB _3_NyK _1Juqt _3WbPm";
 let K_CHALLENGE_TRANSLATE_BANK = "_3xKXD";
 let K_CHALLENGE_JUDGE_QUESTION = "KRKEd _2UAIZ _1LyQh";
 let K_CHALLENGE_JUDGE_OPTIONS = "_-YZ3";
-let K_CHALLENGE_JUDGE_TEXT = "_3EaeX";
-let K_CHALLENGE_JUDGE_CHECKBOX = "cwpAZ";
+let K_CHALLENGE_JUDGE_TEXT = "_3gdNc";
+let K_CHALLENGE_JUDGE_CHECKBOX = "_tqTV";
 let K_CHALLENGE_SELECT_PIC = "_1Zqmf";
 let K_CHALLENGE_NAME_PIC = "_1Zqmf";
 let K_CHALLENGE_FOOTER = "_1l6NK";
@@ -31,7 +31,7 @@ let K_ANSWER_FOOTER = "_3rrAo _1RUUp";
 let K_FOOTER_CORRECT = "t55Fx _1cuVQ";
 let K_SPEAKER_BUTTON = "c_gLl _2ESN4 _2arQ0 _3skMI _1AM95";
 let K_CONFIG_BUTTON = "oNqWF _3hso2 _3skMI _1AM95";
-let K_SPEAKER_ICON = "_1rpnX _3on-X _1rEAJi";
+let K_SPEAKER_ICON = "_1rpnX _3on-X _1rEAJ";
 let K_SIDE_PANEL = "_21w25 _1E3L7";
 
 var enableTTSGlobal = true;
@@ -444,7 +444,8 @@ function challengeJudge() {
             ansText = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_TEXT);
 
             for (var i = 0; i < ansStatus.length; ++i) {
-                if (ansStatus[i].firstChild.checked == true) {
+                if (ansStatus[i].checked == true) {
+                    grade = ansText[i];
                     ansText[i].className = K_CHALLENGE_JUDGE_TEXT
                             + " valid-ans";
                 }
