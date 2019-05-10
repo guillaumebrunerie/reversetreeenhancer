@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.19
+// @version      1.0.20
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -15,7 +15,7 @@
 // console.debug('DuolingoTreeEnhancer');
 
 let K_CHALLENGE_CLASS = "_1Y5M_";
-let K_CHALLENGE_CORRECT_ANSWER = "_34Ym5";
+let K_CHALLENGE_CORRECT_ANSWER = "_75iiA";
 let K_CHALLENGE_TRANSLATIONS = "TVAVJ";
 let K_CHALLENGE_TRANSLATE_QUESTION = "_1SfYc _1qCW5";
 let K_CHALLENGE_TRANSLATE_ANSWER = "_7q434 _1qCW5 _2fPEB _3_NyK _1Juqt _3WbPm";
@@ -27,7 +27,7 @@ let K_CHALLENGE_JUDGE_CHECKBOX = "_tqTV";
 let K_CHALLENGE_SELECT_PIC = "_1Zqmf";
 let K_CHALLENGE_NAME_PIC = "_1Zqmf";
 let K_CHALLENGE_FOOTER = "_1l6NK";
-let K_ANSWER_FOOTER = "_3rrAo _1RUUp";
+let K_ANSWER_FOOTER = "_34UhM _1RUUp";
 let K_FOOTER_CORRECT = "t55Fx _1cuVQ";
 let K_SPEAKER_BUTTON = "c_gLl _2ESN4 _2arQ0 _3skMI _1AM95";
 let K_CONFIG_BUTTON = "oNqWF _3hso2 _3skMI _1AM95";
