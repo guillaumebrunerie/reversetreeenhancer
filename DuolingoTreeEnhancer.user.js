@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.22
+// @version      1.0.23
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -596,7 +596,6 @@ function setUserConfig() {
         // changes.
         if (http.readyState == 4 && http.status == 200) {
             console.info("[DuolingoTreeEnhancer] Updated Setup " + params);
-            location.reload();
         }
     }
 
@@ -978,7 +977,6 @@ function addButton() {
 /* Function dispatching the changes in the page to the other functions */
 function onChange(mutations) {
     var newclass = "";
-    var reload = false;
 
     // General setup
     DuoState = JSON.parse(localStorage.getItem('duo.state'));
