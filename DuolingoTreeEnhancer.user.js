@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.23
+// @version      1.0.24
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -978,31 +978,32 @@ function addButton() {
 function onChange(mutations) {
     var newclass = "";
 
-    // General setup
-    DuoState = JSON.parse(localStorage.getItem('duo.state'));
-    newSourceLang = DuoState.user.fromLanguage;
-    newTargetLang = DuoState.user.learningLanguage;
+    if (window.location.pathname == "/") {
+        // General setup
+        DuoState = JSON.parse(localStorage.getItem('duo.state'));
+        newSourceLang = DuoState.user.fromLanguage;
+        newTargetLang = DuoState.user.learningLanguage;
 
-    if (newSourceLang != sourceLang || newTargetLang != targetLang) {
-        // console.debug("[DuolingoTreeEnhancer] Update DuoState language change");
-        targetLang = DuoState.user.learningLanguage;
-        sourceLang = DuoState.user.fromLanguage;
-        updateConfig(); // Make GM_Config point to this language setup
-        setUserConfig();
+        if (newSourceLang != sourceLang || newTargetLang != targetLang) {
+            // console.debug("[DuolingoTreeEnhancer] Update DuoState language change");
+            targetLang = DuoState.user.learningLanguage;
+            sourceLang = DuoState.user.fromLanguage;
+            updateConfig(); // Make GM_Config point to this language setup
+            setUserConfig();
 
-        var tree = document.getElementsByClassName("mAsUf")[0];
-        var button = document.getElementById("reverse-tree-enhancer-button");
-        if (window.location.pathname == "/")
-            tree.removeChild(button);
-    }
+            var tree = document.getElementsByClassName("mAsUf")[0];
+            var button = document.getElementById("reverse-tree-enhancer-button");
+            if (window.location.pathname == "/")
+                tree.removeChild(button);
+        }
 
-    if (window.location.pathname == "/"
-            && !document.getElementById("reverse-tree-enhancer-button")) {
         // console.debug("[DuolingoTreeEnhancer] Update DuoState new window");
         targetLang = DuoState.user.learningLanguage;
         sourceLang = DuoState.user.fromLanguage;
 
-        addButton();
+        if (!document.getElementById("reverse-tree-enhancer-button")) {
+            addButton();
+        }
     }
 
     var challenges = document.getElementsByClassName(K_CHALLENGE_CLASS);
