@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.25
+// @version      1.0.26
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -28,6 +28,8 @@ let K_CHALLENGE_JUDGE_TEXT = "_2gaCX";
 let K_CHALLENGE_JUDGE_TEXT_CSS = ".NUoBR:not(:hover) div._2gaCX ";
 let K_CHALLENGE_JUDGE_CHECKBOX = "_tqTV";
 let K_CHALLENGE_COMPLETE_QUESTION = "OGy1T";
+let K_CHALLENGE_COMPLETE_ANSWER = "B04k5";
+let K_CHALLENGE_COMPLETE_INPUT_BOX = "_2nP_q";
 let K_CHALLENGE_SELECT_PIC = "_1Zqmf";
 let K_CHALLENGE_NAME_PIC = "_1Zqmf";
 let K_CHALLENGE_FOOTER = "_1_XY0";
@@ -496,12 +498,12 @@ function challengeJudge() {
     }
 }
 
-/* Translation from target language (eg. Polish) */
+/* Type in a missing word */
 function challengeComplete() {
     var questionBox = challenge.getElementsByClassName(K_CHALLENGE_COMPLETE_QUESTION);
 
-    var answerbox = challenge.getElementsByClassName("B04k5");
-    var input_area = answerbox[0];
+    var answerarray = challenge.getElementsByClassName(K_CHALLENGE_COMPLETE_ANSWER);
+    var answerbox = answerarray[0]
 
     if (isHideText(sourceLang)) {
         addCSSHiding(challenge, css_hiding);
@@ -514,14 +516,22 @@ function challengeComplete() {
         // Read the answer aloud if necessary
         var grade = document.getElementsByClassName(K_CHALLENGE_CORRECT_ANSWER);
         if (grade.length == 0) {
-            grade = answerbox;
+            // Make the whole answer a single text
+            // console.debug("[DuolingoTreeEnhancer] Change the whole line");
+            var box_to_remove = answerbox.getElementsByClassName(K_CHALLENGE_COMPLETE_INPUT_BOX)[0];
+            var box_to_fix = box_to_remove.parentNode;
+            box_to_fix.removeChild(box_to_remove);
+            box_to_fix.innerText = box_to_fix.firstChild.value;
+            grade = answerarray;
+        } else {
+            // console.debug("[DuolingoTreeEnhancer] You made a mistake");
         }
 
         if ((grade.length > 0) && isSayText(targetLang)) {
             var input_css = "display: inline-block; "
                 + "margin: 20px 0px 0px -40px; "
                 + "position: absolute;";
-            say(grade, targetLang, input_area, input_css);
+            say(grade, targetLang, answerbox, input_css);
         }
 
     } else {
@@ -589,7 +599,7 @@ function challengeName() {
  */
 function challengeForm() {
     // _1VfeV -> Question
-    // 
+    //
     if (/answer/.test(activeclass)) {
         var translations = getTranslations();
         var first_translation = document
