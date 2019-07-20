@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.0.26
+// @version      1.0.27
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -14,6 +14,7 @@
 
 // console.debug('DuolingoTreeEnhancer');
 
+let K_DUOTREE = "w8Lxd";
 let K_CHALLENGE_CLASS = "_1Y5M_";
 let K_CHALLENGE_CORRECT_ANSWER = "_75iiA";
 let K_CHALLENGE_TRANSLATIONS = "TVAVJ";
@@ -35,8 +36,8 @@ let K_CHALLENGE_NAME_PIC = "_1Zqmf";
 let K_CHALLENGE_FOOTER = "_1_XY0";
 let K_ANSWER_FOOTER = "KekRP";
 let K_FOOTER_CORRECT = "_75iiA";
-let K_SPEAKER_BUTTON = "c_gLl _2ESN4 _2arQ0 _1X3l0 _1AM95 mucpb";
-let K_CONFIG_BUTTON = "oNqWF _3hso2 _1X3l0 _1AM95  H7AnT";
+let K_SPEAKER_BUTTON = "c_gLl _2ESN4 _2arQ0 _2vmUZ _2Zh2S _1X3l0 eJd0I _3yrdh _2wXoR _1AM95 _1dlWz _2gnHr"
+let K_CONFIG_BUTTON = "oNqWF _3hso2 _2Zh2S _1X3l0 _1AM95 H7AnT";
 let K_SPEAKER_ICON = "_3foPi _1rpnX";
 let K_SIDE_PANEL = "_21w25 _1E3L7";
 
@@ -174,7 +175,7 @@ function playURL(url, lang) {
         ellipse.style = "fill:none;stroke:#EEEEEE;stroke-width:5;stroke-linecap:round";
         svg.appendChild(ellipse);
         play_button.appendChild(svg);
-        play_button.setAttribute("onclick", "document.getElementById('"
+        div.setAttribute("onclick", "document.getElementById('"
             + audio_id + "').play()");
         div.removeAttribute("id"); // Make it anonymous
         div.appendChild(play_button);
@@ -1024,22 +1025,15 @@ function isAnswer(mutations, challengeclass) {
 }
 
 function addButton() {
-	var sidepanel = document.getElementsByClassName(K_SIDE_PANEL);
-    var tree = document.getElementsByClassName("w8Lxd")[0];
+    var tree = document.getElementsByClassName(K_DUOTREE)[0];
     var button = document.createElement("button");
 
     button.id = "reverse-tree-enhancer-button";
     button.onclick = showConfig;
     button.className = K_CONFIG_BUTTON
             + " reverse-tree-enhancer-button"
-    if (sidepanel.length > 0) { // Full width browser
-        button.style = "visibility: visible;" +
-                       "position: absolute; " +
-                       "right: 0; " +
-                       "top: 52px; ";
-    } else { // Small screen
-        button.style = "visibility: visible;";
-    }
+    button.style = "visibility: visible;" +
+        "border-left-width: 10px; ";
     tree.insertBefore(button, tree.firstChild);
 
     updateButton(); // Read setup
