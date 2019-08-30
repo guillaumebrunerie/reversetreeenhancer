@@ -1,16 +1,21 @@
 # Duolingo Tree Enhancer
 
-User script for a better experince when using Duolingo.
+User script for a better experience when using Duolingo.
 
 ### What does it do?
 
-The follwing options are available:
+The following options are available:
 
 1. Keep per-tree settings for listening/speaking exercises.
 2. Make all the exercises listening exercises (hide the question).
 3. Read answers aloud.
 4. Hide clues (e.g pictures).
 4. Make Duo better for reverse trees.
+
+### Keyboard shortcuts
+
+1. Ctrl+Alt+K Play audio.
+2. Ctrl+Allt+H Show hidden text and pictures.
 
 ### Where does it work?
 
@@ -29,11 +34,8 @@ It has been also tested on Android with Firefox+Violentmonkey using the "request
 
 ### DuolingoTreeEnhancer stopped working, HELP!
 
-In September 2017, Duolingo implemented a [new look for lessons on the website](https://www.duolingo.com/comment/24513744),
-and started deploying it slowly. If you are not in the group of users that are using the new website,
-the latest update **won't work for you**.
+Duolingo is constantly making small changes and tweaks in the website. When it happens there are two options:
 
-If that's your case, you can [reinstall version 0.9.9](https://github.com/camiloaa/duolingotreeenhancer/raw/OldUI/DuolingoTreeEnhancer.user.js).
-It won't auto-update anymore until the new site is deployed for all users.
-If you get the new design before that, just use the link in the Installation section again.
+1. If you are a developer and can fix the problem yourself, please submit a patch.
+2. Otherwise, be patient. I'll work on it as soon as possible. 
 
