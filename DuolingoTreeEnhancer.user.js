@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.1.1
+// @version      1.1.2
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -1043,7 +1043,11 @@ function isAnswer(mutations, challengeclass) {
 }
 
 function addButton() {
-    var tree = document.getElementsByClassName(K_DUOTREE)[0];
+    var trees = document.getElementsByClassName(K_DUOTREE);
+    if (trees.length == 0) {
+        return; // Nothing to do here
+    }
+    var tree = trees[0];
     var button = document.createElement("button");
 
     button.id = "reverse-tree-enhancer-button";
@@ -1149,5 +1153,8 @@ new MutationObserver(onChange).observe(document.body, {
 });
 
 updateConfig();
-if (window.location.pathname == "/")
+if (document.getElementById("reverse-tree-enhancer-button") == null) {
     addButton();
+} else {
+    // console.debug("[DuolingoTreeEnhancer] Not a tree");
+}
