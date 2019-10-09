@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.1.2
+// @version      1.1.3
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -1066,7 +1066,7 @@ function addButton() {
 function onChange(mutations) {
     var newclass = "";
 
-    if (window.location.pathname == "/") {
+    if (window.location.pathname == "/learn") {
         // General setup
         DuoState = JSON.parse(localStorage.getItem('duo.state'));
         newSourceLang = DuoState.user.fromLanguage;
