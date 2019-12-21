@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.1.3
+// @version      1.1.4
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -39,9 +39,9 @@ let K_CHALLENGE_NAME_PIC = "_1Zqmf";
 let K_CHALLENGE_FOOTER = "_1_XY0 _3wVKa";
 let K_ANSWER_FOOTER = "KekRP";
 let K_FOOTER_CORRECT = K_CHALLENGE_CORRECT_ANSWER;
-let K_SPEAKER_BUTTON = "c_gLl _2ESN4 _2arQ0 _2vmUZ _2Zh2S _1X3l0 eJd0I _3yrdh _2wXoR _1AM95 _1dlWz _2gnHr"
+let K_SPEAKER_BUTTON = "_1B6Vk _2ESN4 _2arQ0 _2vmUZ _2Zh2S _1X3l0 eJd0I _3yrdh _2wXoR _1AM95 _1dlWz _2gnHr"
 let K_CONFIG_BUTTON = "oNqWF _3hso2 _2Zh2S _1X3l0 _1AM95 H7AnT";
-let K_SPEAKER_ICON = "_3foPi _1rpnX";
+let K_SPEAKER_ICON_STYLE = "text-align:center; margin-top:-7px; margin-left:-8px";
 let K_SIDE_PANEL = "_21w25 _1E3L7";
 
 var enableTTSGlobal = true;
@@ -166,7 +166,7 @@ function playURL(url, lang) {
     var div = document.getElementById("empty-play-button-cm");
     if (div != null) {
         var play_button = document.createElement('div');
-        play_button.className = K_SPEAKER_ICON;
+        play_button.style = K_SPEAKER_ICON_STYLE;
         play_button.appendChild(audio);
         var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         svg.className = " enhancer-media-element";
