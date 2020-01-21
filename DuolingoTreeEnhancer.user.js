@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.1.4
+// @version      1.1.5
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
 // @icon         https://raw.githubusercontent.com/camiloaa/duolingotreeenhancer/master/duolingo.png
 // @require      https://github.com/camiloaa/GM_config/raw/master/gm_config.js
 // @downloadURL  https://github.com/camiloaa/duolingotreeenhancer/raw/master/DuolingoTreeEnhancer.user.js
-// @updateURL  https://github.com/camiloaa/duolingotreeenhancer/raw/master/DuolingoTreeEnhancer.user.js
+// @updateURL    https://github.com/camiloaa/duolingotreeenhancer/raw/master/DuolingoTreeEnhancer.user.js
 // @grant        none
 // ==/UserScript==
 
@@ -1079,9 +1079,9 @@ function onChange(mutations) {
             updateConfig(); // Make GM_Config point to this language setup
             setUserConfig();
 
-            var tree = document.getElementsByClassName("mAsUf")[0];
+            var tree = document.getElementsByClassName(K_DUOTREE)[0];
             var button = document.getElementById("reverse-tree-enhancer-button");
-            if (window.location.pathname == "/")
+            if (window.location.pathname == "/learn")
                 tree.removeChild(button);
         }
 
