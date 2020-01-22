@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.1.5
+// @version      1.1.6
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -18,8 +18,8 @@ let K_DUOTREE = "i12-l";
 let K_CHALLENGE_CLASS = "_1Y5M_";
 let K_CHALLENGE_CORRECT_ANSWER = "_75iiA";
 let K_CHALLENGE_TRANSLATIONS = "TVAVJ";
-let K_CHALLENGE_TRANSLATE_QUESTION = "_3VFHG";
-let K_CHALLENGE_TRANSLATE_QUESTION_CSS = "._3VFHG:not(:hover) "
+let K_CHALLENGE_TRANSLATE_QUESTION = "_3XQ22";
+let K_CHALLENGE_TRANSLATE_QUESTION_CSS = "._3XQ22:not(:hover) "
 let K_CHALLENGE_TRANSLATE_ANSWER = "_7q434 _1qCW5 _2fPEB _3_NyK _1Juqt _3WbPm";
 let K_CHALLENGE_TRANSLATE_BANK = "_3xKXD";
 let K_CHALLENGE_SPEAK_QUESTION = "_3NU9I";
@@ -429,6 +429,7 @@ function challengeTranslate() {
     // console.debug("[DuolingoTreeEnhancer] challengeTranslate from "+question+" to "+answer);
     if (/answer/.test(activeclass)) {
         // console.debug("[DuolingoTreeEnhancer] We have an answer");
+        answer.disabled = false;
         removeCSSHiding(challenge);
         // Read the answer aloud if necessary
         var grade = document.getElementsByClassName(K_CHALLENGE_CORRECT_ANSWER);
