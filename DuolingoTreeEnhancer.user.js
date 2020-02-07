@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.1.7
+// @version      1.1.8
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -437,7 +437,7 @@ function challengeTranslate() {
     // console.debug("[DuolingoTreeEnhancer] challengeTranslate from "+question+" to "+answer);
     if (/answer/.test(activeclass)) {
         // console.debug("[DuolingoTreeEnhancer] We have an answer");
-        answer.disabled = false;
+        input_area.disabled = false;
         removeCSSHiding(challenge);
         // Read the answer aloud if necessary
         var grade = document.getElementsByClassName(K_CHALLENGE_CORRECT_ANSWER);
