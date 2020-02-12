@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.1.8
+// @version      1.1.9
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -26,10 +26,9 @@ let K_CHALLENGE_SPEAK_QUESTION = "_3NU9I";
 let K_CHALLENGE_SPEAK_QUESTION_CSS = "._3NU9I:not(:hover) ";
 let K_CHALLENGE_JUDGE_QUESTION = "KRKEd";
 let K_CHALLENGE_JUDGE_QUESTION_CSS = ".KRKEd:not(:hover) ";
-let K_CHALLENGE_JUDGE_OPTIONS = "_3b8vd";
-let K_CHALLENGE_JUDGE_TEXT = "_2gaCX";
-let K_CHALLENGE_JUDGE_TEXT_CSS = ".NUoBR:not(:hover) div._2gaCX ";
-let K_CHALLENGE_JUDGE_CHECKBOX = "_tqTV";
+let K_CHALLENGE_JUDGE_TEXT = "_ZBGt";
+let K_CHALLENGE_JUDGE_TEXT_CSS = "._3YaY9 ._ZBGt:not(:hover) ";
+let K_CHALLENGE_JUDGE_CHECKBOX = "xe-8G";
 let K_CHALLENGE_COMPLETE_QUESTION = "m6gEj";
 let K_CHALLENGE_COMPLETE_QUESTION_CSS = ".m6gEj:not(:hover) "
 let K_CHALLENGE_COMPLETE_ANSWER = "_3vSqb _2fPEB _3_NyK _1Juqt";
@@ -479,6 +478,7 @@ function challengeSpeak() {
 function challengeJudge() {
     var textCell = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_QUESTION);
 
+    // Do we want to hide the target language?
     if (!document.getElementById("timer") && isHideTranslations()) {
         // console.debug("[DuolingoTreeEnhancer] challengeJudge Hiding target");
         addCSSHiding(challenge, css_hiding_target);
@@ -487,6 +487,7 @@ function challengeJudge() {
     if (/answer/.test(activeclass)) {
         // console.debug("[DuolingoTreeEnhancer] callengeJudge answer");
         removeCSSHiding(challenge);
+        var selection_row = document.getElementById("flex_selection_row");
         var grade = document.getElementsByClassName(K_CHALLENGE_CORRECT_ANSWER);
         if (grade.length == 0) { // Answer is right
             ansStatus = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_CHECKBOX);
@@ -505,13 +506,24 @@ function challengeJudge() {
 
         if (isSayText(targetLang)) {
             // console.debug("[DuolingoTreeEnhancer] challengeJudge Hiding source");
-            var answers = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_OPTIONS)[0];
-            var answer_css = "display: inline-block; "
-                    + "margin: 0px 0px -40px -40px; "
-                    + "position: relative;";
-            say(grade, targetLang, answers, answer_css);
+            var answer_css = "display: inline-block; ";
+            say(grade, targetLang, selection_row.firstChild, answer_css);
         }
-    } else {
+    } else { // Asking a question
+        // Put everything inside a flexbox
+        var challenge_grid = textCell[0].parentNode;
+        var question_row = document.createElement("div");
+        var selection_row = document.createElement("div");
+        question_row.style = "display: flex";
+        selection_row.style = "display: flex";
+        selection_row.id = "flex_selection_row";
+        question_row.appendChild(challenge_grid.firstChild);
+        question_row.firstChild.style = "width:100%";
+        selection_row.appendChild(challenge_grid.firstChild);
+        selection_row.firstChild.style = "width:100%";
+        challenge_grid.appendChild(question_row);
+        challenge_grid.appendChild(selection_row);
+
         // console.debug("[DuolingoTreeEnhancer] callengeJudge question");
         if (isHideText(sourceLang)) {
             addCSSHiding(challenge, css_hiding_source);
@@ -519,10 +531,8 @@ function challengeJudge() {
 
         if (isSayText(sourceLang)) {
             // console.debug("[DuolingoTreeEnhancer] challengeJudge: Sentence to translate");
-            var question_css = "display: inline-block; "
-                    + "margin: 0px 0px -45px -40px; "
-                    + "position: relative;";
-            say(textCell, sourceLang, textCell[0], question_css);
+            var question_css = "display: inline-block; ";
+            say(textCell, sourceLang, question_row.firstChild, question_css);
         }
     }
 }
