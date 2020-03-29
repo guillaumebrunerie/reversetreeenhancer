@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.1.9
+// @version      1.1.10
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -19,7 +19,11 @@ let K_CHALLENGE_CLASS = "_1Y5M_";
 let K_CHALLENGE_CORRECT_ANSWER = "_75iiA";
 let K_CHALLENGE_TRANSLATIONS = "TVAVJ";
 let K_CHALLENGE_TRANSLATE_QUESTION = "_3XQ22";
-let K_CHALLENGE_TRANSLATE_QUESTION_CSS = "._3XQ22:not(:hover) "
+let K_CHALLENGE_TRANSLATE_PIC_QUESTION = "UqF8y _1PvQ4";
+// Hide same as K_CHALLENGE_TRANSLATE_QUESTION
+let K_CHALLENGE_TRANSLATE_QUESTION_CSS = "._3XQ22:not(:hover) ";
+// Hide first child of K_CHALLENGE_TRANSLATE_PIC_QUESTION
+let K_CHALLENGE_TRANSLATE_PIC_QUESTION_CSS = "._3PGzd:not(:hover) ";
 let K_CHALLENGE_TRANSLATE_ANSWER = "_7q434 _1qCW5 _2fPEB _3_NyK _1Juqt _3WbPm";
 let K_CHALLENGE_TRANSLATE_BANK = "_3xKXD";
 let K_CHALLENGE_SPEAK_QUESTION = "_3NU9I";
@@ -39,6 +43,7 @@ let K_CHALLENGE_FOOTER = "_1_XY0 _3wVKa";
 let K_ANSWER_FOOTER = "KekRP";
 let K_FOOTER_CORRECT = K_CHALLENGE_CORRECT_ANSWER;
 let K_SPEAKER_BUTTON = "_1B6Vk _2ESN4 _2arQ0 _2vmUZ _2Zh2S _1X3l0 eJd0I _3yrdh _2wXoR _1AM95 _1dlWz _2gnHr"
+let K_SPEAKER_BUTTON_SMALL = "_3foPi cYM_t";
 let K_CONFIG_BUTTON = "oNqWF _3hso2 _2Zh2S _1X3l0 _1AM95 H7AnT";
 let K_SPEAKER_ICON_STYLE = "text-align:center; margin-top:-7px; margin-left:-8px";
 let K_SIDE_PANEL = "_21w25 _1E3L7";
@@ -106,6 +111,7 @@ var css_hiding_style = '{ color: ' + hColor
 /* Elements to hide: Translate, judge, & speak questions */
 var css_hiding_source = toStyleElem(
        K_CHALLENGE_TRANSLATE_QUESTION_CSS + css_hiding_style
+       + K_CHALLENGE_TRANSLATE_PIC_QUESTION_CSS + css_hiding_style
        + K_CHALLENGE_JUDGE_QUESTION_CSS + css_hiding_style
        + K_CHALLENGE_SPEAK_QUESTION_CSS + css_hiding_style
        + K_CHALLENGE_COMPLETE_QUESTION_CSS + css_hiding_style);
@@ -116,6 +122,7 @@ var css_hiding_title = toStyleElem('._1Zqmf:not(:hover) ' + css_hiding_style);
 /* Elements to hide: Translate questions,judge options, & speak questions */
 var css_hiding_target = toStyleElem(
         K_CHALLENGE_TRANSLATE_QUESTION_CSS + css_hiding_style
+        + K_CHALLENGE_TRANSLATE_PIC_QUESTION_CSS + css_hiding_style
         + K_CHALLENGE_JUDGE_TEXT_CSS + css_hiding_style
         + K_CHALLENGE_SPEAK_QUESTION_CSS + css_hiding_style);
 
@@ -396,7 +403,14 @@ document.addEventListener('keyup', keyUpHandler, false);
 
 /* Translation from target language (eg. Polish) */
 function challengeTranslate() {
+    var hasPic = false;
+    var speaker_button;
     var questionBox = challenge.getElementsByClassName(K_CHALLENGE_TRANSLATE_QUESTION);
+    if (0 == questionBox.length) {
+        // console.debug("[DuolingoTreeEnhancer] Translation with pic")
+        hasPic = true;
+        questionBox = challenge.getElementsByClassName(K_CHALLENGE_TRANSLATE_PIC_QUESTION);
+    }
 
     var answerbox = challenge.getElementsByTagName("textarea");
     var input_area = answerbox[0];
@@ -454,12 +468,18 @@ function challengeTranslate() {
     } else {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
-        speak_button = challenge.getElementsByClassName(K_SPEAKER_BUTTON);
+        var question_box_child = questionBox[0].firstChild.firstChild;;
+        if (hasPic) {
+            speaker_button = challenge.getElementsByClassName(K_SPEAKER_BUTTON_SMALL);
+            question_box_child = question_box_child.firstChild;
+        } else {
+            speaker_button = challenge.getElementsByClassName(K_SPEAKER_BUTTON);
+        }
         if (isSayText(question)) {
-            if (speak_button.length == 0) {
+            if (speaker_button.length == 0) {
                 // console.debug("[DuolingoTreeEnhancer] Read the question aloud");
-                say(questionBox, question, questionBox[0].firstChild.firstChild, "");
-            } else if (!/enhancer-media-button/.test(speak_button[0].className)) {
+                say(questionBox, question, question_box_child, "");
+            } else if (!/enhancer-media-button/.test(speaker_button[0].className)) {
                 say(questionBox); // No lang
             }
         }
@@ -576,11 +596,11 @@ function challengeComplete() {
     } else {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
-        speak_button = challenge.getElementsByClassName(K_SPEAKER_BUTTON);
+        speaker_button = challenge.getElementsByClassName(K_SPEAKER_BUTTON);
         if (isSayText(sourceLang)) {
-            if (speak_button.length == 0) {
+            if (speaker_button.length == 0) {
                 say(questionBox, sourceLang, questionBox[0].firstChild, "");
-            } else if (!/enhancer-media-button/.test(speak_button[0].className)) {
+            } else if (!/enhancer-media-button/.test(speaker_button[0].className)) {
                 say(questionBox); // No lang
             }
         }
