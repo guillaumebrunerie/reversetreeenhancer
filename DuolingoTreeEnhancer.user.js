@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.2.2
+// @version      1.2.3
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
+// @match        https://preview.duolingo.com/*
 // @icon         https://raw.githubusercontent.com/camiloaa/duolingotreeenhancer/master/duolingo.png
 // @require      https://github.com/camiloaa/GM_config/raw/master/gm_config.js
 // @downloadURL  https://github.com/camiloaa/duolingotreeenhancer/raw/master/DuolingoTreeEnhancer.user.js
@@ -20,7 +21,7 @@ let K_CHALLENGE_CLASS = "_25wqo Sl6Ax VAUNo";
 let K_CHALLENGE_CORRECT_ANSWER = "TnCw3";
 let K_CHALLENGE_TRANSLATIONS = "TnCw3";
 let K_CHALLENGE_TRANSLATE_QUESTION = "TfNaW GbfJe"; // challenge-translate-prompt
-let K_CHALLENGE_TRANSLATE_PIC_QUESTION = "_1Iuns _1PvQ4";
+let K_CHALLENGE_TRANSLATE_PIC_QUESTION = "_3D7BY _3pn3r _3mZUt";
 // Hide same as K_CHALLENGE_TRANSLATE_QUESTION
 let K_CHALLENGE_TRANSLATE_QUESTION_CSS = ".TfNaW:not(:hover) ";
 // Hide first child of K_CHALLENGE_TRANSLATE_PIC_QUESTION
@@ -665,7 +666,7 @@ function sayAnswers() {
         var span = document.createElement("span");
         span.className = "duolingo-tree-enhancer-span";
         var last_translation = translations[translations.length - 1];
-        log(last_translation);
+        // log(last_translation);
         var txt = last_translation.innerHTML;
         last_translation.innerHTML = "";
         last_translation.append(span);
