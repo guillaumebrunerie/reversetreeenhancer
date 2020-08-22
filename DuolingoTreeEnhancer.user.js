@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.2.4
+// @version      1.3.0-pre1
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -16,11 +16,16 @@
 // log('DuolingoTreeEnhancer');
 
 let K_PLUGIN_NAME = "DuolingoTreeEnhancer";
-let K_DUOTREE = "nae5G";
-let K_CHALLENGE_CLASS = "_25wqo";
+let K_DUO_TREE_DATA_TEST = "skill-tree";
+let K_DUO_CHALLENGE_DATA_TEST = "challenge";
+let K_DUO_CHALLENGE_TRANSLATE_DATA_TEST = "challenge-translate-prompt";
+let K_DUO_CHALLENGE_JUDGE_DATA_TEST = "challenge challenge-judge";
+let K_DUO_CHALLENGE_CHOICE_DATA_TEST = "challenge-choice";
+let K_DUO_CHALLENGE_CHOICE_TEXT = "challenge-judge-text";
+let K_DUO_HINT_SENTENCE_DATA_TEST = "hint-sentence";
+let K_DUO_ANSWER_DATA_TEST = "blame";
+let K_SKILL_DATA_TEST = "skill";
 let K_CHALLENGE_CORRECT_ANSWER = "TnCw3";
-let K_CHALLENGE_TRANSLATIONS = "TnCw3";
-let K_CHALLENGE_TRANSLATE_QUESTION = "TfNaW GbfJe"; // challenge-translate-prompt
 let K_CHALLENGE_TRANSLATE_PIC_QUESTION = "_3D7BY _3pn3r _3mZUt";
 // Hide same as K_CHALLENGE_TRANSLATE_QUESTION
 let K_CHALLENGE_TRANSLATE_QUESTION_CSS = ".TfNaW:not(:hover) ";
@@ -28,7 +33,7 @@ let K_CHALLENGE_TRANSLATE_QUESTION_CSS = ".TfNaW:not(:hover) ";
 let K_CHALLENGE_TRANSLATE_PIC_QUESTION_CSS = "._3pn3r:not(:hover) ";
 let K_CHALLENGE_SPEAK_QUESTION = "_3NU9I";
 let K_CHALLENGE_SPEAK_QUESTION_CSS = "._3NU9I:not(:hover) ";
-let K_CHALLENGE_JUDGE_QUESTION = "_1pGup";
+let K_CHALLENGE_JUDGE_QUESTION = "_3-JBe";
 let K_CHALLENGE_JUDGE_QUESTION_CSS = "._1pGup:not(:hover) ";
 let K_CHALLENGE_JUDGE_TEXT = "sP8II";
 let K_CHALLENGE_JUDGE_TEXT_CSS = "._39fyP .sP8II:not(:hover) ";
@@ -41,9 +46,9 @@ let K_CHALLENGE_SELECT_PIC = "_1_ZLU";
 let K_CHALLENGE_NAME_PIC = "_1_ZLU";
 let K_CHALLENGE_FOOTER = "ZwSRm _1qXYl";
 let K_ANSWER_FOOTER = "_1Ag8k";
-let K_SPEAKER_BUTTON = "_2cYBf  XepLJ _1bJB- vy3TL _3iIWE _1Mkpg _1Dtxl _1sVAI sweRn _1BWZU _2bW5I _3ZpUo"
+let K_SPEAKER_BUTTON = "_2UpLr _1x6bc _1vUZG whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN UCrz7 yTpGk"
 let K_SPEAKER_BUTTON_SMALL = "_3ZNjw";
-let K_CONFIG_BUTTON = "aX_eq _3ZQ9H _18se6 vy3TL _3iIWE _1Mkpg _1Dtxl _1sVAI sweRn _1BWZU _1LIf4 QVrnU";
+let K_CONFIG_BUTTON = "_2Jb7i _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
 let K_SPEAKER_ICON_STYLE = "text-align:center; margin-top:-7px; margin-left:-8px";
 
 var enableTTSGlobal = true;
@@ -81,6 +86,78 @@ var activeclass = "";
 var DuoState = JSON.parse(localStorage.getItem('duo.state'));
 var targetLang = DuoState.user.learningLanguage;
 var sourceLang = DuoState.user.fromLanguage;
+
+/* Restore console */
+var i = document.createElement('iframe');
+i.style.display = 'none';
+document.body.appendChild(i);
+console_alt = i.contentWindow.console;
+
+/* --------------------------------------
+ *  UI-elements Section
+ * --------------------------------------*/
+
+function getFirstElementByDataTestValue(data_test) {
+	return document.querySelector("*[data-test*='" + data_test + "']");
+}
+
+function getElementsByDataTestValue(data_test) {
+	return document.querySelectorAll("*[data-test*='" + data_test + "']");
+}
+
+function getDuoTree() {
+	return getFirstElementByDataTestValue(K_DUO_TREE_DATA_TEST);
+}
+
+function getChallenge() {
+    return getFirstElementByDataTestValue(K_DUO_CHALLENGE_DATA_TEST);
+}
+
+function getTranslatePrompt() {
+    return getFirstElementByDataTestValue(K_DUO_CHALLENGE_TRANSLATE_DATA_TEST);
+}
+
+function getHintSentence() {
+    return getFirstElementByDataTestValue(K_DUO_HINT_SENTENCE_DATA_TEST);
+}
+
+function getChoices() {
+    return getElementsByDataTestValue(K_DUO_CHALLENGE_CHOICE_DATA_TEST);
+}
+
+function getChoicesText() {
+    return getElementsByDataTestValue(K_DUO_CHALLENGE_CHOICE_TEXT);
+}
+
+function getChoosenAnser() {
+    choices = getChoices();
+    answers = getChoicesText();
+    for (var i = 0; i < choices.length; i++) {
+        if (choices[i].firstChild.checked) {
+            return answers[i];
+        }
+    }
+}
+
+function getAnswerFooter() {
+    return getFirstElementByDataTestValue(K_DUO_ANSWER_DATA_TEST)
+}
+
+function getFirstAnswerInFooter() {
+    answers = getAnswerFooter().getElementsByTagName("h2");
+    if (answers.length > 0) {
+        return answers[0].nextSibling;
+    }
+    return null;
+}
+
+function getLastAnswerInFooter() {
+    answers = getAnswerFooter().getElementsByTagName("h2");
+    if (answers.length > 0) {
+        return answers[answers.length - 1].nextSibling;
+    }
+    return null;
+}
 
 /* The color used for hiding */
 var hColor = "#def0a5"; // "##dadada"
@@ -138,12 +215,6 @@ function removeCSSHiding(node) {
     }
 }
 
-/* Restore console */
-var i = document.createElement('iframe');
-i.style.display = 'none';
-document.body.appendChild(i);
-console_alt = i.contentWindow.console;
-
 function log(objectToLog) {
 	console_alt.debug("[" + K_PLUGIN_NAME + "]: %o", objectToLog);
 }
@@ -157,7 +228,7 @@ var waiting = false;
 // Play an audio element.
 function playURL(url, lang, speaker_button) {
 
-    log("Playing URL " + url);
+    // log("Playing URL " + url);
     var audio_id = "audio-userscript-cm-" + lang;
     audio = document.getElementById(audio_id);
 
@@ -187,8 +258,8 @@ function playURL(url, lang, speaker_button) {
         svg.setAttribute("height", "32");
         svg.setAttribute("version", "1.1");
         var ellipse = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
-        ellipse.setAttribute("cx", "12");
-        ellipse.setAttribute("cy", "12");
+        ellipse.setAttribute("cx", "17");
+        ellipse.setAttribute("cy", "17");
         ellipse.setAttribute("rx", "10");
         ellipse.setAttribute("ry", "10");
         ellipse.style = "fill:none;stroke:#EEEEEE;stroke-width:5;stroke-linecap:round";
@@ -350,7 +421,7 @@ function say(itemsToSay, lang, node, css) {
 
     log("Saying '" + sentence + "'");
 
-    var div = document.createElement('div');
+    var div = document.createElement('button');
     div.className = K_SPEAKER_BUTTON + " enhancer-media-button";
     div.id = "empty-play-button-cm";
 
@@ -390,15 +461,10 @@ document.addEventListener('keyup', keyUpHandler, false);
 
 /* Translation from target language (eg. Polish) */
 function challengeTranslate(challenge) {
+    // log("challengeTranslate");
     var hasPic = false;
     var speaker_button;
-    var questionBox = challenge.getElementsByClassName(K_CHALLENGE_TRANSLATE_QUESTION);
-    if (0 == questionBox.length) {
-        // log("Translation with pic")
-        hasPic = true;
-        questionBox = challenge.getElementsByClassName(K_CHALLENGE_TRANSLATE_PIC_QUESTION);
-    }
-
+    var question_box = getTranslatePrompt();
     var answerbox = challenge.getElementsByTagName("textarea");
     var input_area = answerbox[0];
 
@@ -429,7 +495,7 @@ function challengeTranslate(challenge) {
         newWords = document.getElementsByClassName("_29XRF")
         if (newWords.length > 0) {
             newWordsArray = [].slice.call(newWords)
-            newWordsArray.map(element => { element.className = element.className.replace(/_29XRF/g, "");})
+            newWordsArray.map(element => { element.className = element.className.replace(/_29XRF/g, ""); })
         }
         addCSSHiding(challenge, css_hiding);
     }
@@ -438,51 +504,64 @@ function challengeTranslate(challenge) {
     if (/answer/.test(activeclass)) {
         // log("We have an answer");
         input_area.disabled = false;
+        putInFlexbox(input_area, "enhancer-translate-input");
         removeCSSHiding(challenge);
         // Read the answer aloud if necessary
-        var grade = document.getElementsByClassName(K_CHALLENGE_CORRECT_ANSWER);
-        if (grade.length == 0) {
-            grade = answerbox;
-        }
+        // var grade = getAnswerFooter().querySelector("span:not([class])");
+        if (/answer-correct/.test(activeclass)) { // Answer is right
+            var grade = getFirstAnswerInFooter();
+            if (grade == null) {
+                // log("perfect answer!")
+                grade = input_area;
+            }
 
-        if ((grade.length > 0) && isSayText(answer) && (input_area != undefined)) {
-            var input_css = "display: inline-block; "
+            if (isSayText(answer)) {
+                var input_css = "display: inline-block; "
                     + "margin: 20px 0px 0px -40px; "
                     + "position: absolute;";
-            say(grade, answer, input_area, input_css);
+                say([grade], answer, input_area);
+            }
+        } else {
+            sayAnswersInFooter(input_area, answer);
         }
-
     } else {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
-        var question_box_child = questionBox[0].firstChild.firstChild.firstChild;
-        if (hasPic) {
-            speaker_button = challenge.getElementsByClassName(K_SPEAKER_BUTTON_SMALL);
-        } else {
-            speaker_button = challenge.getElementsByClassName(K_SPEAKER_BUTTON);
-        }
+        // log("Should we read the question?");
+        var question_hint = getHintSentence();
+        // log(question_hint);
+        var fb = putInFlexbox(question_hint, "enhancer-translate-question");
+        // log(fb);
+        speaker_button = question_box.getElementsByTagName("button");
         if (isSayText(question)) {
             if (speaker_button.length == 0) {
                 // log("Read the question aloud");
-                say(questionBox, question, question_box_child, "");
+                say([question_hint], question, question_hint, "");
             } else if (!/enhancer-media-button/.test(speaker_button[0].className)) {
-                say(questionBox); // No lang
+                // log("just log the question");
+                say([question_hint]); // No lang
             }
         }
+        // fb.id = "just-ignore-it";
     }
 }
 
 /* Speak question */
 function challengeSpeak(challenge) {
-    if(isHideText(targetLang)) {
+    if (isHideText(targetLang)) {
         addCSSHiding(challenge, css_hiding_target);
     }
 }
 
 /* Multiple-choice translation question */
 function challengeJudge(challenge) {
+    // log("challengeJudge");
     var textCell = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_QUESTION);
 
+    // Put everything inside a flexbox
+    var challenge_grid = textCell[0].parentNode;
+    var question_row = putInFlexbox(challenge_grid.firstChild, "enhancer-question-row");;
+    var selection_row = putInFlexbox(question_row.nextSibling, "enhancer-selection-row");;
     // Do we want to hide the target language?
     if (!document.getElementById("timer") && isHideTranslations()) {
         // log("challengeJudge Hiding target");
@@ -490,36 +569,24 @@ function challengeJudge(challenge) {
     }
 
     if (/answer/.test(activeclass)) {
-        // log("callengeJudge answer");
+        // log("challengeJudge answer");
         removeCSSHiding(challenge);
-        var selection_row = document.getElementById("flex_selection_row");
-        var grade = document.getElementsByClassName(K_CHALLENGE_CORRECT_ANSWER);
-        if (grade.length == 0) { // Answer is right
-            grade = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_CHECKBOX)[0].
-                getElementsByClassName(K_CHALLENGE_JUDGE_TEXT);
-        }
-
         if (isSayText(targetLang)) {
-            // log("challengeJudge Hiding source");
-            var answer_css = "display: inline-block; ";
-            say(grade, targetLang, selection_row.firstChild, answer_css);
+            if (/answer-correct/.test(activeclass)) { // Answer is right
+                // log("challengeJudge correct");
+                grade = getChoosenAnser();
+                // log("challengeJudge Hiding source");
+                var answer_css = "display: inline-block; ";
+                say([grade], targetLang, selection_row.firstChild, answer_css);
+            } else {
+                // log("challengeJudge incorrect");
+                sayAnswersInFooter(selection_row.firstChild);
+            }
         }
+        // selection_row.id = "just-ignore-it";
     } else { // Asking a question
-        // Put everything inside a flexbox
-        var challenge_grid = textCell[0].parentNode;
-        var question_row = document.createElement("div");
-        var selection_row = document.createElement("div");
-        question_row.style = "display: flex";
-        selection_row.style = "display: flex";
-        selection_row.id = "flex_selection_row";
-        question_row.appendChild(challenge_grid.firstChild);
-        question_row.firstChild.style = "width:100%";
-        selection_row.appendChild(challenge_grid.firstChild);
-        selection_row.firstChild.style = "width:100%";
-        challenge_grid.appendChild(question_row);
-        challenge_grid.appendChild(selection_row);
+        // log("challengeJudge question");
 
-        // log("callengeJudge question");
         if (isHideText(sourceLang)) {
             addCSSHiding(challenge, css_hiding_source);
         }
@@ -534,10 +601,11 @@ function challengeJudge(challenge) {
 
 /* Type in a missing word */
 function challengeComplete(challenge) {
+    // log("challengeComplete");
     var hasPic = false;
-    var questionBox = challenge.getElementsByClassName(K_CHALLENGE_COMPLETE_QUESTION);
-    if (questionBox.length == 0) {
-        questionBox = challenge.getElementsByClassName(K_CHALLENGE_TRANSLATE_PIC_QUESTION);
+    var question_box = challenge.getElementsByClassName(K_CHALLENGE_COMPLETE_QUESTION);
+    if (question_box.length == 0) {
+        question_box = challenge.getElementsByClassName(K_CHALLENGE_TRANSLATE_PIC_QUESTION);
         hasPic = true;
     }
 
@@ -579,9 +647,9 @@ function challengeComplete(challenge) {
         speaker_button = challenge.getElementsByClassName(K_SPEAKER_BUTTON);
         if (isSayText(sourceLang)) {
             if (speaker_button.length == 0) {
-                say(questionBox, sourceLang, questionBox[0].firstChild.firstChild.firstChild, "");
+                say(question_box, sourceLang, question_box[0].firstChild.firstChild.firstChild, "");
             } else if (!/enhancer-media-button/.test(speaker_button[0].className)) {
-                say(questionBox); // No lang
+                say(question_box); // No lang
             }
         }
     }
@@ -590,6 +658,7 @@ function challengeComplete(challenge) {
 
 /* Select the correct image */
 function challengeSelect(challenge) {
+    // log("challengeSelect");
     if (/answer/.test(activeclass)) {
         removeCSSHiding(challenge);
     } else {
@@ -615,6 +684,7 @@ function challengeSelect(challenge) {
 
 /* Type the word corresponding to the images */
 function challengeName(challenge) {
+    // log("challengeName");
     if (/answer/.test(activeclass)) {
         removeCSSHiding(challenge);
     } else {
@@ -637,42 +707,69 @@ function challengeName(challenge) {
  * Choose the missing word in the sentence.
  */
 function challengeForm(challenge) {
-    // _1VfeV -> Question
-    //
+    // log("challengeForm");
     if (/answer/.test(activeclass)) {
-        sayAnswers();
+        if (isSayText(targetLang)) {
+            if (/answer-correct/.test(activeclass)) { // Answer is right
+                // log("challengeForm correct");
+                grade = getChoosenAnser();
+                // log(grade);
+                log("challengeForm targetLang");
+            } else {
+                // log("challengeJudge incorrect");
+                // sayAnswersInFooter(selection_row.firstChild);
+            }
+        }
+        if (isSayText(sourceLang)) {
+            if (!isSayText(targetLang)) {
+                sayAnswersInFooter();
+            } else {
+                say([getLastAnswerInFooter()]);
+            }
+        }
     } else {
         // log("Challenge Form: nothing to read here");
     }
 }
 
 function challengeListen(challenge) {
+    // log("challengeListen");
+    var input_box = challenge.getElementsByTagName("textarea")[0];
     if (/answer/.test(activeclass)) {
         // log("Check if a translation is available");
-        sayAnswers();
+        if (/correct/.test(activeclass)) {
+            say([input_box]);
+        }
+        sayAnswersInFooter();
     } else {
         if (isCheckSpell()) {
-            var input_box = challenge.getElementsByTagName("textarea")[0];
             input_box.setAttribute("spellcheck", "true");
             input_box.setAttribute("lang", targetLang);
         }
     }
 }
 
+function sayTextArea() {
+    log("sayTextArea");
+}
+
 // Use TTS for answer in footer
-function sayAnswers() {
-    var translations = document.getElementsByClassName(K_CHALLENGE_TRANSLATIONS);
-    if (isSayText(sourceLang) && translations.length > 0) {
-        var span = document.createElement("span");
-        span.className = "duolingo-tree-enhancer-span";
-        var last_translation = translations[translations.length - 1];
-        // log(last_translation);
-        var txt = last_translation.innerHTML;
-        last_translation.innerHTML = "";
-        last_translation.append(span);
-        span.innerHTML = txt;
-        var text_to_say = document.getElementsByClassName("duolingo-tree-enhancer-span");
-        say(text_to_say, sourceLang, span);
+function sayAnswersInFooter(where = null, lang = targetLang) {
+    // log("sayAnswersInFooter " + first);
+    let first = lang == targetLang;
+    let log_translation = first ? getLastAnswerInFooter() : getFirstAnswerInFooter();
+    let say_translation = first ? getFirstAnswerInFooter() : getLastAnswerInFooter();
+    putInFlexbox(say_translation, "enhancer-footer-answers");
+    if (log_translation != say_translation) {
+        // log("Just log")
+        say([log_translation]);
+    }
+
+    if (where == null) {
+        where = say_translation;
+    }
+    if (isSayText(lang) && say_translation != null) {
+        say([say_translation], lang, where);
     }
 }
 
@@ -1022,33 +1119,16 @@ function isAnswer(mutations, challengeclass) {
         if (mutation.type === 'childList') {
             // log("Changes in childlist ");
             // log(mutation.target);
-            var target = mutation.target;
-            var footer_correct = target.getElementsByClassName(K_CHALLENGE_CORRECT_ANSWER);
-            if (/challenge/.test(challengeclass)) {
-                // log("Challenge activity" + challengeclass);
-                // log("Changed target " + target.className);
-                // log(target);
-                if (/enhancer/.test(target.className)) {
-                    // log("We are adding a button here");
-                    return activeclass;
+            var answer = getAnswerFooter();
+            if (answer != null) {
+                // log("Yes! We have an answer");
+                if(/answer/.test(challengeclass)) {
+                    return challengeclass;
                 }
-                if (target.className == K_CHALLENGE_FOOTER) {
-                    // log("An important change in the challenge");
-                    for (var j = 0; j < mutation.addedNodes.length; ++j) {
-                        // was a child added with ID of 'bar'?
-                        var added_class = mutation.addedNodes[j].className;
-                        // log("class: " + added_class);
-                        var matcher = new RegExp(K_ANSWER_FOOTER, "g");
-                        if (matcher.test(added_class)) {
-                            // log("We got an answer");
-                            if (footer_correct.length != 0) {
-                                // log("You are right, no alt answer");
-                                return challengeclass + " correct answer";
-                            }
-                            return challengeclass + " answer";
-                        }
-                    }
+                if (/blame-correct/.test(answer.getAttribute("data-test"))) {
+                    return challengeclass + " answer answer-correct";
                 }
+                return challengeclass + " answer";
             }
         } else {
             // var target = mutation.target;
@@ -1059,12 +1139,12 @@ function isAnswer(mutations, challengeclass) {
 }
 
 function addButton() {
-    var trees = document.getElementsByClassName(K_DUOTREE);
-    if (trees.length == 0) {
+    // log("addButton");
+    var tree = getDuoTree();
+    if (tree == null) {
         // log("Couldn't find a tree");
         return; // Nothing to do here
     }
-    var tree = trees[0];
     var button = document.createElement("button");
 
     button.id = "reverse-tree-enhancer-button";
@@ -1077,6 +1157,29 @@ function addButton() {
     tree.insertBefore(button, tree.firstChild);
 
     updateButton(); // Read setup
+}
+
+/* Put an element inside a flexbox */
+function putInFlexbox(element, id = "enhancer-flexbox") {
+    // Put everything inside a flexbox
+    // log("putInFlexbox");
+    // log(element);
+    if (element.id == id) {
+        // log("Found myself!");
+        return element;
+    }
+    if (element.parentNode.id == id) {
+        // log("Found my parent!");
+        return element.parentNode;
+    }
+    var flexbox = document.createElement("div");
+    flexbox.style = "display: flex";
+    // log(element.parentNode);
+    element.parentNode.insertBefore(flexbox, element);
+    flexbox.appendChild(element);
+    flexbox.id = id;
+    element.style = "width:100%";
+    return flexbox;
 }
 
 /* Function dispatching the changes in the page to the other functions */
@@ -1096,7 +1199,7 @@ function onChange(mutations) {
             updateConfig(); // Make GM_Config point to this language setup
             setUserConfig();
 
-            var tree = document.getElementsByClassName(K_DUOTREE)[0];
+            var tree = getDuoTree();
             var button = document.getElementById("reverse-tree-enhancer-button");
             if (window.location.pathname == "/learn")
                 tree.removeChild(button);
@@ -1111,9 +1214,9 @@ function onChange(mutations) {
         }
     }
 
-    var challenges = document.getElementsByClassName(K_CHALLENGE_CLASS);
-    if (challenges.length > 0) {
-        newclass = challenges[0].getAttribute("data-test");
+    var challenge = getChallenge();
+    if (challenge != null) {
+        newclass = challenge.getAttribute("data-test");
         newclass = isAnswer(mutations, newclass);
         // log("Challenge: " + newclass);
 
@@ -1121,37 +1224,37 @@ function onChange(mutations) {
             // log("Old class: " + activeclass);
             activeclass = newclass;
 
-            if (challenges.length == 0) {
+            if (challenge == null) {
                 return;
             }
 
-            var challenge = challenges[0];
             challenge.setAttribute("data-test", activeclass);
 
             if (/translate/.test(newclass)) {
                 challengeTranslate(challenge);
             }
-
-            if (/speak/.test(newclass)) {
+            else if (/speak/.test(newclass)) {
                 challengeSpeak(challenge);
             }
-
-            if (/judge/.test(newclass)) {
+            else if (/judge/.test(newclass)) {
                 challengeJudge(challenge);
             }
-            if (/completeReverseTranslation/.test(newclass)) {
+            else if (/completeReverseTranslation/.test(newclass)) {
                 challengeComplete(challenge);
             }
-            if (/select/.test(newclass)) {
+            else if (/selectTranscription/.test(newclass)) {
+                log("selectTranscription");
+            }
+            else if (/select/.test(newclass)) {
                 challengeSelect(challenge);
             }
-            if (/name/.test(newclass)) {
+            else if (/name/.test(newclass)) {
                 challengeName(challenge);
             }
-            if (/form/.test(newclass)) {
+            else if (/form/.test(newclass)) {
                 challengeForm(challenge);
             }
-            if (/listen/.test(newclass)) {
+            else if (/listen/.test(newclass)) {
                 challengeListen(challenge);
             }
         }
