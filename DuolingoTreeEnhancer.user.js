@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.3.0-pre1
+// @version      1.3.0-pre2
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -16,15 +16,6 @@
 // log('DuolingoTreeEnhancer');
 
 let K_PLUGIN_NAME = "DuolingoTreeEnhancer";
-let K_DUO_TREE_DATA_TEST = "skill-tree";
-let K_DUO_CHALLENGE_DATA_TEST = "challenge";
-let K_DUO_CHALLENGE_TRANSLATE_DATA_TEST = "challenge-translate-prompt";
-let K_DUO_CHALLENGE_JUDGE_DATA_TEST = "challenge challenge-judge";
-let K_DUO_CHALLENGE_CHOICE_DATA_TEST = "challenge-choice";
-let K_DUO_CHALLENGE_CHOICE_TEXT = "challenge-judge-text";
-let K_DUO_HINT_SENTENCE_DATA_TEST = "hint-sentence";
-let K_DUO_ANSWER_DATA_TEST = "blame";
-let K_SKILL_DATA_TEST = "skill";
 let K_CHALLENGE_CORRECT_ANSWER = "TnCw3";
 let K_CHALLENGE_TRANSLATE_PIC_QUESTION = "_3D7BY _3pn3r _3mZUt";
 // Hide same as K_CHALLENGE_TRANSLATE_QUESTION
@@ -92,6 +83,9 @@ var i = document.createElement('iframe');
 i.style.display = 'none';
 document.body.appendChild(i);
 console_alt = i.contentWindow.console;
+function log(objectToLog) {
+	console_alt.debug("[" + K_PLUGIN_NAME + "]: %o", objectToLog);
+}
 
 /* --------------------------------------
  *  UI-elements Section
@@ -106,27 +100,47 @@ function getElementsByDataTestValue(data_test) {
 }
 
 function getDuoTree() {
-	return getFirstElementByDataTestValue(K_DUO_TREE_DATA_TEST);
+	return getFirstElementByDataTestValue("skill-tree");
 }
 
 function getChallenge() {
-    return getFirstElementByDataTestValue(K_DUO_CHALLENGE_DATA_TEST);
+    return getFirstElementByDataTestValue("challenge");
+}
+
+function getChallengeHeader() {
+    return getFirstElementByDataTestValue("challenge-header");
 }
 
 function getTranslatePrompt() {
-    return getFirstElementByDataTestValue(K_DUO_CHALLENGE_TRANSLATE_DATA_TEST);
+    return getFirstElementByDataTestValue("challenge-translate-prompt");
 }
 
 function getHintSentence() {
-    return getFirstElementByDataTestValue(K_DUO_HINT_SENTENCE_DATA_TEST);
+    return getFirstElementByDataTestValue("hint-sentence");
+}
+
+function getFormPrompt() {
+    return getFirstElementByDataTestValue("challenge-form-prompt");
+}
+
+function getCompleteInputBox() {
+    return getFirstElementByDataTestValue("challenge-text-input");
+}
+
+function getFirstCardChoice() {
+    return getFirstElementByDataTestValue("challenge-choice-card-input");
+}
+
+function getChoiceBox() {
+    return getFirstElementByDataTestValue("challenge-choice").parentNode;
 }
 
 function getChoices() {
-    return getElementsByDataTestValue(K_DUO_CHALLENGE_CHOICE_DATA_TEST);
+    return getElementsByDataTestValue("challenge-choice");
 }
 
 function getChoicesText() {
-    return getElementsByDataTestValue(K_DUO_CHALLENGE_CHOICE_TEXT);
+    return getElementsByDataTestValue("challenge-judge-text");
 }
 
 function getChoosenAnser() {
@@ -140,7 +154,7 @@ function getChoosenAnser() {
 }
 
 function getAnswerFooter() {
-    return getFirstElementByDataTestValue(K_DUO_ANSWER_DATA_TEST)
+    return getFirstElementByDataTestValue("blame")
 }
 
 function getFirstAnswerInFooter() {
@@ -175,6 +189,11 @@ function toStyleElem(css) {
     }
 
     return style;
+}
+
+function setOpacityToZero(element) {
+    var classList = element.className.split(' ');
+    var stylelist = classList.map(cl => "." + cl);
 }
 
 /* Stylesheet for the hiding text */
@@ -215,8 +234,27 @@ function removeCSSHiding(node) {
     }
 }
 
-function log(objectToLog) {
-	console_alt.debug("[" + K_PLUGIN_NAME + "]: %o", objectToLog);
+/* Put an element inside a flexbox */
+function putInFlexbox(element, id = "enhancer-flexbox") {
+    // Put everything inside a flexbox
+    // log("putInFlexbox");
+    // log(element);
+    if (element.id == id) {
+        // log("Found myself!");
+        return element;
+    }
+    if (element.parentNode.id == id) {
+        // log("Found my parent!");
+        return element.parentNode;
+    }
+    var flexbox = document.createElement("div");
+    flexbox.style = "display: flex";
+    // log(element.parentNode);
+    element.parentNode.insertBefore(flexbox, element);
+    flexbox.appendChild(element);
+    flexbox.id = id;
+    element.style = "width:100%";
+    return flexbox;
 }
 
 /* Audio functions */
@@ -433,6 +471,7 @@ function say(itemsToSay, lang, node, css) {
 
     try {
         // log("say: Insert play button");
+        putInFlexbox(node);
         insertNodeBefore(div, node);
     } catch (err) {
         // log("say: No play button, use old method");
@@ -462,7 +501,6 @@ document.addEventListener('keyup', keyUpHandler, false);
 /* Translation from target language (eg. Polish) */
 function challengeTranslate(challenge) {
     // log("challengeTranslate");
-    var hasPic = false;
     var speaker_button;
     var question_box = getTranslatePrompt();
     var answerbox = challenge.getElementsByTagName("textarea");
@@ -504,10 +542,8 @@ function challengeTranslate(challenge) {
     if (/answer/.test(activeclass)) {
         // log("We have an answer");
         input_area.disabled = false;
-        putInFlexbox(input_area, "enhancer-translate-input");
         removeCSSHiding(challenge);
         // Read the answer aloud if necessary
-        // var grade = getAnswerFooter().querySelector("span:not([class])");
         if (/answer-correct/.test(activeclass)) { // Answer is right
             var grade = getFirstAnswerInFooter();
             if (grade == null) {
@@ -530,8 +566,6 @@ function challengeTranslate(challenge) {
         // log("Should we read the question?");
         var question_hint = getHintSentence();
         // log(question_hint);
-        var fb = putInFlexbox(question_hint, "enhancer-translate-question");
-        // log(fb);
         speaker_button = question_box.getElementsByTagName("button");
         if (isSayText(question)) {
             if (speaker_button.length == 0) {
@@ -542,7 +576,6 @@ function challengeTranslate(challenge) {
                 say([question_hint]); // No lang
             }
         }
-        // fb.id = "just-ignore-it";
     }
 }
 
@@ -558,10 +591,6 @@ function challengeJudge(challenge) {
     // log("challengeJudge");
     var textCell = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_QUESTION);
 
-    // Put everything inside a flexbox
-    var challenge_grid = textCell[0].parentNode;
-    var question_row = putInFlexbox(challenge_grid.firstChild, "enhancer-question-row");;
-    var selection_row = putInFlexbox(question_row.nextSibling, "enhancer-selection-row");;
     // Do we want to hide the target language?
     if (!document.getElementById("timer") && isHideTranslations()) {
         // log("challengeJudge Hiding target");
@@ -572,18 +601,18 @@ function challengeJudge(challenge) {
         // log("challengeJudge answer");
         removeCSSHiding(challenge);
         if (isSayText(targetLang)) {
+            var selection_row = getChoiceBox();
             if (/answer-correct/.test(activeclass)) { // Answer is right
                 // log("challengeJudge correct");
                 grade = getChoosenAnser();
                 // log("challengeJudge Hiding source");
                 var answer_css = "display: inline-block; ";
-                say([grade], targetLang, selection_row.firstChild, answer_css);
+                say([grade], targetLang, grade, answer_css);
             } else {
                 // log("challengeJudge incorrect");
-                sayAnswersInFooter(selection_row.firstChild);
+                sayAnswersInFooter(selection_row.firstChild, targetLang);
             }
         }
-        // selection_row.id = "just-ignore-it";
     } else { // Asking a question
         // log("challengeJudge question");
 
@@ -594,7 +623,7 @@ function challengeJudge(challenge) {
         if (isSayText(sourceLang)) {
             // log("challengeJudge: Sentence to translate");
             var question_css = "display: inline-block; ";
-            say(textCell, sourceLang, question_row.firstChild, question_css);
+            say(textCell, sourceLang, textCell[0], question_css);
         }
     }
 }
@@ -602,15 +631,8 @@ function challengeJudge(challenge) {
 /* Type in a missing word */
 function challengeComplete(challenge) {
     // log("challengeComplete");
-    var hasPic = false;
-    var question_box = challenge.getElementsByClassName(K_CHALLENGE_COMPLETE_QUESTION);
-    if (question_box.length == 0) {
-        question_box = challenge.getElementsByClassName(K_CHALLENGE_TRANSLATE_PIC_QUESTION);
-        hasPic = true;
-    }
-
-    var answerarray = challenge.getElementsByClassName(K_CHALLENGE_COMPLETE_ANSWER);
-    var answerbox = answerarray[0]
+    var question_hint = getHintSentence();
+    var input_box = getCompleteInputBox();
 
     if (isHideText(sourceLang)) {
         addCSSHiding(challenge, css_hiding_source);
@@ -620,37 +642,28 @@ function challengeComplete(challenge) {
     if (/answer/.test(activeclass)) {
         // log("We have an answer");
         removeCSSHiding(challenge);
-        // Read the answer aloud if necessary
-        var grade = document.getElementsByClassName(K_CHALLENGE_CORRECT_ANSWER);
-        if (grade.length == 0) {
-            // Make the whole answer a single text
-            // log("Change the whole line");
-            var box_to_remove = answerbox.getElementsByClassName(K_CHALLENGE_COMPLETE_INPUT_BOX)[0];
-            var box_to_fix = box_to_remove.parentNode;
-            box_to_fix.removeChild(box_to_remove);
-            box_to_fix.innerText = box_to_remove.value;
-            grade = answerarray;
-        } else {
-            // log("You made a mistake");
+        if (isSayText(targetLang)) {
+            // Read the answer aloud if necessary
+            var grade = getFirstAnswerInFooter();
+            var ansText = "";
+            var box_to_fix = input_box.parentNode;
+            var answer_box = box_to_fix.parentNode;
+            if (grade == null) {
+                // Make the whole answer a single text
+                // log("You were right");
+                ansText = input_box.value;
+                box_to_fix.innerHTML = ansText;
+                say([answer_box], targetLang, answer_box);
+            } else {
+                // log("You made a mistake");
+                say([grade], targetLang, answer_box);
+            }
         }
-
-        if ((grade.length > 0) && isSayText(targetLang)) {
-            var input_css = "display: inline-block; "
-                + "margin: 20px 0px 0px -40px; "
-                + "position: absolute;";
-            say(grade, targetLang, answerbox, input_css);
-        }
-
     } else {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
-        speaker_button = challenge.getElementsByClassName(K_SPEAKER_BUTTON);
         if (isSayText(sourceLang)) {
-            if (speaker_button.length == 0) {
-                say(question_box, sourceLang, question_box[0].firstChild.firstChild.firstChild, "");
-            } else if (!/enhancer-media-button/.test(speaker_button[0].className)) {
-                say(question_box); // No lang
-            }
+            say([question_hint], sourceLang, question_hint); // No lang
         }
     }
 
@@ -662,21 +675,19 @@ function challengeSelect(challenge) {
     if (/answer/.test(activeclass)) {
         removeCSSHiding(challenge);
     } else {
+        // log("challengeSelect question");
         if (isHidePics()) {
+            let firstChoice = getFirstCardChoice();
+            let image = firstChoice.nextElementSibling;
+            var css_hiding_pics = toStyleElem('.' + image.className +' { opacity: 0; }');
             addCSSHiding(challenge, css_hiding_pics);
         }
         if (isHideText(sourceLang)) {
             addCSSHiding(challenge, css_hiding_title);
         }
-        // log("challengeSelect question");
-        textCell = challenge.getElementsByClassName(K_CHALLENGE_SELECT_PIC);
+        let textCell = getChallengeHeader();
         if (isSayText(sourceLang)) {
-            question_css = "display: inline-block; "
-                + "margin: 12px 0px 0px -40px; "
-                + "top: 30px; "
-                + "position: relative; "
-                + "align-self:left";
-            say(textCell, sourceLang, textCell[0], question_css);
+            say([textCell], sourceLang, textCell);
         }
 
     }
@@ -710,16 +721,20 @@ function challengeForm(challenge) {
     // log("challengeForm");
     if (/answer/.test(activeclass)) {
         if (isSayText(targetLang)) {
+            var grade = null;
             if (/answer-correct/.test(activeclass)) { // Answer is right
                 // log("challengeForm correct");
                 grade = getChoosenAnser();
-                // log(grade);
                 log("challengeForm targetLang");
             } else {
                 // log("challengeJudge incorrect");
-                // sayAnswersInFooter(selection_row.firstChild);
+                grade = getFirstAnswerInFooter();
             }
-        }
+            var ansText = grade.innerText;
+            var parent_span = getFormPrompt().firstChild;
+            parent_span.childNodes.forEach(node => { if (node.className != "") { node.innerHTML = ansText } });
+            say([parent_span], targetLang, parent_span);
+    }
         if (isSayText(sourceLang)) {
             if (!isSayText(targetLang)) {
                 sayAnswersInFooter();
@@ -754,12 +769,11 @@ function sayTextArea() {
 }
 
 // Use TTS for answer in footer
-function sayAnswersInFooter(where = null, lang = targetLang) {
-    // log("sayAnswersInFooter " + first);
+function sayAnswersInFooter(where = null, lang = sourceLang) {
     let first = lang == targetLang;
     let log_translation = first ? getLastAnswerInFooter() : getFirstAnswerInFooter();
     let say_translation = first ? getFirstAnswerInFooter() : getLastAnswerInFooter();
-    putInFlexbox(say_translation, "enhancer-footer-answers");
+    // log("sayAnswersInFooter " + first);
     if (log_translation != say_translation) {
         // log("Just log")
         say([log_translation]);
@@ -1157,29 +1171,6 @@ function addButton() {
     tree.insertBefore(button, tree.firstChild);
 
     updateButton(); // Read setup
-}
-
-/* Put an element inside a flexbox */
-function putInFlexbox(element, id = "enhancer-flexbox") {
-    // Put everything inside a flexbox
-    // log("putInFlexbox");
-    // log(element);
-    if (element.id == id) {
-        // log("Found myself!");
-        return element;
-    }
-    if (element.parentNode.id == id) {
-        // log("Found my parent!");
-        return element.parentNode;
-    }
-    var flexbox = document.createElement("div");
-    flexbox.style = "display: flex";
-    // log(element.parentNode);
-    element.parentNode.insertBefore(flexbox, element);
-    flexbox.appendChild(element);
-    flexbox.id = id;
-    element.style = "width:100%";
-    return flexbox;
 }
 
 /* Function dispatching the changes in the page to the other functions */
