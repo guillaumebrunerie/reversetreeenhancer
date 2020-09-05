@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.3.0-pre2
+// @version      1.3.0-pre3
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -16,29 +16,8 @@
 // log('DuolingoTreeEnhancer');
 
 let K_PLUGIN_NAME = "DuolingoTreeEnhancer";
-let K_CHALLENGE_CORRECT_ANSWER = "TnCw3";
-let K_CHALLENGE_TRANSLATE_PIC_QUESTION = "_3D7BY _3pn3r _3mZUt";
-// Hide same as K_CHALLENGE_TRANSLATE_QUESTION
-let K_CHALLENGE_TRANSLATE_QUESTION_CSS = ".TfNaW:not(:hover) ";
-// Hide first child of K_CHALLENGE_TRANSLATE_PIC_QUESTION
-let K_CHALLENGE_TRANSLATE_PIC_QUESTION_CSS = "._3pn3r:not(:hover) ";
-let K_CHALLENGE_SPEAK_QUESTION = "_3NU9I";
-let K_CHALLENGE_SPEAK_QUESTION_CSS = "._3NU9I:not(:hover) ";
 let K_CHALLENGE_JUDGE_QUESTION = "_3-JBe";
-let K_CHALLENGE_JUDGE_QUESTION_CSS = "._1pGup:not(:hover) ";
-let K_CHALLENGE_JUDGE_TEXT = "sP8II";
-let K_CHALLENGE_JUDGE_TEXT_CSS = "._39fyP .sP8II:not(:hover) ";
-let K_CHALLENGE_JUDGE_CHECKBOX = "_3u9BR";
-let K_CHALLENGE_COMPLETE_QUESTION = "_3UlgI";
-let K_CHALLENGE_COMPLETE_QUESTION_CSS = "._3UlgI:not(:hover) "
-let K_CHALLENGE_COMPLETE_ANSWER = "_1E12m _1yK31 _66Mfn _2NQKM";
-let K_CHALLENGE_COMPLETE_INPUT_BOX = "_2vU6D _1G0-1 _2NQKM";
-let K_CHALLENGE_SELECT_PIC = "_1_ZLU";
-let K_CHALLENGE_NAME_PIC = "_1_ZLU";
-let K_CHALLENGE_FOOTER = "ZwSRm _1qXYl";
-let K_ANSWER_FOOTER = "_1Ag8k";
 let K_SPEAKER_BUTTON = "_2UpLr _1x6bc _1vUZG whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN UCrz7 yTpGk"
-let K_SPEAKER_BUTTON_SMALL = "_3ZNjw";
 let K_CONFIG_BUTTON = "_2Jb7i _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
 let K_SPEAKER_ICON_STYLE = "text-align:center; margin-top:-7px; margin-left:-8px";
 
@@ -72,7 +51,7 @@ var duo_languages = JSON.parse(
                 + '"ss":"Swedish (Sweden)","sq":"Albanian","ko":"Korean",'
                 + '"sv":"Swedish","km":"Khmer","kl":"Klingon","sk":"Slovak",'
                 + '"sn":"Sindarin","sl":"Slovenian","ky":"Kyrgyz",'
-                + '"sf":"Swedish (Finland)","sw":"Swahili"}');
+                + '"sf":"Swedish (Finland)","sw":"Swahili","zh":"Chinese"}');
 var activeclass = "";
 var DuoState = JSON.parse(localStorage.getItem('duo.state'));
 var targetLang = DuoState.user.learningLanguage;
@@ -191,33 +170,10 @@ function toStyleElem(css) {
     return style;
 }
 
-function setOpacityToZero(element) {
-    var classList = element.className.split(' ');
-    var stylelist = classList.map(cl => "." + cl);
-}
-
 /* Stylesheet for the hiding text */
 var css_hiding_style = '{ color: ' + hColor
        + '!important; background-color: ' + hColor
        + '; border-color: ' + hColor + '; } \n';
-
-/* Elements to hide: Translate, judge, & speak questions */
-var css_hiding_source = toStyleElem(
-       K_CHALLENGE_TRANSLATE_QUESTION_CSS + css_hiding_style
-       + K_CHALLENGE_TRANSLATE_PIC_QUESTION_CSS + css_hiding_style
-       + K_CHALLENGE_JUDGE_QUESTION_CSS + css_hiding_style
-       + K_CHALLENGE_SPEAK_QUESTION_CSS + css_hiding_style
-       + K_CHALLENGE_COMPLETE_QUESTION_CSS + css_hiding_style);
-
-/* Elements to hide: Name & select questions */
-var css_hiding_title = toStyleElem('._1_ZLU:not(:hover) ' + css_hiding_style);
-
-/* Elements to hide: Translate questions,judge options, & speak questions */
-var css_hiding_target = toStyleElem(
-        K_CHALLENGE_TRANSLATE_QUESTION_CSS + css_hiding_style
-        + K_CHALLENGE_TRANSLATE_PIC_QUESTION_CSS + css_hiding_style
-        + K_CHALLENGE_JUDGE_TEXT_CSS + css_hiding_style
-        + K_CHALLENGE_SPEAK_QUESTION_CSS + css_hiding_style);
 
 var css_hiding_pics = toStyleElem('.IKVyf { opacity: 0; } \n'
         + '.eSlsq { opacity: 0; } \n');
@@ -226,12 +182,35 @@ function addCSSHiding(node, css_hiding) {
     node.appendChild(css_hiding);
 }
 
-function removeCSSHiding(node) {
-    var styles = node.getElementsByClassName("enhancer-stylesheet");
+function removeCSSHiding() {
+    var styles = document.getElementsByClassName("enhancer-stylesheet");
 
     for (var i = styles.length - 1; i >= 0; i--) {
-        node.removeChild(styles[i]);
+        styles[i].parentNode.removeChild(styles[i]);
     }
+}
+
+function addCSSPictureHiding(element) {
+    var classList = element.className.split(' ');
+    var parent_class = element.parentNode.className.split(' ')[0];
+    class_list.forEach(class_name => {
+        css = '.' + parent_class + ' .' + class_name + ' { opacity: 0; }';
+        // log("addCSSPicture" + css);
+        element.parentNode.appendChild(toStyleElem(css));
+    });
+}
+
+function addCSSHoverHiding(element) {
+    var class_list = element.className.split(' ');
+    // Make it dependent on the first class of the parent node
+    // just because it is most likely to change if something changes
+    var parent_class = element.parentNode.className.split(' ')[0];
+    class_list.forEach(class_name => {
+        css = '.' + parent_class + ' .' + class_name + ':not(:hover)' + css_hiding_style;
+        // log("addCSSHover" + css);
+        element.parentNode.appendChild(toStyleElem(css));
+    });
+    // .TfNaW:not(:hover)
 }
 
 /* Put an element inside a flexbox */
@@ -489,7 +468,7 @@ function keyUpHandler(e) {
     if (e.altKey && e.ctrlKey && (e.keyCode == 75) && audio) {
         audio.play();
     } else if (e.altKey && e.ctrlKey && (e.keyCode == 72)) {
-        removeCSSHiding(challenge);
+        removeCSSHiding();
     } else {
     }
 }
@@ -522,27 +501,16 @@ function challengeTranslate(challenge) {
     if (lang == targetLang) {
         question = sourceLang;
         answer = targetLang;
-        css_hiding = css_hiding_source;
     } else {
         question = targetLang;
         answer = sourceLang;
-        css_hiding = css_hiding_target;
-    }
-
-    if (isHideText(question)) {
-        newWords = document.getElementsByClassName("_29XRF")
-        if (newWords.length > 0) {
-            newWordsArray = [].slice.call(newWords)
-            newWordsArray.map(element => { element.className = element.className.replace(/_29XRF/g, ""); })
-        }
-        addCSSHiding(challenge, css_hiding);
     }
 
     // log("challengeTranslate from "+question+" to "+answer);
     if (/answer/.test(activeclass)) {
         // log("We have an answer");
         input_area.disabled = false;
-        removeCSSHiding(challenge);
+        removeCSSHiding();
         // Read the answer aloud if necessary
         if (/answer-correct/.test(activeclass)) { // Answer is right
             var grade = getFirstAnswerInFooter();
@@ -566,6 +534,9 @@ function challengeTranslate(challenge) {
         // log("Should we read the question?");
         var question_hint = getHintSentence();
         // log(question_hint);
+        if (isHideText(question)) {
+            addCSSHoverHiding(question_box);
+        }
         speaker_button = question_box.getElementsByTagName("button");
         if (isSayText(question)) {
             if (speaker_button.length == 0) {
@@ -582,24 +553,25 @@ function challengeTranslate(challenge) {
 /* Speak question */
 function challengeSpeak(challenge) {
     if (isHideText(targetLang)) {
-        addCSSHiding(challenge, css_hiding_target);
+        // addCSSHiding(challenge, css_hiding_target);
     }
 }
 
 /* Multiple-choice translation question */
 function challengeJudge(challenge) {
     // log("challengeJudge");
-    var textCell = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_QUESTION);
+    var textCell = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_QUESTION)[0];
 
     // Do we want to hide the target language?
     if (!document.getElementById("timer") && isHideTranslations()) {
         // log("challengeJudge Hiding target");
-        addCSSHiding(challenge, css_hiding_target);
+        var firstChoice = getChoicesText()[0];
+        addCSSHoverHiding(firstChoice);
     }
 
     if (/answer/.test(activeclass)) {
         // log("challengeJudge answer");
-        removeCSSHiding(challenge);
+        removeCSSHiding();
         if (isSayText(targetLang)) {
             var selection_row = getChoiceBox();
             if (/answer-correct/.test(activeclass)) { // Answer is right
@@ -617,13 +589,13 @@ function challengeJudge(challenge) {
         // log("challengeJudge question");
 
         if (isHideText(sourceLang)) {
-            addCSSHiding(challenge, css_hiding_source);
+            addCSSHoverHiding(textCell);
         }
 
         if (isSayText(sourceLang)) {
             // log("challengeJudge: Sentence to translate");
             var question_css = "display: inline-block; ";
-            say(textCell, sourceLang, textCell[0], question_css);
+            say([textCell], sourceLang, textCell);
         }
     }
 }
@@ -635,13 +607,13 @@ function challengeComplete(challenge) {
     var input_box = getCompleteInputBox();
 
     if (isHideText(sourceLang)) {
-        addCSSHiding(challenge, css_hiding_source);
+        addCSSHoverHiding(question_hint);
     }
 
     // log("challengeTranslate from "+question+" to "+answer);
     if (/answer/.test(activeclass)) {
         // log("We have an answer");
-        removeCSSHiding(challenge);
+        removeCSSHiding();
         if (isSayText(targetLang)) {
             // Read the answer aloud if necessary
             var grade = getFirstAnswerInFooter();
@@ -673,19 +645,18 @@ function challengeComplete(challenge) {
 function challengeSelect(challenge) {
     // log("challengeSelect");
     if (/answer/.test(activeclass)) {
-        removeCSSHiding(challenge);
+        removeCSSHiding();
     } else {
         // log("challengeSelect question");
         if (isHidePics()) {
             let firstChoice = getFirstCardChoice();
             let image = firstChoice.nextElementSibling;
-            var css_hiding_pics = toStyleElem('.' + image.className +' { opacity: 0; }');
-            addCSSHiding(challenge, css_hiding_pics);
-        }
-        if (isHideText(sourceLang)) {
-            addCSSHiding(challenge, css_hiding_title);
+            addCSSPictureHiding(image);
         }
         let textCell = getChallengeHeader();
+        if (isHideText(sourceLang)) {
+            addCSSHoverHiding(textCell);
+        }
         if (isSayText(sourceLang)) {
             say([textCell], sourceLang, textCell);
         }
@@ -697,19 +668,17 @@ function challengeSelect(challenge) {
 function challengeName(challenge) {
     // log("challengeName");
     if (/answer/.test(activeclass)) {
-        removeCSSHiding(challenge);
+        removeCSSHiding();
     } else {
+        let textCell = getChallengeHeader();
         if (isHidePics()) {
             addCSSHiding(challenge, css_hiding_pics);
         }
         if (isHideText(sourceLang)) {
-            addCSSHiding(challenge, css_hiding_title);
+            addCSSHoverHiding(textCell);
         }
-        textCell = challenge.getElementsByClassName(K_CHALLENGE_NAME_PIC);
         if (isSayText(sourceLang)) {
-            question_css = "display: inline-block; "
-                + "position: relative; ";
-            say(textCell, sourceLang, textCell[0].firstChild, question_css);
+            say([textCell], sourceLang, textCell);
         }
     }
 }
@@ -725,7 +694,6 @@ function challengeForm(challenge) {
             if (/answer-correct/.test(activeclass)) { // Answer is right
                 // log("challengeForm correct");
                 grade = getChoosenAnser();
-                log("challengeForm targetLang");
             } else {
                 // log("challengeJudge incorrect");
                 grade = getFirstAnswerInFooter();
