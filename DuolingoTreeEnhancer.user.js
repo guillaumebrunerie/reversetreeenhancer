@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.3.0-pre3
+// @version      1.3.0-pre4
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -71,11 +71,19 @@ function log(objectToLog) {
  * --------------------------------------*/
 
 function getFirstElementByDataTestValue(data_test) {
-	return document.querySelector("*[data-test*='" + data_test + "']");
+    return document.querySelector("[data-test='" + data_test + "']");
+}
+
+function getFirstMatchingElementByDataTestValue(data_test) {
+    return document.querySelector("*[data-test*='" + data_test + "']");
 }
 
 function getElementsByDataTestValue(data_test) {
-	return document.querySelectorAll("*[data-test*='" + data_test + "']");
+    return document.querySelectorAll("[data-test='" + data_test + "']");
+}
+
+function getMatchingElementsByDataTestValue(data_test) {
+    return document.querySelectorAll("[data-test*='" + data_test + "']");
 }
 
 function getDuoTree() {
@@ -83,7 +91,7 @@ function getDuoTree() {
 }
 
 function getChallenge() {
-    return getFirstElementByDataTestValue("challenge");
+    return getFirstMatchingElementByDataTestValue("challenge");
 }
 
 function getChallengeHeader() {
@@ -96,6 +104,10 @@ function getTranslatePrompt() {
 
 function getHintSentence() {
     return getFirstElementByDataTestValue("hint-sentence");
+}
+
+function getHintToken() {
+    return getFirstElementByDataTestValue("hint-token");
 }
 
 function getFormPrompt() {
@@ -133,7 +145,7 @@ function getChoosenAnser() {
 }
 
 function getAnswerFooter() {
-    return getFirstElementByDataTestValue("blame")
+    return getFirstMatchingElementByDataTestValue("blame")
 }
 
 function getFirstAnswerInFooter() {
@@ -425,14 +437,8 @@ function insertNodeBefore(node, before) {
 }
 
 // Say a sentence
-function say(itemsToSay, lang, node, css) {
-    var sentence = "";
-    for (var i = 0; i < itemsToSay.length; ++i) {
-        var text = itemsToSay[i].type == "textarea" ? itemsToSay[i].textContent
-                : itemsToSay[i].innerText;
-        sentence = sentence + text + ". ";
-    }
-
+function say(itemToSay, lang, node, css) {
+    var sentence = itemToSay.type == "textarea" ? itemToSay.textContent : itemToSay.innerText;;
     sentence = sentence.replace(/•/g, "");
     sentence = sentence.replace(/\.\./g, ".");
 
@@ -448,15 +454,14 @@ function say(itemsToSay, lang, node, css) {
         // Do nothing, really
     }
 
-    try {
-        // log("say: Insert play button");
-        putInFlexbox(node);
-        insertNodeBefore(div, node);
-    } catch (err) {
-        // log("say: No play button, use old method");
-    }
-
     if (typeof (lang) != 'undefined') {
+        if (typeof (node) != 'undefined') {
+            putInFlexbox(node);
+            insertNodeBefore(div, node);
+        } else {
+            putInFlexbox(itemToSay);
+            insertNodeBefore(div, itemToSay);
+        }
         playSound(sentence, lang, div);
         lastSaidLang = lang;
     } else {
@@ -520,10 +525,7 @@ function challengeTranslate(challenge) {
             }
 
             if (isSayText(answer)) {
-                var input_css = "display: inline-block; "
-                    + "margin: 20px 0px 0px -40px; "
-                    + "position: absolute;";
-                say([grade], answer, input_area);
+                say(grade, answer, input_area);
             }
         } else {
             sayAnswersInFooter(input_area, answer);
@@ -541,10 +543,10 @@ function challengeTranslate(challenge) {
         if (isSayText(question)) {
             if (speaker_button.length == 0) {
                 // log("Read the question aloud");
-                say([question_hint], question, question_hint, "");
+                say(question_hint, question);
             } else if (!/enhancer-media-button/.test(speaker_button[0].className)) {
                 // log("just log the question");
-                say([question_hint]); // No lang
+                say(question_hint); // No lang
             }
         }
     }
@@ -577,9 +579,7 @@ function challengeJudge(challenge) {
             if (/answer-correct/.test(activeclass)) { // Answer is right
                 // log("challengeJudge correct");
                 grade = getChoosenAnser();
-                // log("challengeJudge Hiding source");
-                var answer_css = "display: inline-block; ";
-                say([grade], targetLang, grade, answer_css);
+                say(grade, targetLang, selection_row.firstChild);
             } else {
                 // log("challengeJudge incorrect");
                 sayAnswersInFooter(selection_row.firstChild, targetLang);
@@ -594,8 +594,7 @@ function challengeJudge(challenge) {
 
         if (isSayText(sourceLang)) {
             // log("challengeJudge: Sentence to translate");
-            var question_css = "display: inline-block; ";
-            say([textCell], sourceLang, textCell);
+            say(textCell, sourceLang);
         }
     }
 }
@@ -625,17 +624,17 @@ function challengeComplete(challenge) {
                 // log("You were right");
                 ansText = input_box.value;
                 box_to_fix.innerHTML = ansText;
-                say([answer_box], targetLang, answer_box);
+                say(answer_box, targetLang);
             } else {
                 // log("You made a mistake");
-                say([grade], targetLang, answer_box);
+                say(grade, targetLang);
             }
         }
     } else {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
         if (isSayText(sourceLang)) {
-            say([question_hint], sourceLang, question_hint); // No lang
+            say(question_hint, sourceLang); // No lang
         }
     }
 
@@ -658,7 +657,7 @@ function challengeSelect(challenge) {
             addCSSHoverHiding(textCell);
         }
         if (isSayText(sourceLang)) {
-            say([textCell], sourceLang, textCell);
+            say(textCell, sourceLang);
         }
 
     }
@@ -678,7 +677,7 @@ function challengeName(challenge) {
             addCSSHoverHiding(textCell);
         }
         if (isSayText(sourceLang)) {
-            say([textCell], sourceLang, textCell);
+            say(textCell, sourceLang);
         }
     }
 }
@@ -701,13 +700,13 @@ function challengeForm(challenge) {
             var ansText = grade.innerText;
             var parent_span = getFormPrompt().firstChild;
             parent_span.childNodes.forEach(node => { if (node.className != "") { node.innerHTML = ansText } });
-            say([parent_span], targetLang, parent_span);
-    }
+            say(parent_span, targetLang);
+        }
         if (isSayText(sourceLang)) {
             if (!isSayText(targetLang)) {
                 sayAnswersInFooter();
             } else {
-                say([getLastAnswerInFooter()]);
+                say(getLastAnswerInFooter());
             }
         }
     } else {
@@ -721,7 +720,7 @@ function challengeListen(challenge) {
     if (/answer/.test(activeclass)) {
         // log("Check if a translation is available");
         if (/correct/.test(activeclass)) {
-            say([input_box]);
+            say(input_box);
         }
         sayAnswersInFooter();
     } else {
@@ -732,10 +731,6 @@ function challengeListen(challenge) {
     }
 }
 
-function sayTextArea() {
-    log("sayTextArea");
-}
-
 // Use TTS for answer in footer
 function sayAnswersInFooter(where = null, lang = sourceLang) {
     let first = lang == targetLang;
@@ -744,14 +739,14 @@ function sayAnswersInFooter(where = null, lang = sourceLang) {
     // log("sayAnswersInFooter " + first);
     if (log_translation != say_translation) {
         // log("Just log")
-        say([log_translation]);
+        say(log_translation);
     }
 
     if (where == null) {
         where = say_translation;
     }
     if (isSayText(lang) && say_translation != null) {
-        say([say_translation], lang, where);
+        say(say_translation, lang, where);
     }
 }
 
