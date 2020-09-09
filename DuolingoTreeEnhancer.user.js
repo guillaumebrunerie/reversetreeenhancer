@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.3.0-pre4
+// @version      1.3.0-pre5
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -69,6 +69,17 @@ function log(objectToLog) {
 /* --------------------------------------
  *  UI-elements Section
  * --------------------------------------*/
+
+Array.prototype.randomElement = function () {
+	return this[Math.floor(Math.random() * this.length)]
+}
+
+Element.prototype.parentN = function (n) {
+	if (parseInt(n) <= 0) {
+		return this;
+	}
+	return this.parentElement.parentN(n - 1);
+}
 
 function getFirstElementByDataTestValue(data_test) {
     return document.querySelector("[data-test='" + data_test + "']");
@@ -537,7 +548,7 @@ function challengeTranslate(challenge) {
         var question_hint = getHintSentence();
         // log(question_hint);
         if (isHideText(question)) {
-            addCSSHoverHiding(question_box);
+            addCSSHoverHiding(question_hint.parentN(2));
         }
         speaker_button = question_box.getElementsByTagName("button");
         if (isSayText(question)) {
@@ -633,6 +644,9 @@ function challengeComplete(challenge) {
     } else {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
+        if (isHideText(sourceLang)) {
+            addCSSHoverHiding(question_hint.parentN(1));
+        }
         if (isSayText(sourceLang)) {
             say(question_hint, sourceLang); // No lang
         }
