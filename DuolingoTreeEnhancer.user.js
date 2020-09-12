@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.3.0-pre5
+// @version      1.3.0
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -129,8 +129,8 @@ function getCompleteInputBox() {
     return getFirstElementByDataTestValue("challenge-text-input");
 }
 
-function getFirstCardChoice() {
-    return getFirstElementByDataTestValue("challenge-choice-card-input");
+function getCardChoices() {
+    return getElementsByDataTestValue("challenge-choice-card-input");
 }
 
 function getChoiceBox() {
@@ -146,8 +146,8 @@ function getChoicesText() {
 }
 
 function getChoosenAnser() {
-    choices = getChoices();
-    answers = getChoicesText();
+    let choices = Array.prototype.slice.call(getChoices());
+    let answers = Array.prototype.slice.call(getChoicesText());
     for (var i = 0; i < choices.length; i++) {
         if (choices[i].firstChild.checked) {
             return answers[i];
@@ -175,9 +175,6 @@ function getLastAnswerInFooter() {
     return null;
 }
 
-/* The color used for hiding */
-var hColor = "#def0a5"; // "##dadada"
-
 /* Turns a stylesheet (as a string) into a style element */
 function toStyleElem(css) {
     var style = document.createElement('style');
@@ -193,19 +190,46 @@ function toStyleElem(css) {
     return style;
 }
 
-/* Stylesheet for the hiding text */
-var css_hiding_style = '{ color: ' + hColor
-       + '!important; background-color: ' + hColor
-       + '; border-color: ' + hColor + '; } \n';
-
-var css_hiding_pics = toStyleElem('.IKVyf { opacity: 0; } \n'
-        + '.eSlsq { opacity: 0; } \n');
-
-function addCSSHiding(node, css_hiding) {
-    node.appendChild(css_hiding);
+function addCSSHiding(css) {
+    var style = toStyleElem(css);
+    document.head.appendChild(style);
 }
 
-function removeCSSHiding() {
+/* Stylesheet for the hiding text */
+
+// HARDCODED CLASSNAME HERE -> Hide orange new words
+// The leading space is important!
+css_style_hide_text = ` .enhancer-hide-text:not(:hover){
+    background-color: #def0a5;
+    color: #def0a5;
+    transition: .5s;
+    flex-basis:100%
+}
+
+.enhancer-hide-text:hover {
+    transition: .5s;
+    flex-basis:100%
+}
+
+.enhancer-hide-text ._1bkpY:not(:hover) {
+    color: inherit;
+}
+`;
+
+// The leading space is important!
+css_style_hide_pic = ` .enhancer-hide-pic:not(:hover){
+    transition: .5s;
+    opacity: 0;
+    flex-basis:100%
+}
+
+.enhancer-hide-pic:hover {
+    transition: .5s;
+    opacity: 1;
+    flex-basis:100%
+}`;
+
+function revealElements() {
     var styles = document.getElementsByClassName("enhancer-stylesheet");
 
     for (var i = styles.length - 1; i >= 0; i--) {
@@ -213,27 +237,35 @@ function removeCSSHiding() {
     }
 }
 
-function addCSSPictureHiding(element) {
-    var classList = element.className.split(' ');
-    var parent_class = element.parentNode.className.split(' ')[0];
-    class_list.forEach(class_name => {
-        css = '.' + parent_class + ' .' + class_name + ' { opacity: 0; }';
-        // log("addCSSPicture" + css);
-        element.parentNode.appendChild(toStyleElem(css));
+function hideElements(elements, cssclass, css) {
+    // elements can be an array or an HTMLCollection
+    // better use the old safe for cycle
+    // log("hideElements");
+    // log(elements);
+    // Make the style dependent on parent. Important for multiple selection
+    let parent_class = elements[0].parentElement.classList[0];
+    if (parent_class == null) {
+        addCSSHiding(css);
+    } else {
+        let text_css = "." + parent_class + css;
+        // log(text_css);
+        addCSSHiding(text_css);
+    }
+    elements.forEach(element => {
+        element.classList.add(cssclass);
+        element.parentElement.style="display:flex;";
     });
+    // log("hidden elements: " + elements.length);
 }
 
-function addCSSHoverHiding(element) {
-    var class_list = element.className.split(' ');
-    // Make it dependent on the first class of the parent node
-    // just because it is most likely to change if something changes
-    var parent_class = element.parentNode.className.split(' ')[0];
-    class_list.forEach(class_name => {
-        css = '.' + parent_class + ' .' + class_name + ':not(:hover)' + css_hiding_style;
-        // log("addCSSHover" + css);
-        element.parentNode.appendChild(toStyleElem(css));
-    });
-    // .TfNaW:not(:hover)
+function hideTextElements(elements) {
+    // log("hideTextElements");
+    hideElements(elements, "enhancer-hide-text", css_style_hide_text);
+}
+
+function hidePicElements(elements) {
+    // log("hidePicElements");
+    hideElements(elements, "enhancer-hide-pic", css_style_hide_pic);
 }
 
 /* Put an element inside a flexbox */
@@ -484,7 +516,7 @@ function keyUpHandler(e) {
     if (e.altKey && e.ctrlKey && (e.keyCode == 75) && audio) {
         audio.play();
     } else if (e.altKey && e.ctrlKey && (e.keyCode == 72)) {
-        removeCSSHiding();
+        revealElements();
     } else {
     }
 }
@@ -526,7 +558,7 @@ function challengeTranslate(challenge) {
     if (/answer/.test(activeclass)) {
         // log("We have an answer");
         input_area.disabled = false;
-        removeCSSHiding();
+        revealElements();
         // Read the answer aloud if necessary
         if (/answer-correct/.test(activeclass)) { // Answer is right
             var grade = getFirstAnswerInFooter();
@@ -548,7 +580,7 @@ function challengeTranslate(challenge) {
         var question_hint = getHintSentence();
         // log(question_hint);
         if (isHideText(question)) {
-            addCSSHoverHiding(question_hint.parentN(2));
+            hideTextElements([question_hint]);
         }
         speaker_button = question_box.getElementsByTagName("button");
         if (isSayText(question)) {
@@ -565,42 +597,51 @@ function challengeTranslate(challenge) {
 
 /* Speak question */
 function challengeSpeak(challenge) {
-    if (isHideText(targetLang)) {
-        // addCSSHiding(challenge, css_hiding_target);
+    if (/answer/.test(activeclass)) {
+        revealElements();
+    } else {
+        var question_hint = getHintSentence();
+        if (isHideText(targetLang)) {
+            hideTextElements([question_hint]);
+        }
+        if (isSayText(targetLang)) {
+            say(question_hint);
+        }
     }
 }
 
 /* Multiple-choice translation question */
 function challengeJudge(challenge) {
     // log("challengeJudge");
+    // HARDCODED CLASSNAME HERE -> ChallengeJudge doesn't have a "data-" hint
     var textCell = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_QUESTION)[0];
-
-    // Do we want to hide the target language?
-    if (!document.getElementById("timer") && isHideTranslations()) {
-        // log("challengeJudge Hiding target");
-        var firstChoice = getChoicesText()[0];
-        addCSSHoverHiding(firstChoice);
-    }
 
     if (/answer/.test(activeclass)) {
         // log("challengeJudge answer");
-        removeCSSHiding();
+        revealElements();
         if (isSayText(targetLang)) {
             var selection_row = getChoiceBox();
             if (/answer-correct/.test(activeclass)) { // Answer is right
                 // log("challengeJudge correct");
                 grade = getChoosenAnser();
-                say(grade, targetLang, selection_row.firstChild);
+                say(grade, targetLang, grade.parentElement);
             } else {
                 // log("challengeJudge incorrect");
-                sayAnswersInFooter(selection_row.firstChild, targetLang);
+                sayAnswersInFooter(selection_row, targetLang);
             }
         }
     } else { // Asking a question
         // log("challengeJudge question");
 
+        // Do we want to hide the target language?
+        if (isHideTranslations()) {
+            // log("challengeJudge Hiding target");
+            let choices = Array.prototype.slice.call(getChoicesText());
+            hideTextElements(choices);
+        }
+
         if (isHideText(sourceLang)) {
-            addCSSHoverHiding(textCell);
+            hideTextElements([textCell]);
         }
 
         if (isSayText(sourceLang)) {
@@ -617,13 +658,13 @@ function challengeComplete(challenge) {
     var input_box = getCompleteInputBox();
 
     if (isHideText(sourceLang)) {
-        addCSSHoverHiding(question_hint);
+        hideTextElements([question_hint]);
     }
 
     // log("challengeTranslate from "+question+" to "+answer);
     if (/answer/.test(activeclass)) {
         // log("We have an answer");
-        removeCSSHiding();
+        revealElements();
         if (isSayText(targetLang)) {
             // Read the answer aloud if necessary
             var grade = getFirstAnswerInFooter();
@@ -645,7 +686,7 @@ function challengeComplete(challenge) {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
         if (isHideText(sourceLang)) {
-            addCSSHoverHiding(question_hint.parentN(1));
+            hideTextElements([question_hint]);
         }
         if (isSayText(sourceLang)) {
             say(question_hint, sourceLang); // No lang
@@ -658,17 +699,17 @@ function challengeComplete(challenge) {
 function challengeSelect(challenge) {
     // log("challengeSelect");
     if (/answer/.test(activeclass)) {
-        removeCSSHiding();
+        revealElements();
     } else {
         // log("challengeSelect question");
         if (isHidePics()) {
-            let firstChoice = getFirstCardChoice();
-            let image = firstChoice.nextElementSibling;
-            addCSSPictureHiding(image);
+            let choices = Array.prototype.slice.call(getCardChoices());
+            let images = choices.map(choice => choice.nextElementSibling);
+            hidePicElements(images);
         }
         let textCell = getChallengeHeader();
         if (isHideText(sourceLang)) {
-            addCSSHoverHiding(textCell);
+            hideTextElements([textCell]);
         }
         if (isSayText(sourceLang)) {
             say(textCell, sourceLang);
@@ -681,14 +722,14 @@ function challengeSelect(challenge) {
 function challengeName(challenge) {
     // log("challengeName");
     if (/answer/.test(activeclass)) {
-        removeCSSHiding();
+        revealElements();
     } else {
         let textCell = getChallengeHeader();
         if (isHidePics()) {
-            addCSSHiding(challenge, css_hiding_pics);
+            // hidePicElements([ToBeFound]);
         }
         if (isHideText(sourceLang)) {
-            addCSSHoverHiding(textCell);
+            hideTextElements([textCell]);
         }
         if (isSayText(sourceLang)) {
             say(textCell, sourceLang);

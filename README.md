@@ -9,13 +9,8 @@ The following options are available:
 1. Keep per-tree settings for listening/speaking exercises.
 2. Make all the exercises listening exercises (hide the question).
 3. Read answers aloud.
-4. Hide clues (e.g pictures).
+4. Hide clues (i.e. pictures).
 4. Make Duo better for reverse trees.
-
-### Keyboard shortcuts
-
-1. Ctrl+Alt+K Play audio.
-2. Ctrl+Allt+H Show hidden text and pictures.
 
 ### Where does it work?
 
@@ -29,13 +24,18 @@ It has been also tested on Android with Firefox+Violentmonkey using the "request
  * Chrome, Chromium: [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en)
  * Firefox: [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/)
  * Safari: [JavaScript Blocker](http://javascript-blocker.toggleable.com/)
-2. Click [here to install the userscript](https://github.com/camiloaa/duolingotreeenhancer/raw/master/DuolingoTreeEnhancer.user.js).
+2. Click [**here to install the userscript**](https://github.com/camiloaa/duolingotreeenhancer/raw/master/DuolingoTreeEnhancer.user.js).
 3. Confirm the installation when prompted.
+
+### Keyboard shortcuts
+
+1. Ctrl+Alt+K Play audio.
+2. Ctrl+Allt+H Show hidden text and pictures.
 
 ### DuolingoTreeEnhancer stopped working, HELP!
 
 Duolingo is constantly making small changes and tweaks in the website. When it happens there are two options:
 
 1. If you are a developer and can fix the problem yourself, please submit a patch.
-2. Otherwise, be patient. I'll work on it as soon as possible. 
+2. Otherwise, be patient. I'll work on it as soon as possible.
 
