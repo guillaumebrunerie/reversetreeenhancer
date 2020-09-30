@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.3.0
+// @version      1.3.1
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -15,14 +15,14 @@
 
 // log('DuolingoTreeEnhancer');
 
-let K_PLUGIN_NAME = "DuolingoTreeEnhancer";
-let K_CHALLENGE_JUDGE_QUESTION = "_3-JBe";
-let K_SPEAKER_BUTTON = "_2UpLr _1x6bc _1vUZG whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN UCrz7 yTpGk"
-let K_CONFIG_BUTTON = "_2Jb7i _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
-let K_SPEAKER_ICON_STYLE = "text-align:center; margin-top:-7px; margin-left:-8px";
+const K_PLUGIN_NAME = "DuolingoTreeEnhancer";
+const K_CHALLENGE_JUDGE_QUESTION = "_3-JBe";
+const K_SPEAKER_BUTTON = "_2UpLr _1x6bc _1vUZG whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN UCrz7 yTpGk"
+const K_CONFIG_BUTTON = "_2Jb7i _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
+const K_SPEAKER_ICON_STYLE = "text-align:center; margin-top:-7px; margin-left:-8px";
 
 var enableTTSGlobal = true;
-var duo_languages = JSON.parse(
+const duo_languages = JSON.parse(
         '{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","'
                 + 'gl":"Galician","la":"Latin","tt":"Tatar","tr":"Turkish",'
                 + '"lv":"Latvian","tl":"Tagalog","th":"Thai","te":"Telugu",'
@@ -67,7 +67,7 @@ function log(objectToLog) {
 }
 
 /* --------------------------------------
- *  UI-elements Section
+ *  Prototypes Section
  * --------------------------------------*/
 
 Array.prototype.randomElement = function () {
@@ -80,6 +80,29 @@ Element.prototype.parentN = function (n) {
 	}
 	return this.parentElement.parentN(n - 1);
 }
+
+String.prototype.formatUnicorn = String.prototype.formatUnicorn ||
+function () {
+    "use strict";
+    var str = this.toString();
+    if (arguments.length) {
+        var t = typeof arguments[0];
+        var key;
+        var args = ("string" === t || "number" === t) ?
+            Array.prototype.slice.call(arguments)
+            : arguments[0];
+
+        for (key in args) {
+            str = str.replace(new RegExp("\\{" + key + "\\}", "gi"), args[key]);
+        }
+    }
+
+    return str;
+};
+
+/* --------------------------------------
+ *  UI-elements Section
+ * --------------------------------------*/
 
 function getFirstElementByDataTestValue(data_test) {
     return document.querySelector("[data-test='" + data_test + "']");
@@ -125,7 +148,7 @@ function getFormPrompt() {
     return getFirstElementByDataTestValue("challenge-form-prompt");
 }
 
-function getCompleteInputBox() {
+function getInputBox() {
     return getFirstElementByDataTestValue("challenge-text-input");
 }
 
@@ -146,13 +169,18 @@ function getChoicesText() {
 }
 
 function getChoosenAnser() {
-    let choices = Array.prototype.slice.call(getChoices());
-    let answers = Array.prototype.slice.call(getChoicesText());
+    const choices = Array.prototype.slice.call(getChoices());
+    const answers = Array.prototype.slice.call(getChoicesText());
     for (var i = 0; i < choices.length; i++) {
         if (choices[i].firstChild.checked) {
             return answers[i];
         }
     }
+}
+
+function getTappedAnswer() {
+    const first_token = getFirstElementByDataTestValue("challenge-tap-token");
+    return first_token.parentN(6);
 }
 
 function getAnswerFooter() {
@@ -191,6 +219,7 @@ function toStyleElem(css) {
 }
 
 function addCSSHiding(css) {
+    // log("addCSSHiding: " + css);
     var style = toStyleElem(css);
     document.head.appendChild(style);
 }
@@ -198,35 +227,31 @@ function addCSSHiding(css) {
 /* Stylesheet for the hiding text */
 
 // HARDCODED CLASSNAME HERE -> Hide orange new words
-// The leading space is important!
-css_style_hide_text = ` .enhancer-hide-text:not(:hover){
+css_style_hide_text = `{parent} {child}:not(:hover){
     background-color: #def0a5;
     color: #def0a5;
+    transition: .2s;
+    flex-basis:100%
+}
+
+{child}:hover {
     transition: .5s;
     flex-basis:100%
 }
 
-.enhancer-hide-text:hover {
-    transition: .5s;
-    flex-basis:100%
-}
-
-.enhancer-hide-text ._1bkpY:not(:hover) {
+{child} ._1bkpY:not(:hover) {
     color: inherit;
 }
 `;
 
-// The leading space is important!
-css_style_hide_pic = ` .enhancer-hide-pic:not(:hover){
-    transition: .5s;
+css_style_hide_pic = `{parent} {child}:not(:hover){
+    transition: .2s;
     opacity: 0;
-    flex-basis:100%
 }
 
-.enhancer-hide-pic:hover {
+{child}:hover {
     transition: .5s;
     opacity: 1;
-    flex-basis:100%
 }`;
 
 function revealElements() {
@@ -237,35 +262,34 @@ function revealElements() {
     }
 }
 
-function hideElements(elements, cssclass, css) {
+function hideElements(elements, css) {
     // elements can be an array or an HTMLCollection
     // better use the old safe for cycle
     // log("hideElements");
     // log(elements);
     // Make the style dependent on parent. Important for multiple selection
-    let parent_class = elements[0].parentElement.classList[0];
-    if (parent_class == null) {
-        addCSSHiding(css);
-    } else {
-        let text_css = "." + parent_class + css;
-        // log(text_css);
-        addCSSHiding(text_css);
-    }
+    const parent_class = elements[0].parentElement.classList[0];
+    const child_class = ["enhancer-hide-class", parent_class].filter(Boolean).join("-");
+    const parent_style = (parent_class) ? "." + parent_class : "";
+    const child_style = "."+child_class;
+    addCSSHiding(css.formatUnicorn({parent:parent_style, child: child_style}));
     elements.forEach(element => {
-        element.classList.add(cssclass);
-        element.parentElement.style="display:flex;";
-    });
+        element.classList.add(child_class);
+        if (element.parentElement.firstChild != element) {
+            element.parentElement.style = "display:flex;";
+        }
+        });
     // log("hidden elements: " + elements.length);
 }
 
 function hideTextElements(elements) {
     // log("hideTextElements");
-    hideElements(elements, "enhancer-hide-text", css_style_hide_text);
+    hideElements(elements, css_style_hide_text);
 }
 
 function hidePicElements(elements) {
     // log("hidePicElements");
-    hideElements(elements, "enhancer-hide-pic", css_style_hide_pic);
+    hideElements(elements, css_style_hide_pic);
 }
 
 /* Put an element inside a flexbox */
@@ -294,8 +318,6 @@ function putInFlexbox(element, id = "enhancer-flexbox") {
 /* Audio functions */
 
 var audio;
-var prevAudio;
-var waiting = false;
 
 // Play an audio element.
 function playURL(url, lang, speaker_button) {
@@ -313,9 +335,10 @@ function playURL(url, lang, speaker_button) {
         }
     }
     audio = document.createElement('audio');
+    audio.classList.add("enhancer-audio-class");
     audio.setAttribute("id", audio_id);
     audio.setAttribute("autoplay", "true");
-    source = document.createElement('source');
+    var source = document.createElement('source');
     source.setAttribute("type", "audio/mpeg");
     source.setAttribute("src", url);
     audio.appendChild(source);
@@ -325,7 +348,6 @@ function playURL(url, lang, speaker_button) {
         play_button.style = K_SPEAKER_ICON_STYLE;
         play_button.appendChild(audio);
         var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.className = " enhancer-media-element";
         svg.setAttribute("width", "28");
         svg.setAttribute("height", "32");
         svg.setAttribute("version", "1.1");
@@ -484,6 +506,7 @@ function say(itemToSay, lang, node, css) {
     var sentence = itemToSay.type == "textarea" ? itemToSay.textContent : itemToSay.innerText;;
     sentence = sentence.replace(/•/g, "");
     sentence = sentence.replace(/\.\./g, ".");
+    sentence = sentence.replace(/\n/g," ");
 
     log("Saying '" + sentence + "'");
 
@@ -528,10 +551,13 @@ document.addEventListener('keyup', keyUpHandler, false);
 /* Translation from target language (eg. Polish) */
 function challengeTranslate(challenge) {
     // log("challengeTranslate");
-    var speaker_button;
     var question_box = getTranslatePrompt();
     var answerbox = challenge.getElementsByTagName("textarea");
     var input_area = answerbox[0];
+    var question_hint = getHintSentence();
+    const speaker_button = question_box.getElementsByTagName("button");
+    const has_button = speaker_button.length != 0;
+    var has_enhancer_button = has_button ? /enhancer-media-button/.test(speaker_button[0].className) : false;
 
     if (input_area != undefined) {
         lang = input_area.getAttribute("lang");
@@ -539,11 +565,18 @@ function challengeTranslate(challenge) {
             input_area.setAttribute("spellcheck", "true");
         }
     } else {
-        // Not sure how to figure out which language it is.
-        // Most likely it is a source to target challenge,
-        // since target to source should have a sound icon already,
-        // but it is still just a guess
-        lang = targetLang;
+        // log("Tapped exercise "+has_button+" "+has_enhancer_button);
+        input_area = getTappedAnswer();
+        if (!has_button && !has_enhancer_button) {
+            // Not sure how to figure out which language it is.
+            // Most likely it is a source to target challenge,
+            // since target to source should have a sound icon already,
+            // but it is still just a guess
+            lang = targetLang;
+        } else {
+            lang = sourceLang;
+        }
+        // log("Probably translating to: " + lang);
     }
 
     if (lang == targetLang) {
@@ -577,17 +610,15 @@ function challengeTranslate(challenge) {
         // Read the question aloud if no TTS is available
         // We know there is not TTS because there is no play button
         // log("Should we read the question?");
-        var question_hint = getHintSentence();
         // log(question_hint);
         if (isHideText(question)) {
             hideTextElements([question_hint]);
         }
-        speaker_button = question_box.getElementsByTagName("button");
         if (isSayText(question)) {
-            if (speaker_button.length == 0) {
+            if (!has_button) {
                 // log("Read the question aloud");
                 say(question_hint, question);
-            } else if (!/enhancer-media-button/.test(speaker_button[0].className)) {
+            } else if (!has_enhancer_button) {
                 // log("just log the question");
                 say(question_hint); // No lang
             }
@@ -636,7 +667,7 @@ function challengeJudge(challenge) {
         // Do we want to hide the target language?
         if (isHideTranslations()) {
             // log("challengeJudge Hiding target");
-            let choices = Array.prototype.slice.call(getChoicesText());
+            const choices = Array.prototype.slice.call(getChoicesText());
             hideTextElements(choices);
         }
 
@@ -655,7 +686,7 @@ function challengeJudge(challenge) {
 function challengeComplete(challenge) {
     // log("challengeComplete");
     var question_hint = getHintSentence();
-    var input_box = getCompleteInputBox();
+    var input_box = getInputBox();
 
     if (isHideText(sourceLang)) {
         hideTextElements([question_hint]);
@@ -703,11 +734,11 @@ function challengeSelect(challenge) {
     } else {
         // log("challengeSelect question");
         if (isHidePics()) {
-            let choices = Array.prototype.slice.call(getCardChoices());
-            let images = choices.map(choice => choice.nextElementSibling);
+            const choices = Array.prototype.slice.call(getCardChoices());
+            const images = choices.map(choice => choice.nextElementSibling);
             hidePicElements(images);
         }
-        let textCell = getChallengeHeader();
+        const textCell = getChallengeHeader();
         if (isHideText(sourceLang)) {
             hideTextElements([textCell]);
         }
@@ -724,9 +755,10 @@ function challengeName(challenge) {
     if (/answer/.test(activeclass)) {
         revealElements();
     } else {
-        let textCell = getChallengeHeader();
+        const textCell = getChallengeHeader();
         if (isHidePics()) {
-            // hidePicElements([ToBeFound]);
+            var pic_to_hide = getInputBox().parentN(2).firstChild;
+            hidePicElements([pic_to_hide]);
         }
         if (isHideText(sourceLang)) {
             hideTextElements([textCell]);
@@ -788,9 +820,9 @@ function challengeListen(challenge) {
 
 // Use TTS for answer in footer
 function sayAnswersInFooter(where = null, lang = sourceLang) {
-    let first = lang == targetLang;
-    let log_translation = first ? getLastAnswerInFooter() : getFirstAnswerInFooter();
-    let say_translation = first ? getFirstAnswerInFooter() : getLastAnswerInFooter();
+    const first = lang == targetLang;
+    const log_translation = first ? getLastAnswerInFooter() : getFirstAnswerInFooter();
+    const say_translation = first ? getFirstAnswerInFooter() : getLastAnswerInFooter();
     // log("sayAnswersInFooter " + first);
     if (log_translation != say_translation) {
         // log("Just log")
@@ -1146,8 +1178,7 @@ function updateButton() {
 function isAnswer(mutations, challengeclass) {
     // By default, we get an empty collection here
     // log("Do we have an answer? " + challengeclass)
-    for (var i = 0; i < mutations.length; ++i) {
-        mutation = mutations[i];
+    for (let mutation of mutations) {
         if (mutation.type === 'childList') {
             // log("Changes in childlist ");
             // log(mutation.target);
