@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Duolingo Tree Enhancer
 // @namespace    https://github.com/camiloaa/duolingotreeenhancer
-// @version      1.3.1
+// @version      1.3.2
 // @description  Enhance Duolingo by customizing difficulty and providing extra functionality. Based on Guillaume Brunerie's ReverseTreeEnhancer
 // @author       Camilo Arboleda
 // @match        https://www.duolingo.com/*
@@ -21,7 +21,6 @@ const K_SPEAKER_BUTTON = "_2UpLr _1x6bc _1vUZG whuSQ _2gwtT _1nlVc _2fOC9 t5wFJ 
 const K_CONFIG_BUTTON = "_2Jb7i _3iVqs _2A7uO _2gwtT _1nlVc _2fOC9 t5wFJ _3dtSu _25Cnc _3yAjN _3Ev3S _1figt";
 const K_SPEAKER_ICON_STYLE = "text-align:center; margin-top:-7px; margin-left:-8px";
 
-var enableTTSGlobal = true;
 const duo_languages = JSON.parse(
         '{"gu":"Gujarati","ga":"Irish","gn":"Guarani (Jopará)","'
                 + 'gl":"Galician","la":"Latin","tt":"Tatar","tr":"Turkish",'
@@ -52,23 +51,23 @@ const duo_languages = JSON.parse(
                 + '"sv":"Swedish","km":"Khmer","kl":"Klingon","sk":"Slovak",'
                 + '"sn":"Sindarin","sl":"Slovenian","ky":"Kyrgyz",'
                 + '"sf":"Swedish (Finland)","sw":"Swahili","zh":"Chinese"}');
-var activeclass = "";
-var DuoState = JSON.parse(localStorage.getItem('duo.state'));
-var targetLang = DuoState.user.learningLanguage;
-var sourceLang = DuoState.user.fromLanguage;
-
-/* Restore console */
-var i = document.createElement('iframe');
-i.style.display = 'none';
-document.body.appendChild(i);
-console_alt = i.contentWindow.console;
-function log(objectToLog) {
-	console_alt.debug("[" + K_PLUGIN_NAME + "]: %o", objectToLog);
-}
+var activeClass = "";
+var duoState = JSON.parse(localStorage.getItem('duo.state'));
+var targetLang = duoState.user.learningLanguage;
+var sourceLang = duoState.user.fromLanguage;
 
 /* --------------------------------------
  *  Prototypes Section
  * --------------------------------------*/
+
+/* Restore console */
+var _i = document.createElement('iframe');
+_i.style.display = 'none';
+document.body.appendChild(_i);
+console_alt = _i.contentWindow.console;
+function log(objectToLog) {
+	console_alt.debug("[" + K_PLUGIN_NAME + "]: %o", objectToLog);
+}
 
 Array.prototype.randomElement = function () {
 	return this[Math.floor(Math.random() * this.length)]
@@ -180,7 +179,11 @@ function getChoosenAnser() {
 
 function getTappedAnswer() {
     const first_token = getFirstElementByDataTestValue("challenge-tap-token");
-    return first_token.parentN(6);
+    const parent_token = first_token.parentN(3);
+    if (parent_token.hasAttribute("dir")) {
+        return parent_token;
+    }
+    return parent_token.parentElement;
 }
 
 function getAnswerFooter() {
@@ -557,7 +560,7 @@ function challengeTranslate(challenge) {
     var question_hint = getHintSentence();
     const speaker_button = question_box.getElementsByTagName("button");
     const has_button = speaker_button.length != 0;
-    var has_enhancer_button = has_button ? /enhancer-media-button/.test(speaker_button[0].className) : false;
+    const has_enhancer_button = has_button ? /enhancer-media-button/.test(speaker_button[0].className) : false;
 
     if (input_area != undefined) {
         lang = input_area.getAttribute("lang");
@@ -567,7 +570,7 @@ function challengeTranslate(challenge) {
     } else {
         // log("Tapped exercise "+has_button+" "+has_enhancer_button);
         input_area = getTappedAnswer();
-        if (!has_button && !has_enhancer_button) {
+        if (!has_button || has_enhancer_button) {
             // Not sure how to figure out which language it is.
             // Most likely it is a source to target challenge,
             // since target to source should have a sound icon already,
@@ -588,12 +591,12 @@ function challengeTranslate(challenge) {
     }
 
     // log("challengeTranslate from "+question+" to "+answer);
-    if (/answer/.test(activeclass)) {
+    if (/answer/.test(activeClass)) {
         // log("We have an answer");
         input_area.disabled = false;
         revealElements();
         // Read the answer aloud if necessary
-        if (/answer-correct/.test(activeclass)) { // Answer is right
+        if (/answer-correct/.test(activeClass)) { // Answer is right
             var grade = getFirstAnswerInFooter();
             if (grade == null) {
                 // log("perfect answer!")
@@ -628,7 +631,7 @@ function challengeTranslate(challenge) {
 
 /* Speak question */
 function challengeSpeak(challenge) {
-    if (/answer/.test(activeclass)) {
+    if (/answer/.test(activeClass)) {
         revealElements();
     } else {
         var question_hint = getHintSentence();
@@ -647,12 +650,12 @@ function challengeJudge(challenge) {
     // HARDCODED CLASSNAME HERE -> ChallengeJudge doesn't have a "data-" hint
     var textCell = challenge.getElementsByClassName(K_CHALLENGE_JUDGE_QUESTION)[0];
 
-    if (/answer/.test(activeclass)) {
+    if (/answer/.test(activeClass)) {
         // log("challengeJudge answer");
         revealElements();
         if (isSayText(targetLang)) {
             var selection_row = getChoiceBox();
-            if (/answer-correct/.test(activeclass)) { // Answer is right
+            if (/answer-correct/.test(activeClass)) { // Answer is right
                 // log("challengeJudge correct");
                 grade = getChoosenAnser();
                 say(grade, targetLang, grade.parentElement);
@@ -693,7 +696,7 @@ function challengeComplete(challenge) {
     }
 
     // log("challengeTranslate from "+question+" to "+answer);
-    if (/answer/.test(activeclass)) {
+    if (/answer/.test(activeClass)) {
         // log("We have an answer");
         revealElements();
         if (isSayText(targetLang)) {
@@ -729,7 +732,7 @@ function challengeComplete(challenge) {
 /* Select the correct image */
 function challengeSelect(challenge) {
     // log("challengeSelect");
-    if (/answer/.test(activeclass)) {
+    if (/answer/.test(activeClass)) {
         revealElements();
     } else {
         // log("challengeSelect question");
@@ -752,7 +755,7 @@ function challengeSelect(challenge) {
 /* Type the word corresponding to the images */
 function challengeName(challenge) {
     // log("challengeName");
-    if (/answer/.test(activeclass)) {
+    if (/answer/.test(activeClass)) {
         revealElements();
     } else {
         const textCell = getChallengeHeader();
@@ -774,10 +777,10 @@ function challengeName(challenge) {
  */
 function challengeForm(challenge) {
     // log("challengeForm");
-    if (/answer/.test(activeclass)) {
+    if (/answer/.test(activeClass)) {
         if (isSayText(targetLang)) {
             var grade = null;
-            if (/answer-correct/.test(activeclass)) { // Answer is right
+            if (/answer-correct/.test(activeClass)) { // Answer is right
                 // log("challengeForm correct");
                 grade = getChoosenAnser();
             } else {
@@ -804,9 +807,9 @@ function challengeForm(challenge) {
 function challengeListen(challenge) {
     // log("challengeListen");
     var input_box = challenge.getElementsByTagName("textarea")[0];
-    if (/answer/.test(activeclass)) {
+    if (/answer/.test(activeClass)) {
         // log("Check if a translation is available");
-        if (/correct/.test(activeclass)) {
+        if (/correct/.test(activeClass)) {
             say(input_box);
         }
         sayAnswersInFooter();
@@ -841,8 +844,8 @@ function setUserConfig() {
     var autoplay = isSayText(targetLang);
     var microphone = isSpeaking();
     var speakers = isListening();
-    DuoState.user.enableMicrophone = microphone;
-    DuoState.user.enableSpeaker = speakers;
+    duoState.user.enableMicrophone = microphone;
+    duoState.user.enableSpeaker = speakers;
 
     // This was reverse engineered, might stop working any time
     url = "/2016-04-13/users/";
@@ -851,7 +854,7 @@ function setUserConfig() {
             + microphone + ',"enableSpeaker":' + speakers + '}';
 
     http = new XMLHttpRequest();
-    http.open("PATCH", url + DuoState.user.id + fields, true);
+    http.open("PATCH", url + duoState.user.id + fields, true);
 
     http.onreadystatechange = function() {// Call a function when the state
         // changes.
@@ -1146,10 +1149,9 @@ function isHideText(from) {
 
 function isSayText(from) {
     if (targetLang == from)
-        return (GM_config.get('READ_TARGET') && enableTTSGlobal
-                && isEnhancedTree());
+        return (GM_config.get('READ_TARGET') && isEnhancedTree());
     else
-        return (GM_config.get('READ_SOURCE') && enableTTSGlobal);
+        return (GM_config.get('READ_SOURCE'));
 }
 
 function isListening() {
@@ -1228,14 +1230,14 @@ function onChange(mutations) {
 
     if (window.location.pathname == "/learn") {
         // General setup
-        DuoState = JSON.parse(localStorage.getItem('duo.state'));
-        newSourceLang = DuoState.user.fromLanguage;
-        newTargetLang = DuoState.user.learningLanguage;
+        duoState = JSON.parse(localStorage.getItem('duo.state'));
+        newSourceLang = duoState.user.fromLanguage;
+        newTargetLang = duoState.user.learningLanguage;
 
         if (newSourceLang != sourceLang || newTargetLang != targetLang) {
-            // log("Update DuoState language change");
-            targetLang = DuoState.user.learningLanguage;
-            sourceLang = DuoState.user.fromLanguage;
+            // log("Update duoState language change");
+            targetLang = duoState.user.learningLanguage;
+            sourceLang = duoState.user.fromLanguage;
             updateConfig(); // Make GM_Config point to this language setup
             setUserConfig();
 
@@ -1245,9 +1247,9 @@ function onChange(mutations) {
                 tree.removeChild(button);
         }
 
-        // log("Update DuoState new window");
-        targetLang = DuoState.user.learningLanguage;
-        sourceLang = DuoState.user.fromLanguage;
+        // log("Update duoState new window");
+        targetLang = duoState.user.learningLanguage;
+        sourceLang = duoState.user.fromLanguage;
 
         if (!document.getElementById("reverse-tree-enhancer-button")) {
             addButton();
@@ -1260,15 +1262,15 @@ function onChange(mutations) {
         newclass = isAnswer(mutations, newclass);
         // log("Challenge: " + newclass);
 
-        if (newclass != activeclass) {
-            // log("Old class: " + activeclass);
-            activeclass = newclass;
+        if (newclass != activeClass) {
+            // log("Old class: " + activeClass);
+            activeClass = newclass;
 
             if (challenge == null) {
                 return;
             }
 
-            challenge.setAttribute("data-test", activeclass);
+            challenge.setAttribute("data-test", activeClass);
 
             if (/translate/.test(newclass)) {
                 challengeTranslate(challenge);
@@ -1298,12 +1300,6 @@ function onChange(mutations) {
                 challengeListen(challenge);
             }
         }
-    }
-
-    if (/certification_test/.test(newclass)) {
-        enableTTSGlobal = false;
-    } else {
-        enableTTSGlobal = true;
     }
 }
 
